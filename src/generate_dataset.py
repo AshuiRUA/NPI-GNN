@@ -520,6 +520,8 @@ if __name__ == '__main__':
         output_edgelist_file(G, graph_output_path)
 
     # load node2vec result
+    if not osp.exists(f'data/node2vec_result/{dataset_name}/node2vecWindowSize={args.node2vecWindowSize}'):
+        raise Exception(f'node2vec result not exists. use edgelist file in data/graph/{dataset_name} and node2vec to generate it')
     node2vec_result_path = f'data/node2vec_result/{dataset_name}/node2vecWindowSize={args.node2vecWindowSize}/result.emb'
     read_node2vec_result(path=node2vec_result_path)
 
