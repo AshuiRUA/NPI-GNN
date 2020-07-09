@@ -23,8 +23,8 @@ def parse_args():
     parser.add_argument('--hopNumber', default=2, help='hop number of subgraph')
     parser.add_argument('--node2vecWindowSize', default=5, help='node2vec window size')
     parser.add_argument('--shuffle', default=True, help='shuffle interactions before generate dataset')
-    parser.add_argument('--reduce', default=True, help='randomly reduce the source database, and also maintain one connected component')
-    parser.add_argument('--reduceRatio', default=0.99, help='reduce Ratio')
+    parser.add_argument('--reduce', default=False, help='randomly reduce the source database, and also maintain one connected component')
+    parser.add_argument('--reduceRatio', default=0.5, help='reduce Ratio')
 
     return parser.parse_args()
 
