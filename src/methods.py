@@ -48,11 +48,11 @@ def get_num_of_subgraph(dataset_name, node2vec_windowSize):
     return len(interaction_list) + len(negative_interaction_list)
 
 
-def load_intermediate_products(dataset_name, node2vec_windowSize):
-    interaction_list_path = f'data/reduce_dataset_intermediate_products/{dataset_name}/node2vecWindowSize={node2vec_windowSize}/interaction_list.txt'
-    negative_interaction_list_path = f'data/reduce_dataset_intermediate_products/{dataset_name}/node2vecWindowSize={node2vec_windowSize}/negative_interaction_list.txt'
-    lncRNA_list_path = f'data/reduce_dataset_intermediate_products/{dataset_name}/node2vecWindowSize={node2vec_windowSize}/lncRNA_list.txt'
-    protein_list_path = f'data/reduce_dataset_intermediate_products/{dataset_name}/node2vecWindowSize={node2vec_windowSize}/protein_list.txt'
+def load_intermediate_products(project_name):
+    interaction_list_path = f'data/intermediate_products/{project_name}/interaction_list.txt'
+    negative_interaction_list_path = f'data/intermediate_products/{project_name}/negative_interaction_list.txt'
+    lncRNA_list_path = f'data/intermediate_products/{project_name}/lncRNA_list.txt'
+    protein_list_path = f'data/intermediate_products/{project_name}/protein_list.txt'
     with open(file=interaction_list_path, mode='rb') as f:
         interaction_list = pickle.load(f)
     with open(file=negative_interaction_list_path, mode='rb') as f:
