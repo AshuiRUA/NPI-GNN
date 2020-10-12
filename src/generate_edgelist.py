@@ -19,9 +19,9 @@ sys.setrecursionlimit(100000)
 
 def parse_args():
     parser = argparse.ArgumentParser(description="generate_dataset.")
-    parser.add_argument('--projectName', default='0930_NPInter2', help='project name')
+    parser.add_argument('--projectName', default='1012_NPInter2', help='project name')
     parser.add_argument('--datasetName', default='NPInter2', help='raw interactions dataset')
-    parser.add_argument('--createBalanceDataset', default=True, help='Create a Balance dataset')
+    parser.add_argument('--createBalanceDataset', default=True, type=bool, help='Create a Balance dataset')
     parser.add_argument('--reduce', default=False, help='randomly reduce the source database, and also maintain one connected component')
     parser.add_argument('--reduceRatio', default=0.5, help='reduce Ratio')
     parser.add_argument('--output', default=True, help='output dataset or not')

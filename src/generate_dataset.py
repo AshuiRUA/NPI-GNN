@@ -22,10 +22,10 @@ def parse_args():
     parser = argparse.ArgumentParser(description="generate_dataset.")
     parser.add_argument('--projectName', default='0930_NPInter2', help='project name')
     parser.add_argument('--datasetName', default='NPInter2', help='raw interactions dataset')
-    parser.add_argument('--hopNumber', default=2, help='hop number of subgraph')
-    parser.add_argument('--node2vecWindowSize', default=5, help='node2vec window size')
-    parser.add_argument('--shuffle', default=True, help='shuffle interactions before generate dataset')
-    parser.add_argument('--output', default=True, help='output dataset or not')
+    parser.add_argument('--hopNumber', default=2, type=int, help='hop number of subgraph')
+    parser.add_argument('--shuffle', default=True, type=bool, help='shuffle interactions before generate dataset')
+    parser.add_argument('--noKmer', default=False, type=bool, help='Not using k-mer')
+    parser.add_argument('--output', default=True, type=bool, help='output dataset or not')
 
 
     return parser.parse_args()
@@ -107,20 +107,22 @@ if __name__ == "__main__":
     read_node2vec_result(path=node2vec_result_path)
 
     # load k-mer
-    lncRNA_3_mer_path = f'data/lncRNA_3_mer/{args.datasetName}/lncRNA_3_mer.txt'
-    protein_2_mer_path = f'data/protein_2_mer/{args.datasetName}/protein_2_mer.txt'
-    load_node_k_mer(lncRNA_list, 'lncRNA', lncRNA_3_mer_path)
-    load_node_k_mer(protein_list, 'protein', protein_2_mer_path)
+    if args.noKmer == False:
+        lncRNA_3_mer_path = f'data/lncRNA_3_mer/{args.datasetName}/lncRNA_3_mer.txt'
+        protein_2_mer_path = f'data/protein_2_mer/{args.datasetName}/protein_2_mer.txt'
+        load_node_k_mer(lncRNA_list, 'lncRNA', lncRNA_3_mer_path)
+        load_node_k_mer(protein_list, 'protein', protein_2_mer_path)
 
     # 执行检查
-    for lncRNA in lncRNA_list:
-        if len(lncRNA.attributes_vector) != 113:
-            print(len(lncRNA.attributes_vector), lncRNA.name)
-            raise Exception('lncRNA.attributes_vector error')
-    for protein in protein_list:
-        if len(protein.attributes_vector) != 113:
-            print(len(protein.attributes_vector), protein.name)
-            raise Exception('protein.attributes_vector error')
+    if args.noKmer == False:
+        for lncRNA in lncRNA_list:
+            if len(lncRNA.attributes_vector) != 113:
+                print(len(lncRNA.attributes_vector), lncRNA.name)
+                raise Exception('lncRNA.attributes_vector error')
+        for protein in protein_list:
+            if len(protein.attributes_vector) != 113:
+                print(len(protein.attributes_vector), protein.name)
+                raise Exception('protein.attributes_vector error')
     
     for lncRNA in lncRNA_list:
         if len(lncRNA.embedded_vector) != 64:
@@ -136,6 +138,7 @@ if __name__ == "__main__":
     all_interaction_list = interaction_list.copy()
     all_interaction_list.extend(negative_interaction_list)
     if args.shuffle == True:    # 随机打乱
+        print('shuffle dataset\n')
         random.shuffle(all_interaction_list)
     
     num_of_subgraph = len(all_interaction_list)

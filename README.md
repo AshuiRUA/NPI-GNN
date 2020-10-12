@@ -9,18 +9,26 @@ pytorch 1.4.0
 torch-geometric 1.4.2
 
 ### Usage:
-First, you have to generate dataset for training.
->Python generate_dataset.py --datasetName NPInter2 --hopNumber 2 --node2vecWindowSize 5
+First, you have to generate edgelist for node2vec.
+>Python .\src\generate_edgelist.py --projectName yourProjectName --datasetName NPInter2 --createBalanceDataset True 
 
-This project did not provided node2vec result for all window size, you may have to use node2vec-master/src/main to generate result following hint which is outputted by generate_dataset.py.
+This will output a edgelist file in 'data/graph/yourProjectName/bipartite_graph.edgelist' and an empty folder 'data/node2vec_result/yourProjectName' to store node2vec result.
 
-Then, train GNN and save models.
->Python train.py --name object_name --datasetName NPInter2 --hopNumber 2 --node2vecWindowSize 5
+Second, you have to run node2vec.
+>Python .\node2vec-master\src\main.py --input 'data/graph/yourProjectName/bipartite_graph.edgelist' --output 'data/node2vec_result/yourProjectName/result.emb' --window-size 5
 
-This will save modules and training log in ./result
+You can use different window size, but please remember it.
 
-If you want to reduce the size of the data set while keeping the bipartite graph has only one connected component, You need to use "--reduce" and "--reduceRatio"
->Python generate_dataset.py --datasetName NPInter2 --hopNumber 2 --node2vecWindowSize 5 --reduce True --reduceRatio 0.5
+Third, generate dataset for training.
+>Python src/generate_dataset.py --projectName yourProjectName --datasetName NPInter2 --hopNumber 2 --shuffle True
 
-then use generate_reduced_dataset.py to generate dataset.
->Python generate_reduced_dataset.py --datasetName NPInter2 --hopNumber 2 --node2vecWindowSize 5 --reduceRatio 0.5
+Finally, train GNN and save models.
+>Python .\src\train.py --projectName yourProjectName --datasetName NPInter2 --hopNumber 2 --node2vecWindowSize 5 --crossValidation True --foldNumber 5 --epochNumber 50 --initialLearningRate 0.005 --l2WeightDecay 0.0005
+
+This will save modules and training log in 'result/yourProjectName'
+
+If you want to reduce the size of the dataset while keeping the bipartite graph has only one connected component, you need to use "--reduce" and "--reduceRatio" on generate_list.py
+>Python .\src\generate_edgelist.py --projectName yourProjectName --datasetName NPInter2 --createBalanceDataset True --reduce True --reduceRatio 0.5
+
+If you don't want to use k-mer, you need ro use "noK-mer" on generate_dataset.py
+>Python src/generate_dataset.py --projectName yourProjectName --datasetName NPInter2 --hopNumber 2 --shuffle True --noKmer True

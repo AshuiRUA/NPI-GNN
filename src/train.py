@@ -22,14 +22,13 @@ def parse_args():
     parser = argparse.ArgumentParser(description="generate_dataset.")
     parser.add_argument('--projectName', default='0930_NPInter2', help='the name of this object')
     parser.add_argument('--datasetName', default='NPInter2', help='raw interactions dataset')
-    parser.add_argument('--hopNumber', default=2, help='hop number of subgraph')
-    parser.add_argument('--node2vecWindowSize', default=5, help='node2vec window size')
-    parser.add_argument('--shuffle', default=True, help='shuffle interactions before generate dataset')
-    parser.add_argument('--crossValidation', default=True, help='do cross validation')
-    parser.add_argument('--foldNumber', default=5, help='fold number of cross validation')
-    parser.add_argument('--epochNumber', default=5, help='number of training epoch')
-    parser.add_argument('--initialLearningRate', default=0.005, help='Initial learning rate')
-    parser.add_argument('--l2WeightDecay', default=0.0005, help='L2 weight')
+    parser.add_argument('--hopNumber', default=2, type=int , help='hop number of subgraph')
+    parser.add_argument('--node2vecWindowSize', default=5, type=int, help='node2vec window size')
+    parser.add_argument('--crossValidation', default=True, type=bool, help='do cross validation')
+    parser.add_argument('--foldNumber', default=5, type=int, help='fold number of cross validation')
+    parser.add_argument('--epochNumber', default=5, type=int, help='number of training epoch')
+    parser.add_argument('--initialLearningRate', default=0.005,type=float, help='Initial learning rate')
+    parser.add_argument('--l2WeightDecay', default=0.0005, type=float, help='L2 weight')
 
     return parser.parse_args()
 
@@ -52,12 +51,12 @@ if __name__ == "__main__":
     #参数
     args = parse_args()
 
-    dataset_path = f'data\\dataset\\{args.projectName}'
+    dataset_path = f'./data/dataset/{args.projectName}'
     # 读取数据集
     dataset = LncRNA_Protein_Interaction_dataset(root=dataset_path)
     
-    if args.shuffle == False:
-        dataset = dataset.shuffle()
+    print('shuffle dataset\n')
+    dataset = dataset.shuffle()
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -140,7 +139,7 @@ if __name__ == "__main__":
                 loss_last = loss
 
                 # 训练中评价模型，监视训练过程中的模型变化, 并且写入文件
-                if (epoch + 1) % 10 == 0 and epoch != num_of_epoch - 1:
+                if (epoch + 1) % 5 == 0 and epoch != num_of_epoch - 1:
                     # 用Accuracy, Precision, Sensitivity, MCC评价模型
                     # Accuracy, Precision, Sensitivity ,MCC = Accuracy_Precision_Sensitivity_MCC(model, train_loader, device)
                     Accuracy, Precision, Sensitivity, Specificity, MCC = Accuracy_Precision_Sensitivity_Specificity_MCC(model, train_loader, device)
