@@ -21,10 +21,10 @@ def parse_args():
 	'''
 	parser = argparse.ArgumentParser(description="Run node2vec.")
 
-	parser.add_argument('--input', nargs='?', default=r'data\graph\0930_NPInter2\bipartite_graph.edgelist',
+	parser.add_argument('--input', nargs='?', default=r'data\graph\1012_NPInter2\bipartite_graph.edgelist',
 	                    help='Input graph path')
 
-	parser.add_argument('--output', nargs='?', default=r'data\node2vec_result\0930_NPInter2\result.emb',
+	parser.add_argument('--output', nargs='?', default=r'data\node2vec_result\1012_NPInter2\result.emb',
 	                    help='Embeddings path')
 
 	parser.add_argument('--dimensions', type=int, default=64,
