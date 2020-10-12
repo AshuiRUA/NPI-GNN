@@ -19,12 +19,13 @@ sys.setrecursionlimit(100000)
 
 def parse_args():
     parser = argparse.ArgumentParser(description="generate_dataset.")
-    parser.add_argument('--datasetName', default='NPInter2', help='raw interactions dataset')
+    parser.add_argument('--datasetName', default='RPI369', help='raw interactions dataset')
     parser.add_argument('--hopNumber', default=2, help='hop number of subgraph')
     parser.add_argument('--node2vecWindowSize', default=5, help='node2vec window size')
     parser.add_argument('--shuffle', default=True, help='shuffle interactions before generate dataset')
     parser.add_argument('--reduce', default=False, help='randomly reduce the source database, and also maintain one connected component')
     parser.add_argument('--reduceRatio', default=0.5, help='reduce Ratio')
+    parser.add_argument('--output', default=True, help='output dataset or not')
 
     return parser.parse_args()
 
@@ -561,6 +562,8 @@ if __name__ == '__main__':
         dataset_path = f'data/dataset/_{dataset_name}_{args.hopNumber}_hop_node2vecWindowSize={args.node2vecWindowSize}_notShuffled_dataset'
     if not osp.exists(dataset_path):
         os.makedirs(dataset_path)
-    My_dataset = LncRNA_Protein_Interaction_dataset(root=dataset_path, interaction_list=all_interaction_list, h=args.hopNumber)
+    
+    if args.output == True:
+        My_dataset = LncRNA_Protein_Interaction_dataset(root=dataset_path, interaction_list=all_interaction_list, h=args.hopNumber)
 
     print('\n' + 'exit' + '\n')

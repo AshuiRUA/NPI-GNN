@@ -7,9 +7,9 @@ import time
 import gc
 import argparse
 
-from classes import Net_1, Net_small, LncRNA_Protein_Interaction_dataset
+from classes import Net_1, LncRNA_Protein_Interaction_dataset
 
-from methods import get_num_of_subgraph, dataset_analysis, average_list, Sensitivity_Precision_Recall_Specificity_MCC
+from methods import get_num_of_subgraph, dataset_analysis, average_list, Accuracy_Precision_Sensitivity_Specificity_MCC
 
 from torch_geometric.data import DataLoader
 
@@ -96,9 +96,9 @@ if __name__ == "__main__":
 
         # 记录启示时间
         start_time = time.time()
-        Sensitivity_list = []
+        Accuracy_list = []
         Precision_list = []
-        Recall_list = []
+        Sensitivity_list = []
         Specificity_list = []
         MCC_list = []
         for i in range(k):
@@ -144,15 +144,15 @@ if __name__ == "__main__":
 
                 # 训练中评价模型，监视训练过程中的模型变化, 并且写入文件
                 if (epoch + 1) % 10 == 0 and epoch != num_of_epoch - 1:
-                    # 用Sensitivity, Precision, Recall, MCC评价模型
-                    # Sensitivity, Precision, Recall ,MCC = Sensitivity_Precision_Recall_MCC(model, train_loader, device)
-                    Sensitivity, Precision, Recall, Specificity, MCC = Sensitivity_Precision_Recall_Specificity_MCC(model, train_loader, device)
-                    output = 'Epoch: {:03d}, 训练集, Sensitivity: {:.5f}, Precision: {:.5f}, Recall: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(epoch + 1, Sensitivity, Precision, Recall, Specificity, MCC)
+                    # 用Accuracy, Precision, Sensitivity, MCC评价模型
+                    # Accuracy, Precision, Sensitivity ,MCC = Accuracy_Precision_Sensitivity_MCC(model, train_loader, device)
+                    Accuracy, Precision, Sensitivity, Specificity, MCC = Accuracy_Precision_Sensitivity_Specificity_MCC(model, train_loader, device)
+                    output = 'Epoch: {:03d}, 训练集, Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(epoch + 1, Accuracy, Precision, Sensitivity, Specificity, MCC)
                     print(output)
                     result_file.write(output + '\n')
-                    # Sensitivity, Precision, Recall, MCC = Sensitivity_Precision_Recall_MCC(model, test_loader, device)
-                    Sensitivity, Precision, Recall, Specificity, MCC = Sensitivity_Precision_Recall_Specificity_MCC(model, test_loader, device)
-                    output = 'Epoch: {:03d}, 测试集, Sensitivity: {:.5f}, Precision: {:.5f}, Recall: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(epoch + 1, Sensitivity, Precision, Recall, Specificity, MCC)
+                    # Accuracy, Precision, Sensitivity, MCC = Accuracy_Precision_Sensitivity_MCC(model, test_loader, device)
+                    Accuracy, Precision, Sensitivity, Specificity, MCC = Accuracy_Precision_Sensitivity_Specificity_MCC(model, test_loader, device)
+                    output = 'Epoch: {:03d}, 测试集, Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(epoch + 1, Accuracy, Precision, Sensitivity, Specificity, MCC)
                     print(output)
                     result_file.write(output + '\n')
                     # 保存模型
@@ -160,17 +160,17 @@ if __name__ == "__main__":
                     torch.save(model.state_dict(), network_model_path)
 
             # 训练结束，评价模型，并且把结果写入文件
-            Sensitivity, Precision, Recall, Specificity, MCC = Sensitivity_Precision_Recall_Specificity_MCC(model, train_loader, device)
-            output = '第{:03d}折结果, 训练集, Sensitivity: {:.5f}, Precision: {:.5f}, Recall: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(i + 1, Sensitivity, Precision, Recall, Specificity, MCC)
+            Accuracy, Precision, Sensitivity, Specificity, MCC = Accuracy_Precision_Sensitivity_Specificity_MCC(model, train_loader, device)
+            output = '第{:03d}折结果, 训练集, Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(i + 1, Accuracy, Precision, Sensitivity, Specificity, MCC)
             print(output)
             result_file.write(output + '\n')
-            Sensitivity, Precision, Recall, Specificity, MCC = Sensitivity_Precision_Recall_Specificity_MCC(model, test_loader, device)
-            output = '第{:03d}折结果, 测试集, Sensitivity: {:.5f}, Precision: {:.5f}, Recall: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(i + 1, Sensitivity, Precision, Recall, Specificity, MCC)
+            Accuracy, Precision, Sensitivity, Specificity, MCC = Accuracy_Precision_Sensitivity_Specificity_MCC(model, test_loader, device)
+            output = '第{:03d}折结果, 测试集, Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(i + 1, Accuracy, Precision, Sensitivity, Specificity, MCC)
             print(output)
 
-            Sensitivity_list.append(Sensitivity)
+            Accuracy_list.append(Accuracy)
             Precision_list.append(Precision)
-            Recall_list.append(Recall)
+            Sensitivity_list.append(Sensitivity)
             Specificity_list.append(Specificity)
             MCC_list.append(MCC)
 
@@ -185,16 +185,16 @@ if __name__ == "__main__":
         result_file.write('耗时' + str(end_time - start_time) + '\n')
         
 
-        # 计算平均的Sensitivity, Precision, Recall, MCC
-        Sensitivity_average = average_list(Sensitivity_list)
+        # 计算平均的Accuracy, Precision, Sensitivity, MCC
+        Accuracy_average = average_list(Accuracy_list)
         Precision_average = average_list(Precision_list)
-        Recall_average = average_list(Recall_list)
+        Sensitivity_average = average_list(Sensitivity_list)
         Specificity_average = average_list(Specificity_list)
         MCC_average = average_list(MCC_list)
 
         # 输出最终的结果
-        print('最终结果，Sensitivity: {:.5f}, Precision: {:.5f}, Recall: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(Sensitivity_average, Precision_average, Recall_average, Specificity_average, MCC_average))
-        result_file.write('最终结果，Sensitivity: {:.5f}, Precision: {:.5f}, Recall: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(Sensitivity_average, Precision_average, Recall_average, Specificity_average, MCC_average))
+        print('最终结果，Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(Accuracy_average, Precision_average, Sensitivity_average, Specificity_average, MCC_average))
+        result_file.write('最终结果，Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(Accuracy_average, Precision_average, Sensitivity_average, Specificity_average, MCC_average))
 
         result_file.close()
         
