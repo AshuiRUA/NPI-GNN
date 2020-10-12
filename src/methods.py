@@ -64,7 +64,7 @@ def load_intermediate_products(dataset_name, node2vec_windowSize):
     return interaction_list, negative_interaction_list, lncRNA_list, protein_list
 
 
-def Sensitivity(model, loader, device):
+def Accuracy(model, loader, device):
     model.eval()
     
     correct = 0
@@ -75,7 +75,7 @@ def Sensitivity(model, loader, device):
     return correct / len(loader.dataset)
 
 
-def Sensitivity_Precision_Recall_MCC(model, loader, device):
+def Accuracy_Precision_Sensitivity_MCC(model, loader, device):
     model.eval()
     
     TP = 0
@@ -96,25 +96,25 @@ def Sensitivity_Precision_Recall_MCC(model, loader, device):
                 TN += 1
     print('TP: %d, FP: %d, TN: %d, FN: %d' % (TP, FP, TN, FN))
     if (TP + TN + FP + FN) != 0:
-        Sensitivity = (TP + TN) / (TP + TN + FP + FN)
+        Accuracy = (TP + TN) / (TP + TN + FP + FN)
     else:
-        Sensitivity = 0
+        Accuracy = 0
     if (TP + FP) != 0:
         Precision = (TP) / (TP + FP)
     else:
         Precision = 0
     if (TP + FN) != 0:
-        Recall = (TP) / (TP + FN)
+        Sensitivity = (TP) / (TP + FN)
     else:
-        Recall = 0
+        Sensitivity = 0
     if (((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN)) ** 0.5) != 0:
         MCC = (TP * TN - FP * FN) / (((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN)) ** 0.5)
     else:
         MCC = 0
-    return Sensitivity, Precision, Recall, MCC
+    return Accuracy, Precision, Sensitivity, MCC
 
 
-def Sensitivity_Precision_Recall_Specificity_MCC(model, loader, device):
+def Accuracy_Precision_Sensitivity_Specificity_MCC(model, loader, device):
     model.eval()
     
     TP = 0
@@ -135,17 +135,17 @@ def Sensitivity_Precision_Recall_Specificity_MCC(model, loader, device):
                 TN += 1
     print('TP: %d, FP: %d, TN: %d, FN: %d' % (TP, FP, TN, FN))
     if (TP + TN + FP + FN) != 0:
-        Sensitivity = (TP + TN) / (TP + TN + FP + FN)
+        Accuracy = (TP + TN) / (TP + TN + FP + FN)
     else:
-        Sensitivity = 0
+        Accuracy = 0
     if (TP + FP) != 0:
         Precision = (TP) / (TP + FP)
     else:
         Precision = 0
     if (TP + FN) != 0:
-        Recall = (TP) / (TP + FN)
+        Sensitivity = (TP) / (TP + FN)
     else:
-        Recall = 0
+        Sensitivity = 0
     if (((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN)) ** 0.5) != 0:
         MCC = (TP * TN - FP * FN) / (((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN)) ** 0.5)
     else:
@@ -154,7 +154,7 @@ def Sensitivity_Precision_Recall_Specificity_MCC(model, loader, device):
         Specificity = TN / (FP + TN)
     else:
         Specificity = 0
-    return Sensitivity, Precision, Recall, Specificity, MCC
+    return Accuracy, Precision, Sensitivity, Specificity, MCC
 
 # def MCC(model, loader, device):
 #     model.eval()
