@@ -20,14 +20,14 @@ from torch.optim import *
 
 def parse_args():
     parser = argparse.ArgumentParser(description="generate_dataset.")
-    parser.add_argument('--name', default='RPI369_windowSize=5_0703', help='the name of this object')
-    parser.add_argument('--datasetName', default='RPI369', help='raw interactions dataset')
+    parser.add_argument('--projectName', default='0930_NPInter2', help='the name of this object')
+    parser.add_argument('--datasetName', default='NPInter2', help='raw interactions dataset')
     parser.add_argument('--hopNumber', default=2, help='hop number of subgraph')
     parser.add_argument('--node2vecWindowSize', default=5, help='node2vec window size')
     parser.add_argument('--shuffle', default=True, help='shuffle interactions before generate dataset')
     parser.add_argument('--crossValidation', default=True, help='do cross validation')
     parser.add_argument('--foldNumber', default=5, help='fold number of cross validation')
-    parser.add_argument('--epochNumber', default=200, help='number of training epoch')
+    parser.add_argument('--epochNumber', default=5, help='number of training epoch')
     parser.add_argument('--initialLearningRate', default=0.005, help='Initial learning rate')
     parser.add_argument('--l2WeightDecay', default=0.0005, help='L2 weight')
 
@@ -52,10 +52,7 @@ if __name__ == "__main__":
     #参数
     args = parse_args()
 
-    if args.shuffle == True:
-        dataset_path = f'data/dataset/_{args.datasetName}_{args.hopNumber}_hop_node2vecWindowSize={args.node2vecWindowSize}_shuffled_dataset'
-    else:
-        dataset_path = f'data/dataset/_{args.datasetName}_{args.hopNumber}_hop_node2vecWindowSize={args.node2vecWindowSize}_notShuffled_dataset'
+    dataset_path = f'data\\dataset\\{args.projectName}'
     # 读取数据集
     dataset = LncRNA_Protein_Interaction_dataset(root=dataset_path)
     
@@ -64,7 +61,7 @@ if __name__ == "__main__":
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    saving_path = f'result/{args.name}'
+    saving_path = f'result/{args.projectName}'
     if osp.exists(saving_path):
         raise Exception('已经有同名的训练')
     else:
@@ -123,7 +120,7 @@ if __name__ == "__main__":
             test_dataset = dataset[test_dataset_start:test_dataset_end]
             train_dataset = dataset[0:test_dataset_start] + dataset[test_dataset_end:dataset.len()]
 
-            print('训练集数据数量：', len(test_dataset), '测试集数据数量：', len(train_dataset))
+            print('测试数据数量：', len(test_dataset), '训练集数据数量：', len(train_dataset))
             print('训练集')
             dataset_analysis(train_dataset)
             print('测试集')

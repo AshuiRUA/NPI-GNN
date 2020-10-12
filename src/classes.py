@@ -17,22 +17,22 @@ from random import shuffle
 import torch.nn.functional as F
 
 class Node:
-    def __init__(self, name, serial_number):
+    def __init__(self, name, serial_number, node_type):
         self.name = name
         self.interaction_list = []
         self.serial_number = serial_number  # 从0开始的序号
         self.embedded_vector = []
         self.attributes_vector = []
+        self.node_type = node_type 
 
 class LncRNA:
     def __init__(self, lncRNA_name, serial_number, node_type):
-        Node.__init__(self, lncRNA_name, serial_number)
-        self.node_type = node_type  #LncRNA
+        Node.__init__(self, lncRNA_name, serial_number, node_type)
+        
 
 class Protein:
     def __init__(self, protein_name, serial_number, node_type):
-        Node.__init__(self, protein_name, serial_number)
-        self.node_type = node_type  #Protein
+        Node.__init__(self, protein_name, serial_number, node_type)
 
 class LncRNA_Protein_Interaction:
     def __init__(self, lncRNA, protein, y):
