@@ -4,9 +4,11 @@ import argparse
 import random
 from openpyxl import load_workbook
 
-from classes import LncRNA
-from classes import Protein
-from classes import LncRNA_Protein_Interaction, LncRNA_Protein_Interaction_dataset
+sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
+
+from src.classes import LncRNA
+from src.classes import Protein
+from src.classes import LncRNA_Protein_Interaction, LncRNA_Protein_Interaction_dataset
 
 
 def parse_args():

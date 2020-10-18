@@ -7,9 +7,11 @@ import time
 import gc
 import argparse
 
-from classes import Net_1, LncRNA_Protein_Interaction_dataset
+sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
 
-from methods import get_num_of_subgraph, dataset_analysis, average_list, Accuracy_Precision_Sensitivity_Specificity_MCC
+from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
+
+from src.methods import dataset_analysis, average_list, Accuracy_Precision_Sensitivity_Specificity_MCC
 
 from torch_geometric.data import DataLoader
 
@@ -20,15 +22,18 @@ from torch.optim import *
 
 def parse_args():
     parser = argparse.ArgumentParser(description="generate_dataset.")
-    parser.add_argument('--projectName', default='0930_NPInter2', help='the name of this object')
-    parser.add_argument('--datasetName', default='NPInter2', help='raw interactions dataset')
+    parser.add_argument('--trainingName', help='the name of this training')
+    parser.add_argument('--datasetName',  help='the name of this object')
+    parser.add_argument('--inMemory', type = int, help='in memory dataset or not')
+    parser.add_argument('--interactionDatasetName', help='raw interactions dataset')
+    parser.add_argument('--epochNumber',  type=int, help='number of training epoch')
     parser.add_argument('--hopNumber', default=2, type=int , help='hop number of subgraph')
     parser.add_argument('--node2vecWindowSize', default=5, type=int, help='node2vec window size')
-    parser.add_argument('--crossValidation', default=True, type=bool, help='do cross validation')
+    parser.add_argument('--crossValidation', default=1, type=int, help='do cross validation')
     parser.add_argument('--foldNumber', default=5, type=int, help='fold number of cross validation')
-    parser.add_argument('--epochNumber', default=5, type=int, help='number of training epoch')
     parser.add_argument('--initialLearningRate', default=0.005,type=float, help='Initial learning rate')
     parser.add_argument('--l2WeightDecay', default=0.0005, type=float, help='L2 weight')
+    parser.add_argument('--batchSize', default=60, type=int, help='batch size')
 
     return parser.parse_args()
 
@@ -51,22 +56,25 @@ if __name__ == "__main__":
     #参数
     args = parse_args()
 
-    dataset_path = f'./data/dataset/{args.projectName}'
+    dataset_path = f'./data/dataset/{args.datasetName}'
     # 读取数据集
-    dataset = LncRNA_Protein_Interaction_dataset(root=dataset_path)
-    
+    if args.inMemory == 0:
+        dataset = LncRNA_Protein_Interaction_dataset(root=dataset_path)
+    else:
+        dataset = LncRNA_Protein_Interaction_inMemoryDataset(root=dataset_path)
+    # 打乱数据集
     print('shuffle dataset\n')
     dataset = dataset.shuffle()
     
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    saving_path = f'result/{args.projectName}'
+    saving_path = f'result/{args.trainingName}'
     if osp.exists(saving_path):
         raise Exception('已经有同名的训练')
     else:
         os.makedirs(saving_path)
 
-    if args.crossValidation == True:
+    if args.crossValidation == 1:
         # k折交叉验证
         k = args.foldNumber
         step_length = len(dataset) // k
@@ -83,7 +91,7 @@ if __name__ == "__main__":
         # 准备log
         log_path = saving_path + '/log.txt'
         result_file = open(file=log_path, mode='w')
-        result_file.write(f'database：{args.datasetName}\n')
+        result_file.write(f'database：{args.interactionDatasetName}\n')
         result_file.write(f'node2vec_windowSize = {args.node2vecWindowSize}\n')
         result_file.write(f'{k}折交叉验证\n')
         result_file.write(f'迭代次数：{num_of_epoch}\n')
@@ -125,8 +133,8 @@ if __name__ == "__main__":
             print('测试集')
             dataset_analysis(test_dataset)
 
-            train_loader = DataLoader(train_dataset, batch_size=60)
-            test_loader = DataLoader(test_dataset, batch_size=60)
+            train_loader = DataLoader(train_dataset, batch_size=args.batchSize)
+            test_loader = DataLoader(test_dataset, batch_size=args.batchSize)
 
             # 训练开始
             loss_last = float('inf')

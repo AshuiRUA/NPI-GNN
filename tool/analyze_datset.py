@@ -7,9 +7,11 @@ import time
 import gc
 import argparse
 
-from classes import Net_1, LncRNA_Protein_Interaction_dataset
+sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
 
-from methods import get_num_of_subgraph, dataset_analysis, average_list, Accuracy_Precision_Sensitivity_Specificity_MCC
+from src.classes import Net_1, LncRNA_Protein_Interaction_dataset
+
+from src.methods import dataset_analysis, average_list, Accuracy_Precision_Sensitivity_Specificity_MCC
 
 from torch_geometric.data import DataLoader
 

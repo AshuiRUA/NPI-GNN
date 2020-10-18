@@ -1,0 +1,108 @@
+database：NPInter2
+node2vec_windowSize = 5
+5折交叉验证
+迭代次数：50
+学习率：初始0.005，每当loss增加时就乘0.95
+L2正则化，系数0.0005
+Epoch: 005, 训练集, Accuracy: 0.95834, Precision: 0.94195, Sensitivity: 0.97761, Specificity: 0.93876, MCC: 0.91732
+Epoch: 005, 测试集, Accuracy: 0.94957, Precision: 0.92668, Sensitivity: 0.97269, Specificity: 0.92791, MCC: 0.90022
+Epoch: 010, 训练集, Accuracy: 0.95372, Precision: 0.95103, Sensitivity: 0.95749, Specificity: 0.94989, MCC: 0.90745
+Epoch: 010, 测试集, Accuracy: 0.94765, Precision: 0.94106, Sensitivity: 0.95134, Specificity: 0.94419, MCC: 0.89527
+Epoch: 015, 训练集, Accuracy: 0.95432, Precision: 0.92593, Sensitivity: 0.98845, Specificity: 0.91963, MCC: 0.91070
+Epoch: 015, 测试集, Accuracy: 0.94837, Precision: 0.91779, Sensitivity: 0.98113, Specificity: 0.91767, MCC: 0.89885
+Epoch: 020, 训练集, Accuracy: 0.96345, Precision: 0.94301, Sensitivity: 0.98714, Specificity: 0.93936, MCC: 0.92789
+Epoch: 020, 测试集, Accuracy: 0.95341, Precision: 0.93128, Sensitivity: 0.97567, Specificity: 0.93256, MCC: 0.90783
+Epoch: 025, 训练集, Accuracy: 0.96273, Precision: 0.95157, Sensitivity: 0.97571, Specificity: 0.94953, MCC: 0.92573
+Epoch: 025, 测试集, Accuracy: 0.95197, Precision: 0.93732, Sensitivity: 0.96524, Specificity: 0.93953, MCC: 0.90430
+Epoch: 030, 训练集, Accuracy: 0.96357, Precision: 0.94403, Sensitivity: 0.98619, Specificity: 0.94057, MCC: 0.92804
+Epoch: 030, 测试集, Accuracy: 0.95653, Precision: 0.93211, Sensitivity: 0.98163, Specificity: 0.93302, MCC: 0.91432
+Epoch: 035, 训练集, Accuracy: 0.96285, Precision: 0.93756, Sensitivity: 0.99238, Specificity: 0.93282, MCC: 0.92726
+Epoch: 035, 测试集, Accuracy: 0.95317, Precision: 0.92441, Sensitivity: 0.98361, Specificity: 0.92465, MCC: 0.90817
+Epoch: 040, 训练集, Accuracy: 0.96158, Precision: 0.93692, Sensitivity: 0.99047, Specificity: 0.93222, MCC: 0.92467
+Epoch: 040, 测试集, Accuracy: 0.95293, Precision: 0.92358, Sensitivity: 0.98411, Specificity: 0.92372, MCC: 0.90778
+Epoch: 045, 训练集, Accuracy: 0.96747, Precision: 0.94902, Sensitivity: 0.98857, Specificity: 0.94602, MCC: 0.93573
+Epoch: 045, 测试集, Accuracy: 0.95365, Precision: 0.93337, Sensitivity: 0.97368, Specificity: 0.93488, MCC: 0.90812
+第001折结果, 训练集, Accuracy: 0.96200, Precision: 0.93453, Sensitivity: 0.99428, Specificity: 0.92919, MCC: 0.92589
+第001折结果, 测试集, Accuracy: 0.95053, Precision: 0.91929, Sensitivity: 0.98411, Specificity: 0.91907, MCC: 0.90327
+Epoch: 005, 训练集, Accuracy: 0.96477, Precision: 0.95572, Sensitivity: 0.97484, Specificity: 0.95465, MCC: 0.92972
+Epoch: 005, 测试集, Accuracy: 0.95653, Precision: 0.94772, Sensitivity: 0.96562, Specificity: 0.94759, MCC: 0.91323
+Epoch: 010, 训练集, Accuracy: 0.96987, Precision: 0.96591, Sensitivity: 0.97424, Specificity: 0.96548, MCC: 0.93977
+Epoch: 010, 测试集, Accuracy: 0.95677, Precision: 0.95204, Sensitivity: 0.96126, Specificity: 0.95236, MCC: 0.91359
+Epoch: 015, 训练集, Accuracy: 0.97209, Precision: 0.97368, Sensitivity: 0.97053, Specificity: 0.97366, MCC: 0.94418
+Epoch: 015, 测试集, Accuracy: 0.96061, Precision: 0.96434, Sensitivity: 0.95593, Specificity: 0.96522, MCC: 0.92125
+Epoch: 020, 训练集, Accuracy: 0.96813, Precision: 0.97508, Sensitivity: 0.96094, Specificity: 0.97534, MCC: 0.93635
+Epoch: 020, 测试集, Accuracy: 0.95365, Precision: 0.96291, Sensitivity: 0.94286, Specificity: 0.96427, MCC: 0.90747
+Epoch: 025, 训练集, Accuracy: 0.97869, Precision: 0.96704, Sensitivity: 0.99125, Specificity: 0.96608, MCC: 0.95768
+Epoch: 025, 测试集, Accuracy: 0.96494, Precision: 0.95068, Sensitivity: 0.98015, Specificity: 0.94998, MCC: 0.93033
+Epoch: 030, 训练集, Accuracy: 0.97701, Precision: 0.96902, Sensitivity: 0.98562, Specificity: 0.96836, MCC: 0.95416
+Epoch: 030, 测试集, Accuracy: 0.96446, Precision: 0.95491, Sensitivity: 0.97433, Specificity: 0.95474, MCC: 0.92911
+Epoch: 035, 训练集, Accuracy: 0.97449, Precision: 0.97290, Sensitivity: 0.97628, Specificity: 0.97269, MCC: 0.94898
+Epoch: 035, 测试集, Accuracy: 0.96061, Precision: 0.96029, Sensitivity: 0.96029, Specificity: 0.96093, MCC: 0.92122
+Epoch: 040, 训练集, Accuracy: 0.98013, Precision: 0.97042, Sensitivity: 0.99054, Specificity: 0.96969, MCC: 0.96047
+Epoch: 040, 测试集, Accuracy: 0.96134, Precision: 0.95033, Sensitivity: 0.97288, Specificity: 0.94998, MCC: 0.92294
+Epoch: 045, 训练集, Accuracy: 0.97659, Precision: 0.95946, Sensitivity: 0.99533, Specificity: 0.95778, MCC: 0.95385
+Epoch: 045, 测试集, Accuracy: 0.96398, Precision: 0.94308, Sensitivity: 0.98692, Specificity: 0.94140, MCC: 0.92896
+第002折结果, 训练集, Accuracy: 0.98187, Precision: 0.97285, Sensitivity: 0.99149, Specificity: 0.97221, MCC: 0.96392
+第002折结果, 测试集, Accuracy: 0.96590, Precision: 0.95461, Sensitivity: 0.97772, Specificity: 0.95426, MCC: 0.93207
+Epoch: 005, 训练集, Accuracy: 0.96819, Precision: 0.95505, Sensitivity: 0.98258, Specificity: 0.95380, MCC: 0.93676
+Epoch: 005, 测试集, Accuracy: 0.96230, Precision: 0.94591, Sensitivity: 0.98082, Specificity: 0.94370, MCC: 0.92522
+Epoch: 010, 训练集, Accuracy: 0.96369, Precision: 0.97039, Sensitivity: 0.95652, Specificity: 0.97084, MCC: 0.92747
+Epoch: 010, 测试集, Accuracy: 0.95245, Precision: 0.96320, Sensitivity: 0.94104, Specificity: 0.96391, MCC: 0.90514
+Epoch: 015, 训练集, Accuracy: 0.97407, Precision: 0.95746, Sensitivity: 0.99219, Specificity: 0.95596, MCC: 0.94876
+Epoch: 015, 测试集, Accuracy: 0.96470, Precision: 0.94534, Sensitivity: 0.98658, Specificity: 0.94273, MCC: 0.93028
+Epoch: 020, 训练集, Accuracy: 0.97047, Precision: 0.97375, Sensitivity: 0.96697, Specificity: 0.97396, MCC: 0.94096
+Epoch: 020, 测试集, Accuracy: 0.96110, Precision: 0.96339, Sensitivity: 0.95877, Specificity: 0.96343, MCC: 0.92220
+Epoch: 025, 训练集, Accuracy: 0.97929, Precision: 0.96964, Sensitivity: 0.98955, Specificity: 0.96904, MCC: 0.95879
+Epoch: 025, 测试集, Accuracy: 0.96878, Precision: 0.95446, Sensitivity: 0.98466, Specificity: 0.95284, MCC: 0.93803
+Epoch: 030, 训练集, Accuracy: 0.97887, Precision: 0.96664, Sensitivity: 0.99195, Specificity: 0.96580, MCC: 0.95807
+Epoch: 030, 测试集, Accuracy: 0.96734, Precision: 0.95055, Sensitivity: 0.98610, Specificity: 0.94851, MCC: 0.93533
+Epoch: 035, 训练集, Accuracy: 0.97995, Precision: 0.97583, Sensitivity: 0.98427, Specificity: 0.97564, MCC: 0.95994
+Epoch: 035, 测试集, Accuracy: 0.96566, Precision: 0.96064, Sensitivity: 0.97124, Specificity: 0.96006, MCC: 0.93137
+Epoch: 040, 训练集, Accuracy: 0.97947, Precision: 0.96505, Sensitivity: 0.99496, Specificity: 0.96400, MCC: 0.95940
+Epoch: 040, 测试集, Accuracy: 0.96398, Precision: 0.94161, Sensitivity: 0.98945, Specificity: 0.93840, MCC: 0.92915
+Epoch: 045, 训练集, Accuracy: 0.98133, Precision: 0.96954, Sensitivity: 0.99387, Specificity: 0.96880, MCC: 0.96297
+Epoch: 045, 测试集, Accuracy: 0.96566, Precision: 0.94832, Sensitivity: 0.98514, Specificity: 0.94610, MCC: 0.93202
+第003折结果, 训练集, Accuracy: 0.98049, Precision: 0.96686, Sensitivity: 0.99508, Specificity: 0.96592, MCC: 0.96139
+第003折结果, 测试集, Accuracy: 0.96518, Precision: 0.94416, Sensitivity: 0.98897, Specificity: 0.94129, MCC: 0.93140
+Epoch: 005, 训练集, Accuracy: 0.95042, Precision: 0.94811, Sensitivity: 0.95246, Specificity: 0.94840, MCC: 0.90085
+Epoch: 005, 测试集, Accuracy: 0.94020, Precision: 0.94201, Sensitivity: 0.94068, Specificity: 0.93971, MCC: 0.88036
+Epoch: 010, 训练集, Accuracy: 0.96381, Precision: 0.96057, Sensitivity: 0.96694, Specificity: 0.96070, MCC: 0.92763
+Epoch: 010, 测试集, Accuracy: 0.95125, Precision: 0.95285, Sensitivity: 0.95151, Specificity: 0.95098, MCC: 0.90246
+Epoch: 015, 训练集, Accuracy: 0.97107, Precision: 0.96321, Sensitivity: 0.97925, Specificity: 0.96297, MCC: 0.94227
+Epoch: 015, 测试集, Accuracy: 0.95917, Precision: 0.95231, Sensitivity: 0.96846, Specificity: 0.94951, MCC: 0.91842
+Epoch: 020, 训练集, Accuracy: 0.97137, Precision: 0.96312, Sensitivity: 0.97997, Specificity: 0.96285, MCC: 0.94288
+Epoch: 020, 测试集, Accuracy: 0.95749, Precision: 0.95049, Sensitivity: 0.96704, Specificity: 0.94755, MCC: 0.91507
+Epoch: 025, 训练集, Accuracy: 0.97365, Precision: 0.95906, Sensitivity: 0.98926, Specificity: 0.95819, MCC: 0.94777
+Epoch: 025, 测试集, Accuracy: 0.96110, Precision: 0.94470, Sensitivity: 0.98117, Specificity: 0.94020, MCC: 0.92281
+Epoch: 030, 训练集, Accuracy: 0.97227, Precision: 0.95373, Sensitivity: 0.99240, Specificity: 0.95234, MCC: 0.94532
+Epoch: 030, 测试集, Accuracy: 0.96422, Precision: 0.94582, Sensitivity: 0.98635, Specificity: 0.94118, MCC: 0.92923
+Epoch: 035, 训练集, Accuracy: 0.97647, Precision: 0.96175, Sensitivity: 0.99216, Specificity: 0.96094, MCC: 0.95342
+Epoch: 035, 测试集, Accuracy: 0.96566, Precision: 0.94921, Sensitivity: 0.98540, Specificity: 0.94510, MCC: 0.93194
+Epoch: 040, 训练集, Accuracy: 0.97893, Precision: 0.96540, Sensitivity: 0.99324, Specificity: 0.96476, MCC: 0.95826
+Epoch: 040, 测试集, Accuracy: 0.96806, Precision: 0.95394, Sensitivity: 0.98493, Specificity: 0.95049, MCC: 0.93657
+Epoch: 045, 训练集, Accuracy: 0.97713, Precision: 0.96126, Sensitivity: 0.99409, Specificity: 0.96034, MCC: 0.95482
+Epoch: 045, 测试集, Accuracy: 0.96350, Precision: 0.94295, Sensitivity: 0.98823, Specificity: 0.93775, MCC: 0.92801
+第004折结果, 训练集, Accuracy: 0.97455, Precision: 0.95488, Sensitivity: 0.99590, Specificity: 0.95342, MCC: 0.94998
+第004折结果, 测试集, Accuracy: 0.96085, Precision: 0.93714, Sensitivity: 0.98964, Specificity: 0.93088, MCC: 0.92310
+Epoch: 005, 训练集, Accuracy: 0.92593, Precision: 0.94739, Sensitivity: 0.90123, Specificity: 0.95041, MCC: 0.85283
+Epoch: 005, 测试集, Accuracy: 0.91787, Precision: 0.94584, Sensitivity: 0.88962, Specificity: 0.94716, MCC: 0.83739
+Epoch: 010, 训练集, Accuracy: 0.93721, Precision: 0.94022, Sensitivity: 0.93319, Specificity: 0.94120, MCC: 0.87445
+Epoch: 010, 测试集, Accuracy: 0.92411, Precision: 0.93617, Sensitivity: 0.91321, Specificity: 0.93542, MCC: 0.84851
+Epoch: 015, 训练集, Accuracy: 0.94934, Precision: 0.93812, Sensitivity: 0.96165, Specificity: 0.93714, MCC: 0.89897
+Epoch: 015, 测试集, Accuracy: 0.93876, Precision: 0.93231, Sensitivity: 0.94858, Specificity: 0.92857, MCC: 0.87758
+Epoch: 020, 训练集, Accuracy: 0.94934, Precision: 0.93843, Sensitivity: 0.96129, Specificity: 0.93750, MCC: 0.89895
+Epoch: 020, 测试集, Accuracy: 0.93372, Precision: 0.92804, Sensitivity: 0.94292, Specificity: 0.92417, MCC: 0.86747
+Epoch: 025, 训练集, Accuracy: 0.95456, Precision: 0.93701, Sensitivity: 0.97419, Specificity: 0.93511, MCC: 0.90985
+Epoch: 025, 测试集, Accuracy: 0.93900, Precision: 0.92603, Sensitivity: 0.95660, Specificity: 0.92074, MCC: 0.87838
+Epoch: 030, 训练集, Accuracy: 0.95168, Precision: 0.93687, Sensitivity: 0.96816, Specificity: 0.93535, MCC: 0.90387
+Epoch: 030, 测试集, Accuracy: 0.93348, Precision: 0.92524, Sensitivity: 0.94575, Specificity: 0.92074, MCC: 0.86708
+Epoch: 035, 训练集, Accuracy: 0.94916, Precision: 0.92010, Sensitivity: 0.98324, Specificity: 0.91539, MCC: 0.90045
+Epoch: 035, 测试集, Accuracy: 0.93756, Precision: 0.91370, Sensitivity: 0.96887, Specificity: 0.90509, MCC: 0.87660
+Epoch: 040, 训练集, Accuracy: 0.95678, Precision: 0.94478, Sensitivity: 0.96985, Specificity: 0.94383, MCC: 0.91389
+Epoch: 040, 测试集, Accuracy: 0.94428, Precision: 0.93785, Sensitivity: 0.95377, Specificity: 0.93444, MCC: 0.88863
+Epoch: 045, 训练集, Accuracy: 0.95786, Precision: 0.93762, Sensitivity: 0.98058, Specificity: 0.93535, MCC: 0.91670
+Epoch: 045, 测试集, Accuracy: 0.94645, Precision: 0.93055, Sensitivity: 0.96698, Specificity: 0.92515, MCC: 0.89349
+第005折结果, 训练集, Accuracy: 0.96050, Precision: 0.94675, Sensitivity: 0.97552, Specificity: 0.94563, MCC: 0.92144
+第005折结果, 测试集, Accuracy: 0.94717, Precision: 0.94434, Sensitivity: 0.95236, Specificity: 0.94178, MCC: 0.89431
+耗时19955.813338279724
+最终结果，Accuracy: 0.95793, Precision: 0.93991, Sensitivity: 0.97856, Specificity: 0.93746, MCC: 0.91683

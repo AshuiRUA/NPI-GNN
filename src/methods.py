@@ -1,5 +1,7 @@
 import pickle
-from classes import LncRNA_Protein_Interaction
+sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
+
+from src.classes import  LncRNA_Protein_Interaction
 
 
 def nodeSerialNumber_listIndex_dict_generation(node_list):
@@ -43,11 +45,6 @@ def reset_basic_data(interaction_list, negative_interaction_list, lncRNA_list, p
     return new_interaction_list, new_negative_interaction_list, lncRNA_list, protein_list
 
 
-def get_num_of_subgraph(dataset_name, node2vec_windowSize):
-    interaction_list, negative_interaction_list, lncRNA_list, protein_list = load_7_output(dataset_name, node2vec_windowSize)
-    return len(interaction_list) + len(negative_interaction_list)
-
-
 def load_intermediate_products(project_name):
     interaction_list_path = f'data/intermediate_products/{project_name}/interaction_list.txt'
     negative_interaction_list_path = f'data/intermediate_products/{project_name}/negative_interaction_list.txt'
@@ -61,7 +58,8 @@ def load_intermediate_products(project_name):
         lncRNA_list = pickle.load(f)
     with open(file=protein_list_path, mode='rb') as f:
         protein_list = pickle.load(f)
-    return interaction_list, negative_interaction_list, lncRNA_list, protein_list
+    # 重新建立node和interaction的相互包含的关系
+    return reset_basic_data(interaction_list, negative_interaction_list, lncRNA_list, protein_list)\
 
 
 def Accuracy(model, loader, device):
@@ -73,46 +71,6 @@ def Accuracy(model, loader, device):
         pred = model(data).max(dim = 1)[1]
         correct += pred.eq(data.y).sum().item()
     return correct / len(loader.dataset)
-
-
-def Accuracy_Precision_Sensitivity_MCC(model, loader, device):
-    model.eval()
-    
-    TP = 0
-    TN = 0
-    FP = 0
-    FN = 0
-    for data in loader:
-        data = data.to(device)
-        pred = model(data).max(dim = 1)[1]
-        for index in range(len(pred)):
-            if pred[index] == 1 and data.y[index] == 1:
-                TP += 1
-            elif pred[index] == 1 and data.y[index] == 0:
-                FP += 1
-            elif pred[index] == 0 and data.y[index] == 1:
-                FN += 1
-            else:
-                TN += 1
-    print('TP: %d, FP: %d, TN: %d, FN: %d' % (TP, FP, TN, FN))
-    if (TP + TN + FP + FN) != 0:
-        Accuracy = (TP + TN) / (TP + TN + FP + FN)
-    else:
-        Accuracy = 0
-    if (TP + FP) != 0:
-        Precision = (TP) / (TP + FP)
-    else:
-        Precision = 0
-    if (TP + FN) != 0:
-        Sensitivity = (TP) / (TP + FN)
-    else:
-        Sensitivity = 0
-    if (((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN)) ** 0.5) != 0:
-        MCC = (TP * TN - FP * FN) / (((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN)) ** 0.5)
-    else:
-        MCC = 0
-    return Accuracy, Precision, Sensitivity, MCC
-
 
 def Accuracy_Precision_Sensitivity_Specificity_MCC(model, loader, device):
     model.eval()
@@ -133,7 +91,7 @@ def Accuracy_Precision_Sensitivity_Specificity_MCC(model, loader, device):
                 FN += 1
             else:
                 TN += 1
-    print('TP: %d, FP: %d, TN: %d, FN: %d' % (TP, FP, TN, FN))
+    print('TP: %d, FN: %d, TN: %d, FP: %d' % (TP, FN, TN, FP))
     if (TP + TN + FP + FN) != 0:
         Accuracy = (TP + TN) / (TP + TN + FP + FN)
     else:

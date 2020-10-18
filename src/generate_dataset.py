@@ -1,10 +1,3 @@
-from classes import LncRNA
-from classes import Protein
-from classes import LncRNA_Protein_Interaction, LncRNA_Protein_Interaction_dataset
-
-from methods import reset_basic_data, nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
-from methods import load_intermediate_products
-
 from openpyxl import load_workbook
 import random
 import networkx as nx
@@ -15,17 +8,25 @@ import os
 import argparse
 import copy
 import gc
-sys.setrecursionlimit(100000)
 
+sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
+
+from src.classes import LncRNA
+from src.classes import Protein
+from src.classes import LncRNA_Protein_Interaction, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
+
+from src.methods import nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
+from src.methods import load_intermediate_products
 
 def parse_args():
     parser = argparse.ArgumentParser(description="generate_dataset.")
     parser.add_argument('--projectName', default='0930_NPInter2', help='project name')
-    parser.add_argument('--datasetName', default='NPInter2', help='raw interactions dataset')
+    parser.add_argument('--interactionDatasetName', default='NPInter2', help='raw interactions dataset')
+    parser.add_argument('--inMemory',type=int, help='in memory dataset or not')
     parser.add_argument('--hopNumber', default=2, type=int, help='hop number of subgraph')
-    parser.add_argument('--shuffle', default=True, type=bool, help='shuffle interactions before generate dataset')
-    parser.add_argument('--noKmer', default=False, type=bool, help='Not using k-mer')
-    parser.add_argument('--output', default=True, type=bool, help='output dataset or not')
+    parser.add_argument('--shuffle', default=1, type=int, help='shuffle interactions before generate dataset')
+    parser.add_argument('--noKmer', default=0, type=int, help='Not using k-mer')
+    parser.add_argument('--output', default=1, type=int, help='output dataset or not')
 
 
     return parser.parse_args()
@@ -96,25 +97,8 @@ def load_node_k_mer(node_list, node_type, k_mer_path):
                                 node.attributes_vector.append(float(number))
 
 
-if __name__ == "__main__":
-    args = parse_args()
-
-    # 用中间产物，重现相互作用数据集
-    interaction_list, negative_interaction_list, lncRNA_list, protein_list = load_intermediate_products(args.projectName)
-
-    # load node2vec result
-    node2vec_result_path = f'data/node2vec_result/{args.projectName}/result.emb'
-    read_node2vec_result(path=node2vec_result_path)
-
-    # load k-mer
-    if args.noKmer == False:
-        lncRNA_3_mer_path = f'data/lncRNA_3_mer/{args.datasetName}/lncRNA_3_mer.txt'
-        protein_2_mer_path = f'data/protein_2_mer/{args.datasetName}/protein_2_mer.txt'
-        load_node_k_mer(lncRNA_list, 'lncRNA', lncRNA_3_mer_path)
-        load_node_k_mer(protein_list, 'protein', protein_2_mer_path)
-
-    # 执行检查
-    if args.noKmer == False:
+def load_exam(noKmer:int, lncRNA_list:list, protein_list:list):
+    if noKmer == 0:
         for lncRNA in lncRNA_list:
             if len(lncRNA.attributes_vector) != 113:
                 print(len(lncRNA.attributes_vector), lncRNA.name)
@@ -130,14 +114,33 @@ if __name__ == "__main__":
     for protein in protein_list:
         if len(protein.embedded_vector) != 64:
             raise Exception('protein embedded_vector error')
-    
-    # 重新建立关联
-    interaction_list, negative_interaction_list, lncRNA_list, protein_list = reset_basic_data(interaction_list, negative_interaction_list, lncRNA_list, protein_list)
 
+
+if __name__ == "__main__":
+    args = parse_args()
+
+    # 用中间产物，重现相互作用数据集
+    interaction_list, negative_interaction_list, lncRNA_list, protein_list = load_intermediate_products(args.projectName)
+
+    # load node2vec result
+    node2vec_result_path = f'data/node2vec_result/{args.projectName}/result.emb'
+    read_node2vec_result(path=node2vec_result_path)
+
+    # load k-mer
+    if args.noKmer == 0:
+        lncRNA_3_mer_path = f'data/lncRNA_3_mer/{args.interactionDatasetName}/lncRNA_3_mer.txt'
+        protein_2_mer_path = f'data/protein_2_mer/{args.interactionDatasetName}/protein_2_mer.txt'
+        load_node_k_mer(lncRNA_list, 'lncRNA', lncRNA_3_mer_path)
+        load_node_k_mer(protein_list, 'protein', protein_2_mer_path)
+
+    # 执行检查
+    load_exam(args.noKmer, lncRNA_list, protein_list)
+    
+    
     # 数据集生成
     all_interaction_list = interaction_list.copy()
     all_interaction_list.extend(negative_interaction_list)
-    if args.shuffle == True:    # 随机打乱
+    if args.shuffle == 1:    # 随机打乱
         print('shuffle dataset\n')
         random.shuffle(all_interaction_list)
     
@@ -145,7 +148,9 @@ if __name__ == "__main__":
     dataset_path = f'data\\dataset\\{args.projectName}'
     if not osp.exists(dataset_path):
         os.makedirs(dataset_path)
-    if args.output == True:
-        My_dataset = LncRNA_Protein_Interaction_dataset(root=dataset_path, interaction_list=all_interaction_list, h=args.hopNumber)
-
+    if args.output == 1:
+        if args.inMemory == 0:
+            My_dataset = LncRNA_Protein_Interaction_dataset(root=dataset_path, interaction_list=all_interaction_list, h=args.hopNumber)
+        else:
+            My_dataset = LncRNA_Protein_Interaction_inMemoryDataset(root=dataset_path, interaction_list=all_interaction_list, h=args.hopNumber)
     print('\n' + 'exit' + '\n')
