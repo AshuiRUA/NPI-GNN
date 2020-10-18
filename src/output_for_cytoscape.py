@@ -4,7 +4,12 @@ import argparse
 import random
 from openpyxl import load_workbook
 
+<<<<<<< HEAD
 sys.path.append(os.path.realpath('.'))
+=======
+sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
+
+>>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
 from src.classes import LncRNA
 from src.classes import Protein
 from src.classes import LncRNA_Protein_Interaction, LncRNA_Protein_Interaction_dataset

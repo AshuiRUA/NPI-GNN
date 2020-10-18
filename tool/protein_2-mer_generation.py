@@ -16,7 +16,11 @@ import os.path as osp
 import argparse
 import sys
 
+<<<<<<< HEAD
 sys.path.append(os.path.realpath('.'))
+=======
+sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
+>>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
 
 import src.classes
 

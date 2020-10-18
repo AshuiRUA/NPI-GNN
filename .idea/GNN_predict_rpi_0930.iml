@@ -8,6 +8,9 @@
   <component name="PyDocumentationSettings">
     <option name="format" value="NUMPY" />
     <option name="myDocStringFormat" value="NumPy" />
+<<<<<<< HEAD
     <option name="renderExternalDocumentation" value="true" />
+=======
+>>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
   </component>
 </module>

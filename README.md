@@ -11,8 +11,11 @@ torch-geometric 1.4.2
 ### Usage:
 First, you have to generate edgelist for node2vec.
 >Python .\src\generate_edgelist.py --projectName yourProjectName --interactionDatasetName NPInter2 --createBalanceDataset 1 
+<<<<<<< HEAD
 
 push test
+=======
+>>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
 
 This will output a edgelist file in 'data/graph/yourProjectName/bipartite_graph.edgelist' and an empty folder 'data/node2vec_result/yourProjectName' to store node2vec result.
 
@@ -33,4 +36,8 @@ If you want to reduce the size of the dataset while keeping the bipartite graph 
 >Python .\src\generate_edgelist.py --projectName yourProjectName --interactionDatasetName NPInter2 --createBalanceDataset 1 --reduce 1 --reduceRatio 0.5
 
 If you don't want to use k-mer, you need ro use "noK-mer" on generate_dataset.py
+<<<<<<< HEAD
 >Python src/generate_dataset.py --projectName yourProjectName --interactionDatasetName NPInter2 --inMemory 0 --noKmer 1
+=======
+>Python src/generate_dataset.py --projectName yourProjectName --interactionDatasetName NPInter2 --inMemory 0 --noKmer 1
+>>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
