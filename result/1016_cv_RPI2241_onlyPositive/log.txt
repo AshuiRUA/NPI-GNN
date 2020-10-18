@@ -1,0 +1,208 @@
+database£∫RPI2241_onlyPositive
+node2vec_windowSize = 5
+5’€Ωª≤Ê—È÷§
+µ¸¥˙¥Œ ˝£∫100
+—ßœ∞¬ £∫≥ı º0.005£¨√øµ±loss‘ˆº” ±æÕ≥À0.95
+L2’˝‘ÚªØ£¨œµ ˝0.0005
+Epoch: 005, —µ¡∑ºØ, Accuracy: 0.49693, Precision: 0.83333, Sensitivity: 0.00277, Specificity: 0.99944, MCC: 0.02695
+Epoch: 005, ≤‚ ‘ºØ, Accuracy: 0.51674, Precision: 0.00000, Sensitivity: 0.00000, Specificity: 1.00000, MCC: 0.00000
+Epoch: 010, —µ¡∑ºØ, Accuracy: 0.53820, Precision: 0.83628, Sensitivity: 0.10454, Specificity: 0.97919, MCC: 0.17227
+Epoch: 010, ≤‚ ‘ºØ, Accuracy: 0.54129, Precision: 0.69643, Sensitivity: 0.09007, Specificity: 0.96328, MCC: 0.11014
+Epoch: 015, —µ¡∑ºØ, Accuracy: 0.58896, Precision: 0.86147, Sensitivity: 0.22013, Specificity: 0.96400, MCC: 0.27481
+Epoch: 015, ≤‚ ‘ºØ, Accuracy: 0.55580, Precision: 0.65487, Sensitivity: 0.17090, Specificity: 0.91577, MCC: 0.13046
+Epoch: 020, —µ¡∑ºØ, Accuracy: 0.61573, Precision: 0.80282, Sensitivity: 0.31527, Specificity: 0.92126, MCC: 0.29677
+Epoch: 020, ≤‚ ‘ºØ, Accuracy: 0.58482, Precision: 0.65969, Sensitivity: 0.29099, Specificity: 0.85961, MCC: 0.18376
+Epoch: 025, —µ¡∑ºØ, Accuracy: 0.65170, Precision: 0.78147, Sensitivity: 0.42920, Specificity: 0.87795, MCC: 0.34320
+Epoch: 025, ≤‚ ‘ºØ, Accuracy: 0.57812, Precision: 0.60300, Sensitivity: 0.37182, Specificity: 0.77106, MCC: 0.15611
+Epoch: 030, —µ¡∑ºØ, Accuracy: 0.65784, Precision: 0.79373, Sensitivity: 0.43418, Specificity: 0.88526, MCC: 0.35738
+Epoch: 030, ≤‚ ‘ºØ, Accuracy: 0.56696, Precision: 0.58242, Sensitivity: 0.36721, Specificity: 0.75378, MCC: 0.13135
+Epoch: 035, —µ¡∑ºØ, Accuracy: 0.67540, Precision: 0.82525, Sensitivity: 0.45188, Specificity: 0.90270, MCC: 0.39656
+Epoch: 035, ≤‚ ‘ºØ, Accuracy: 0.55580, Precision: 0.56809, Sensitivity: 0.33718, Specificity: 0.76026, MCC: 0.10766
+Epoch: 040, —µ¡∑ºØ, Accuracy: 0.67624, Precision: 0.83179, Sensitivity: 0.44856, Specificity: 0.90776, MCC: 0.40041
+Epoch: 040, ≤‚ ‘ºØ, Accuracy: 0.58259, Precision: 0.61847, Sensitivity: 0.35566, Specificity: 0.79482, MCC: 0.16786
+Epoch: 045, —µ¡∑ºØ, Accuracy: 0.70190, Precision: 0.83139, Sensitivity: 0.51272, Specificity: 0.89426, MCC: 0.43961
+Epoch: 045, ≤‚ ‘ºØ, Accuracy: 0.54353, Precision: 0.54054, Sensitivity: 0.36952, Specificity: 0.70626, MCC: 0.08051
+Epoch: 050, —µ¡∑ºØ, Accuracy: 0.71445, Precision: 0.83504, Sensitivity: 0.54038, Specificity: 0.89145, MCC: 0.46050
+Epoch: 050, ≤‚ ‘ºØ, Accuracy: 0.54018, Precision: 0.53292, Sensitivity: 0.39261, Specificity: 0.67819, MCC: 0.07389
+Epoch: 055, —µ¡∑ºØ, Accuracy: 0.72616, Precision: 0.90730, Sensitivity: 0.50885, Specificity: 0.94713, MCC: 0.50624
+Epoch: 055, ≤‚ ‘ºØ, Accuracy: 0.54464, Precision: 0.54480, Sensitivity: 0.35104, Specificity: 0.72570, MCC: 0.08282
+Epoch: 060, —µ¡∑ºØ, Accuracy: 0.73173, Precision: 0.91716, Sensitivity: 0.51438, Specificity: 0.95276, MCC: 0.51863
+Epoch: 060, ≤‚ ‘ºØ, Accuracy: 0.54353, Precision: 0.54317, Sensitivity: 0.34873, Specificity: 0.72570, MCC: 0.08040
+Epoch: 065, —µ¡∑ºØ, Accuracy: 0.72309, Precision: 0.91371, Sensitivity: 0.49779, Specificity: 0.95219, MCC: 0.50405
+Epoch: 065, ≤‚ ‘ºØ, Accuracy: 0.54576, Precision: 0.55118, Sensitivity: 0.32333, Specificity: 0.75378, MCC: 0.08549
+Epoch: 070, —µ¡∑ºØ, Accuracy: 0.73954, Precision: 0.91619, Sensitivity: 0.53208, Specificity: 0.95051, MCC: 0.53024
+Epoch: 070, ≤‚ ‘ºØ, Accuracy: 0.54911, Precision: 0.55235, Sensitivity: 0.35335, Specificity: 0.73218, MCC: 0.09248
+Epoch: 075, —µ¡∑ºØ, Accuracy: 0.74066, Precision: 0.92293, Sensitivity: 0.52987, Specificity: 0.95501, MCC: 0.53456
+Epoch: 075, ≤‚ ‘ºØ, Accuracy: 0.54353, Precision: 0.54545, Sensitivity: 0.33256, Specificity: 0.74082, MCC: 0.08044
+Epoch: 080, —µ¡∑ºØ, Accuracy: 0.73620, Precision: 0.94342, Sensitivity: 0.50719, Specificity: 0.96907, MCC: 0.53570
+Epoch: 080, ≤‚ ‘ºØ, Accuracy: 0.54688, Precision: 0.55133, Sensitivity: 0.33487, Specificity: 0.74514, MCC: 0.08780
+Epoch: 085, —µ¡∑ºØ, Accuracy: 0.75042, Precision: 0.96251, Sensitivity: 0.52544, Specificity: 0.97919, MCC: 0.56491
+Epoch: 085, ≤‚ ‘ºØ, Accuracy: 0.55246, Precision: 0.56250, Sensitivity: 0.33256, Specificity: 0.75810, MCC: 0.10029
+Epoch: 090, —µ¡∑ºØ, Accuracy: 0.74735, Precision: 0.96209, Sensitivity: 0.51936, Specificity: 0.97919, MCC: 0.56005
+Epoch: 090, ≤‚ ‘ºØ, Accuracy: 0.55804, Precision: 0.57088, Sensitivity: 0.34411, Specificity: 0.75810, MCC: 0.11241
+Epoch: 095, —µ¡∑ºØ, Accuracy: 0.75098, Precision: 0.96165, Sensitivity: 0.52710, Specificity: 0.97863, MCC: 0.56543
+Epoch: 095, ≤‚ ‘ºØ, Accuracy: 0.56696, Precision: 0.58364, Sensitivity: 0.36259, Specificity: 0.75810, MCC: 0.13158
+µ⁄001’€Ω·π˚, —µ¡∑ºØ, Accuracy: 0.75739, Precision: 0.97088, Sensitivity: 0.53485, Specificity: 0.98369, MCC: 0.57885
+µ⁄001’€Ω·π˚, ≤‚ ‘ºØ, Accuracy: 0.56473, Precision: 0.58301, Sensitivity: 0.34873, Specificity: 0.76674, MCC: 0.12729
+Epoch: 005, —µ¡∑ºØ, Accuracy: 0.56442, Precision: 0.63134, Sensitivity: 0.30615, Specificity: 0.82183, MCC: 0.14939
+Epoch: 005, ≤‚ ‘ºØ, Accuracy: 0.52902, Precision: 0.56561, Sensitivity: 0.27716, Specificity: 0.78427, MCC: 0.07125
+Epoch: 010, —µ¡∑ºØ, Accuracy: 0.61573, Precision: 0.80294, Sensitivity: 0.30503, Specificity: 0.92539, MCC: 0.29390
+Epoch: 010, ≤‚ ‘ºØ, Accuracy: 0.54353, Precision: 0.62069, Sensitivity: 0.23947, Specificity: 0.85169, MCC: 0.11521
+Epoch: 015, —µ¡∑ºØ, Accuracy: 0.62688, Precision: 0.64002, Sensitivity: 0.57709, Specificity: 0.67650, MCC: 0.25487
+Epoch: 015, ≤‚ ‘ºØ, Accuracy: 0.55022, Precision: 0.55825, Sensitivity: 0.50998, Specificity: 0.59101, MCC: 0.10131
+Epoch: 020, —µ¡∑ºØ, Accuracy: 0.67847, Precision: 0.73130, Sensitivity: 0.56257, Specificity: 0.79399, MCC: 0.36656
+Epoch: 020, ≤‚ ‘ºØ, Accuracy: 0.54576, Precision: 0.56433, Sensitivity: 0.42794, Specificity: 0.66517, MCC: 0.09583
+Epoch: 025, —µ¡∑ºØ, Accuracy: 0.69799, Precision: 0.75413, Sensitivity: 0.58603, Specificity: 0.80958, MCC: 0.40594
+Epoch: 025, ≤‚ ‘ºØ, Accuracy: 0.55692, Precision: 0.58036, Sensitivity: 0.43237, Specificity: 0.68315, MCC: 0.11930
+Epoch: 030, —µ¡∑ºØ, Accuracy: 0.69939, Precision: 0.80637, Sensitivity: 0.52346, Specificity: 0.87472, MCC: 0.42540
+Epoch: 030, ≤‚ ‘ºØ, Accuracy: 0.55357, Precision: 0.58586, Sensitivity: 0.38581, Specificity: 0.72360, MCC: 0.11620
+Epoch: 035, —µ¡∑ºØ, Accuracy: 0.71054, Precision: 0.77246, Sensitivity: 0.59553, Specificity: 0.82517, MCC: 0.43232
+Epoch: 035, ≤‚ ‘ºØ, Accuracy: 0.55246, Precision: 0.56983, Sensitivity: 0.45233, Specificity: 0.65393, MCC: 0.10847
+Epoch: 040, —µ¡∑ºØ, Accuracy: 0.72002, Precision: 0.86867, Sensitivity: 0.51732, Specificity: 0.92205, MCC: 0.48065
+Epoch: 040, ≤‚ ‘ºØ, Accuracy: 0.56250, Precision: 0.61049, Sensitivity: 0.36142, Specificity: 0.76629, MCC: 0.13961
+Epoch: 045, —µ¡∑ºØ, Accuracy: 0.73062, Precision: 0.84975, Sensitivity: 0.55922, Specificity: 0.90145, MCC: 0.49042
+Epoch: 045, ≤‚ ‘ºØ, Accuracy: 0.55915, Precision: 0.59211, Sensitivity: 0.39911, Specificity: 0.72135, MCC: 0.12721
+Epoch: 050, —µ¡∑ºØ, Accuracy: 0.72504, Precision: 0.89105, Sensitivity: 0.51173, Specificity: 0.93764, MCC: 0.49686
+Epoch: 050, ≤‚ ‘ºØ, Accuracy: 0.57812, Precision: 0.64202, Sensitivity: 0.36585, Specificity: 0.79326, MCC: 0.17590
+Epoch: 055, —µ¡∑ºØ, Accuracy: 0.72895, Precision: 0.90982, Sensitivity: 0.50726, Specificity: 0.94989, MCC: 0.51003
+Epoch: 055, ≤‚ ‘ºØ, Accuracy: 0.57254, Precision: 0.63600, Sensitivity: 0.35255, Specificity: 0.79551, MCC: 0.16505
+Epoch: 060, —µ¡∑ºØ, Accuracy: 0.74568, Precision: 0.92050, Sensitivity: 0.53687, Specificity: 0.95379, MCC: 0.54003
+Epoch: 060, ≤‚ ‘ºØ, Accuracy: 0.59263, Precision: 0.66667, Sensitivity: 0.38137, Specificity: 0.80674, MCC: 0.20772
+Epoch: 065, —µ¡∑ºØ, Accuracy: 0.76269, Precision: 0.91808, Sensitivity: 0.57598, Specificity: 0.94878, MCC: 0.56573
+Epoch: 065, ≤‚ ‘ºØ, Accuracy: 0.58259, Precision: 0.63799, Sensitivity: 0.39468, Specificity: 0.77303, MCC: 0.18109
+Epoch: 070, —µ¡∑ºØ, Accuracy: 0.75739, Precision: 0.88851, Sensitivity: 0.58771, Specificity: 0.92650, MCC: 0.54671
+Epoch: 070, ≤‚ ‘ºØ, Accuracy: 0.57031, Precision: 0.61149, Sensitivity: 0.40133, Specificity: 0.74157, MCC: 0.15191
+Epoch: 075, —µ¡∑ºØ, Accuracy: 0.77663, Precision: 0.90433, Sensitivity: 0.61788, Specificity: 0.93486, MCC: 0.58297
+Epoch: 075, ≤‚ ‘ºØ, Accuracy: 0.57812, Precision: 0.61736, Sensitivity: 0.42572, Specificity: 0.73258, MCC: 0.16627
+Epoch: 080, —µ¡∑ºØ, Accuracy: 0.78081, Precision: 0.93576, Sensitivity: 0.60223, Specificity: 0.95880, MCC: 0.60073
+Epoch: 080, ≤‚ ‘ºØ, Accuracy: 0.58929, Precision: 0.64769, Sensitivity: 0.40355, Specificity: 0.77753, MCC: 0.19514
+Epoch: 085, —µ¡∑ºØ, Accuracy: 0.77775, Precision: 0.94370, Sensitivity: 0.58994, Specificity: 0.96492, MCC: 0.59878
+Epoch: 085, ≤‚ ‘ºØ, Accuracy: 0.57812, Precision: 0.63774, Sensitivity: 0.37472, Specificity: 0.78427, MCC: 0.17418
+Epoch: 090, —µ¡∑ºØ, Accuracy: 0.79281, Precision: 0.94402, Sensitivity: 0.62179, Specificity: 0.96325, MCC: 0.62269
+Epoch: 090, ≤‚ ‘ºØ, Accuracy: 0.58259, Precision: 0.63230, Sensitivity: 0.40798, Specificity: 0.75955, MCC: 0.17887
+Epoch: 095, —µ¡∑ºØ, Accuracy: 0.80033, Precision: 0.95278, Sensitivity: 0.63128, Specificity: 0.96882, MCC: 0.63776
+Epoch: 095, ≤‚ ‘ºØ, Accuracy: 0.57478, Precision: 0.61986, Sensitivity: 0.40133, Specificity: 0.75056, MCC: 0.16203
+µ⁄002’€Ω·π˚, —µ¡∑ºØ, Accuracy: 0.80284, Precision: 0.95466, Sensitivity: 0.63520, Specificity: 0.96993, MCC: 0.64242
+µ⁄002’€Ω·π˚, ≤‚ ‘ºØ, Accuracy: 0.58371, Precision: 0.63176, Sensitivity: 0.41463, Specificity: 0.75506, MCC: 0.18039
+Epoch: 005, —µ¡∑ºØ, Accuracy: 0.60904, Precision: 0.67658, Sensitivity: 0.40853, Specificity: 0.80710, MCC: 0.23525
+Epoch: 005, ≤‚ ‘ºØ, Accuracy: 0.55915, Precision: 0.61765, Sensitivity: 0.36601, Specificity: 0.76201, MCC: 0.13918
+Epoch: 010, —µ¡∑ºØ, Accuracy: 0.59481, Precision: 0.92506, Sensitivity: 0.20090, Specificity: 0.98392, MCC: 0.29783
+Epoch: 010, ≤‚ ‘ºØ, Accuracy: 0.52344, Precision: 0.71622, Sensitivity: 0.11547, Specificity: 0.95195, MCC: 0.12242
+Epoch: 015, —µ¡∑ºØ, Accuracy: 0.63134, Precision: 0.83626, Sensitivity: 0.32099, Specificity: 0.93792, MCC: 0.32948
+Epoch: 015, ≤‚ ‘ºØ, Accuracy: 0.54241, Precision: 0.66443, Sensitivity: 0.21569, Specificity: 0.88558, MCC: 0.13595
+Epoch: 020, —µ¡∑ºØ, Accuracy: 0.66592, Precision: 0.83410, Sensitivity: 0.40909, Specificity: 0.91962, MCC: 0.38282
+Epoch: 020, ≤‚ ‘ºØ, Accuracy: 0.52232, Precision: 0.57488, Sensitivity: 0.25926, Specificity: 0.79863, MCC: 0.06865
+Epoch: 025, —µ¡∑ºØ, Accuracy: 0.68991, Precision: 0.79751, Sensitivity: 0.50393, Specificity: 0.87361, MCC: 0.40673
+Epoch: 025, ≤‚ ‘ºØ, Accuracy: 0.53125, Precision: 0.57196, Sensitivity: 0.33769, Specificity: 0.73455, MCC: 0.07862
+Epoch: 030, —µ¡∑ºØ, Accuracy: 0.69771, Precision: 0.78843, Sensitivity: 0.53535, Specificity: 0.85809, MCC: 0.41605
+Epoch: 030, ≤‚ ‘ºØ, Accuracy: 0.52232, Precision: 0.55049, Sensitivity: 0.36819, Specificity: 0.68421, MCC: 0.05519
+Epoch: 035, —µ¡∑ºØ, Accuracy: 0.71640, Precision: 0.78868, Sensitivity: 0.58642, Specificity: 0.84479, MCC: 0.44669
+Epoch: 035, ≤‚ ‘ºØ, Accuracy: 0.52679, Precision: 0.55072, Sensitivity: 0.41394, Specificity: 0.64531, MCC: 0.06086
+Epoch: 040, —µ¡∑ºØ, Accuracy: 0.72170, Precision: 0.79518, Sensitivity: 0.59259, Specificity: 0.84922, MCC: 0.45746
+Epoch: 040, ≤‚ ‘ºØ, Accuracy: 0.52679, Precision: 0.55193, Sensitivity: 0.40523, Specificity: 0.65446, MCC: 0.06159
+Epoch: 045, —µ¡∑ºØ, Accuracy: 0.73787, Precision: 0.84395, Sensitivity: 0.57969, Specificity: 0.89412, MCC: 0.49963
+Epoch: 045, ≤‚ ‘ºØ, Accuracy: 0.53125, Precision: 0.56436, Sensitivity: 0.37255, Specificity: 0.69794, MCC: 0.07448
+Epoch: 050, —µ¡∑ºØ, Accuracy: 0.73090, Precision: 0.75169, Sensitivity: 0.68462, Specificity: 0.77661, MCC: 0.46331
+Epoch: 050, ≤‚ ‘ºØ, Accuracy: 0.54241, Precision: 0.55990, Sensitivity: 0.49891, Specificity: 0.58810, MCC: 0.08732
+Epoch: 055, —µ¡∑ºØ, Accuracy: 0.75795, Precision: 0.81736, Sensitivity: 0.66049, Specificity: 0.85421, MCC: 0.52497
+Epoch: 055, ≤‚ ‘ºØ, Accuracy: 0.54129, Precision: 0.56593, Sensitivity: 0.44880, Specificity: 0.63844, MCC: 0.08879
+Epoch: 060, —µ¡∑ºØ, Accuracy: 0.76352, Precision: 0.86599, Sensitivity: 0.62009, Specificity: 0.90521, MCC: 0.54859
+Epoch: 060, ≤‚ ‘ºØ, Accuracy: 0.53237, Precision: 0.56173, Sensitivity: 0.39651, Specificity: 0.67506, MCC: 0.07446
+Epoch: 065, —µ¡∑ºØ, Accuracy: 0.77719, Precision: 0.85694, Sensitivity: 0.66218, Specificity: 0.89080, MCC: 0.56848
+Epoch: 065, ≤‚ ‘ºØ, Accuracy: 0.55022, Precision: 0.58000, Sensitivity: 0.44227, Specificity: 0.66362, MCC: 0.10848
+Epoch: 070, —µ¡∑ºØ, Accuracy: 0.78779, Precision: 0.88125, Sensitivity: 0.66218, Specificity: 0.91186, MCC: 0.59337
+Epoch: 070, ≤‚ ‘ºØ, Accuracy: 0.55134, Precision: 0.58309, Sensitivity: 0.43573, Specificity: 0.67277, MCC: 0.11157
+Epoch: 075, —µ¡∑ºØ, Accuracy: 0.79532, Precision: 0.88700, Sensitivity: 0.67396, Specificity: 0.91519, MCC: 0.60763
+Epoch: 075, ≤‚ ‘ºØ, Accuracy: 0.54799, Precision: 0.58182, Sensitivity: 0.41830, Specificity: 0.68421, MCC: 0.10623
+Epoch: 080, —µ¡∑ºØ, Accuracy: 0.79420, Precision: 0.87500, Sensitivity: 0.68350, Specificity: 0.90355, MCC: 0.60229
+Epoch: 080, ≤‚ ‘ºØ, Accuracy: 0.55022, Precision: 0.57910, Sensitivity: 0.44662, Specificity: 0.65904, MCC: 0.10804
+Epoch: 085, —µ¡∑ºØ, Accuracy: 0.80033, Precision: 0.89481, Sensitivity: 0.67789, Specificity: 0.92129, MCC: 0.61833
+Epoch: 085, ≤‚ ‘ºØ, Accuracy: 0.55134, Precision: 0.58507, Sensitivity: 0.42702, Specificity: 0.68192, MCC: 0.11254
+Epoch: 090, —µ¡∑ºØ, Accuracy: 0.80145, Precision: 0.86444, Sensitivity: 0.71212, Specificity: 0.88969, MCC: 0.61194
+Epoch: 090, ≤‚ ‘ºØ, Accuracy: 0.53571, Precision: 0.55858, Sensitivity: 0.44662, Specificity: 0.62929, MCC: 0.07716
+Epoch: 095, —µ¡∑ºØ, Accuracy: 0.81707, Precision: 0.90330, Sensitivity: 0.70763, Specificity: 0.92517, MCC: 0.64889
+Epoch: 095, ≤‚ ‘ºØ, Accuracy: 0.55469, Precision: 0.58523, Sensitivity: 0.44880, Specificity: 0.66590, MCC: 0.11740
+µ⁄003’€Ω·π˚, —µ¡∑ºØ, Accuracy: 0.82041, Precision: 0.90994, Sensitivity: 0.70875, Specificity: 0.93071, MCC: 0.65642
+µ⁄003’€Ω·π˚, ≤‚ ‘ºØ, Accuracy: 0.55246, Precision: 0.58239, Sensitivity: 0.44662, Specificity: 0.66362, MCC: 0.11283
+Epoch: 005, —µ¡∑ºØ, Accuracy: 0.61461, Precision: 0.65471, Sensitivity: 0.48775, Specificity: 0.74190, MCC: 0.23742
+Epoch: 005, ≤‚ ‘ºØ, Accuracy: 0.57924, Precision: 0.60241, Sensitivity: 0.44944, Specificity: 0.70732, MCC: 0.16229
+Epoch: 010, —µ¡∑ºØ, Accuracy: 0.65588, Precision: 0.73814, Sensitivity: 0.48497, Specificity: 0.82737, MCC: 0.33237
+Epoch: 010, ≤‚ ‘ºØ, Accuracy: 0.57924, Precision: 0.61184, Sensitivity: 0.41798, Specificity: 0.73836, MCC: 0.16509
+Epoch: 015, —µ¡∑ºØ, Accuracy: 0.67736, Precision: 0.70389, Sensitivity: 0.61414, Specificity: 0.74078, MCC: 0.35778
+Epoch: 015, ≤‚ ‘ºØ, Accuracy: 0.58929, Precision: 0.60000, Sensitivity: 0.51910, Specificity: 0.65854, MCC: 0.17942
+Epoch: 020, —µ¡∑ºØ, Accuracy: 0.69716, Precision: 0.71207, Sensitivity: 0.66370, Specificity: 0.73073, MCC: 0.39529
+Epoch: 020, ≤‚ ‘ºØ, Accuracy: 0.57031, Precision: 0.56849, Sensitivity: 0.55955, Specificity: 0.58093, MCC: 0.14051
+Epoch: 025, —µ¡∑ºØ, Accuracy: 0.72421, Precision: 0.75140, Sensitivity: 0.67149, Specificity: 0.77709, MCC: 0.45107
+Epoch: 025, ≤‚ ‘ºØ, Accuracy: 0.57366, Precision: 0.57175, Sensitivity: 0.56404, Specificity: 0.58315, MCC: 0.14722
+Epoch: 030, —µ¡∑ºØ, Accuracy: 0.72002, Precision: 0.82781, Sensitivity: 0.55679, Specificity: 0.88380, MCC: 0.46610
+Epoch: 030, ≤‚ ‘ºØ, Accuracy: 0.59598, Precision: 0.62928, Sensitivity: 0.45393, Specificity: 0.73614, MCC: 0.19820
+Epoch: 035, —µ¡∑ºØ, Accuracy: 0.74930, Precision: 0.81124, Sensitivity: 0.65089, Specificity: 0.84804, MCC: 0.50884
+Epoch: 035, ≤‚ ‘ºØ, Accuracy: 0.59375, Precision: 0.60858, Sensitivity: 0.51011, Specificity: 0.67627, MCC: 0.18905
+Epoch: 040, —µ¡∑ºØ, Accuracy: 0.75125, Precision: 0.81786, Sensitivity: 0.64755, Specificity: 0.85531, MCC: 0.51398
+Epoch: 040, ≤‚ ‘ºØ, Accuracy: 0.59263, Precision: 0.60638, Sensitivity: 0.51236, Specificity: 0.67184, MCC: 0.18662
+Epoch: 045, —µ¡∑ºØ, Accuracy: 0.76715, Precision: 0.83958, Sensitivity: 0.66147, Specificity: 0.87318, MCC: 0.54695
+Epoch: 045, ≤‚ ‘ºØ, Accuracy: 0.59375, Precision: 0.60686, Sensitivity: 0.51685, Specificity: 0.66962, MCC: 0.18872
+Epoch: 050, —µ¡∑ºØ, Accuracy: 0.76269, Precision: 0.88013, Sensitivity: 0.60913, Specificity: 0.91676, MCC: 0.55253
+Epoch: 050, ≤‚ ‘ºØ, Accuracy: 0.59710, Precision: 0.62426, Sensitivity: 0.47416, Specificity: 0.71840, MCC: 0.19864
+Epoch: 055, —µ¡∑ºØ, Accuracy: 0.77273, Precision: 0.90304, Sensitivity: 0.61192, Specificity: 0.93408, MCC: 0.57655
+Epoch: 055, ≤‚ ‘ºØ, Accuracy: 0.61719, Precision: 0.65741, Sensitivity: 0.47865, Specificity: 0.75388, MCC: 0.24198
+Epoch: 060, —µ¡∑ºØ, Accuracy: 0.78555, Precision: 0.87454, Sensitivity: 0.66759, Specificity: 0.90391, MCC: 0.58802
+Epoch: 060, ≤‚ ‘ºØ, Accuracy: 0.60379, Precision: 0.61905, Sensitivity: 0.52584, Specificity: 0.68071, MCC: 0.20912
+Epoch: 065, —µ¡∑ºØ, Accuracy: 0.80257, Precision: 0.88202, Sensitivity: 0.69933, Specificity: 0.90615, MCC: 0.61872
+Epoch: 065, ≤‚ ‘ºØ, Accuracy: 0.59487, Precision: 0.60250, Sensitivity: 0.54157, Specificity: 0.64745, MCC: 0.19011
+Epoch: 070, —µ¡∑ºØ, Accuracy: 0.80535, Precision: 0.86995, Sensitivity: 0.71882, Specificity: 0.89218, MCC: 0.62028
+Epoch: 070, ≤‚ ‘ºØ, Accuracy: 0.59263, Precision: 0.59479, Sensitivity: 0.56404, Specificity: 0.62084, MCC: 0.18520
+Epoch: 075, —µ¡∑ºØ, Accuracy: 0.81707, Precision: 0.88000, Sensitivity: 0.73497, Specificity: 0.89944, MCC: 0.64305
+Epoch: 075, ≤‚ ‘ºØ, Accuracy: 0.58705, Precision: 0.59080, Sensitivity: 0.54831, Specificity: 0.62528, MCC: 0.17412
+Epoch: 080, —µ¡∑ºØ, Accuracy: 0.82404, Precision: 0.86248, Sensitivity: 0.77171, Specificity: 0.87654, MCC: 0.65177
+Epoch: 080, ≤‚ ‘ºØ, Accuracy: 0.58147, Precision: 0.57743, Sensitivity: 0.58652, Specificity: 0.57650, MCC: 0.16302
+Epoch: 085, —µ¡∑ºØ, Accuracy: 0.83240, Precision: 0.89543, Sensitivity: 0.75334, Specificity: 0.91173, MCC: 0.67345
+Epoch: 085, ≤‚ ‘ºØ, Accuracy: 0.59487, Precision: 0.59670, Sensitivity: 0.56854, Specificity: 0.62084, MCC: 0.18965
+Epoch: 090, —µ¡∑ºØ, Accuracy: 0.83436, Precision: 0.89801, Sensitivity: 0.75501, Specificity: 0.91397, MCC: 0.67747
+Epoch: 090, ≤‚ ‘ºØ, Accuracy: 0.59263, Precision: 0.59390, Sensitivity: 0.56854, Specificity: 0.61641, MCC: 0.18517
+Epoch: 095, —µ¡∑ºØ, Accuracy: 0.83910, Precision: 0.90498, Sensitivity: 0.75835, Specificity: 0.92011, MCC: 0.68739
+Epoch: 095, ≤‚ ‘ºØ, Accuracy: 0.57478, Precision: 0.57656, Sensitivity: 0.54157, Specificity: 0.60754, MCC: 0.14944
+µ⁄004’€Ω·π˚, —µ¡∑ºØ, Accuracy: 0.84635, Precision: 0.93684, Sensitivity: 0.74332, Specificity: 0.94972, MCC: 0.70811
+µ⁄004’€Ω·π˚, ≤‚ ‘ºØ, Accuracy: 0.59933, Precision: 0.60697, Sensitivity: 0.54831, Specificity: 0.64967, MCC: 0.19903
+Epoch: 005, —µ¡∑ºØ, Accuracy: 0.58561, Precision: 0.60694, Sensitivity: 0.47931, Specificity: 0.69132, MCC: 0.17462
+Epoch: 005, ≤‚ ‘ºØ, Accuracy: 0.51897, Precision: 0.52696, Sensitivity: 0.47461, Specificity: 0.56433, MCC: 0.03910
+Epoch: 010, —µ¡∑ºØ, Accuracy: 0.61573, Precision: 0.65140, Sensitivity: 0.49329, Specificity: 0.73749, MCC: 0.23802
+Epoch: 010, ≤‚ ‘ºØ, Accuracy: 0.54464, Precision: 0.56198, Sensitivity: 0.45033, Specificity: 0.64108, MCC: 0.09310
+Epoch: 015, —µ¡∑ºØ, Accuracy: 0.62632, Precision: 0.66842, Sensitivity: 0.49720, Specificity: 0.75473, MCC: 0.26077
+Epoch: 015, ≤‚ ‘ºØ, Accuracy: 0.53237, Precision: 0.54775, Sensitivity: 0.43046, Specificity: 0.63657, MCC: 0.06849
+Epoch: 020, —µ¡∑ºØ, Accuracy: 0.65923, Precision: 0.72283, Sensitivity: 0.51342, Specificity: 0.80423, MCC: 0.33209
+Epoch: 020, ≤‚ ‘ºØ, Accuracy: 0.54241, Precision: 0.56305, Sensitivity: 0.42384, Specificity: 0.66366, MCC: 0.09010
+Epoch: 025, —µ¡∑ºØ, Accuracy: 0.67457, Precision: 0.73154, Sensitivity: 0.54866, Specificity: 0.79978, MCC: 0.36006
+Epoch: 025, ≤‚ ‘ºØ, Accuracy: 0.54129, Precision: 0.55645, Sensitivity: 0.45695, Specificity: 0.62754, MCC: 0.08573
+Epoch: 030, —µ¡∑ºØ, Accuracy: 0.69130, Precision: 0.76012, Sensitivity: 0.55649, Specificity: 0.82536, MCC: 0.39657
+Epoch: 030, ≤‚ ‘ºØ, Accuracy: 0.54464, Precision: 0.56303, Sensitivity: 0.44371, Specificity: 0.64786, MCC: 0.09351
+Epoch: 035, —µ¡∑ºØ, Accuracy: 0.70719, Precision: 0.76662, Sensitivity: 0.59340, Specificity: 0.82036, MCC: 0.42496
+Epoch: 035, ≤‚ ‘ºØ, Accuracy: 0.54576, Precision: 0.56150, Sensitivity: 0.46358, Specificity: 0.62980, MCC: 0.09467
+Epoch: 040, —µ¡∑ºØ, Accuracy: 0.71556, Precision: 0.81579, Sensitivity: 0.55481, Specificity: 0.87542, MCC: 0.45440
+Epoch: 040, ≤‚ ‘ºØ, Accuracy: 0.55246, Precision: 0.57514, Sensitivity: 0.43929, Specificity: 0.66817, MCC: 0.11036
+Epoch: 045, —µ¡∑ºØ, Accuracy: 0.71612, Precision: 0.75065, Sensitivity: 0.64485, Specificity: 0.78699, MCC: 0.43634
+Epoch: 045, ≤‚ ‘ºØ, Accuracy: 0.54241, Precision: 0.54746, Sensitivity: 0.54746, Specificity: 0.53725, MCC: 0.08471
+Epoch: 050, —µ¡∑ºØ, Accuracy: 0.72950, Precision: 0.78207, Sensitivity: 0.63423, Specificity: 0.82425, MCC: 0.46710
+Epoch: 050, ≤‚ ‘ºØ, Accuracy: 0.54464, Precision: 0.55528, Sensitivity: 0.49890, Specificity: 0.59142, MCC: 0.09069
+Epoch: 055, —µ¡∑ºØ, Accuracy: 0.73285, Precision: 0.75060, Sensitivity: 0.69519, Specificity: 0.77030, MCC: 0.46685
+Epoch: 055, ≤‚ ‘ºØ, Accuracy: 0.57143, Precision: 0.57451, Sensitivity: 0.58720, Specificity: 0.55530, MCC: 0.14257
+Epoch: 060, —µ¡∑ºØ, Accuracy: 0.75293, Precision: 0.81850, Sensitivity: 0.64821, Specificity: 0.85706, MCC: 0.51683
+Epoch: 060, ≤‚ ‘ºØ, Accuracy: 0.56362, Precision: 0.57635, Sensitivity: 0.51656, Specificity: 0.61174, MCC: 0.12885
+Epoch: 065, —µ¡∑ºØ, Accuracy: 0.76408, Precision: 0.80906, Sensitivity: 0.68960, Specificity: 0.83815, MCC: 0.53379
+Epoch: 065, ≤‚ ‘ºØ, Accuracy: 0.54688, Precision: 0.55427, Sensitivity: 0.52980, Specificity: 0.56433, MCC: 0.09418
+Epoch: 070, —µ¡∑ºØ, Accuracy: 0.77886, Precision: 0.79490, Sensitivity: 0.75000, Specificity: 0.80756, MCC: 0.55854
+Epoch: 070, ≤‚ ‘ºØ, Accuracy: 0.54241, Precision: 0.54507, Sensitivity: 0.57395, Specificity: 0.51016, MCC: 0.08428
+Epoch: 075, —µ¡∑ºØ, Accuracy: 0.79559, Precision: 0.83407, Sensitivity: 0.73658, Specificity: 0.85428, MCC: 0.59511
+Epoch: 075, ≤‚ ‘ºØ, Accuracy: 0.55022, Precision: 0.55605, Sensitivity: 0.54746, Specificity: 0.55305, MCC: 0.10050
+Epoch: 080, —µ¡∑ºØ, Accuracy: 0.81567, Precision: 0.86006, Sensitivity: 0.75280, Specificity: 0.87820, MCC: 0.63616
+Epoch: 080, ≤‚ ‘ºØ, Accuracy: 0.55357, Precision: 0.56092, Sensitivity: 0.53863, Specificity: 0.56885, MCC: 0.10752
+Epoch: 085, —µ¡∑ºØ, Accuracy: 0.80954, Precision: 0.90299, Sensitivity: 0.69239, Specificity: 0.92603, MCC: 0.63629
+Epoch: 085, ≤‚ ‘ºØ, Accuracy: 0.55804, Precision: 0.57403, Sensitivity: 0.48786, Specificity: 0.62980, MCC: 0.11883
+Epoch: 090, —µ¡∑ºØ, Accuracy: 0.82181, Precision: 0.91065, Sensitivity: 0.71253, Specificity: 0.93048, MCC: 0.65911
+Epoch: 090, ≤‚ ‘ºØ, Accuracy: 0.55469, Precision: 0.57105, Sensitivity: 0.47903, Specificity: 0.63205, MCC: 0.11238
+Epoch: 095, —µ¡∑ºØ, Accuracy: 0.82348, Precision: 0.91221, Sensitivity: 0.71477, Specificity: 0.93159, MCC: 0.66238
+Epoch: 095, ≤‚ ‘ºØ, Accuracy: 0.56250, Precision: 0.57722, Sensitivity: 0.50331, Specificity: 0.62302, MCC: 0.12722
+µ⁄005’€Ω·π˚, —µ¡∑ºØ, Accuracy: 0.83157, Precision: 0.91515, Sensitivity: 0.72987, Specificity: 0.93270, MCC: 0.67690
+µ⁄005’€Ω·π˚, ≤‚ ‘ºØ, Accuracy: 0.56696, Precision: 0.58228, Sensitivity: 0.50773, Specificity: 0.62754, MCC: 0.13621
+∫ƒ ±5003.96816277504
+◊Ó÷’Ω·π˚£¨Accuracy: 0.57344, Precision: 0.59728, Sensitivity: 0.45321, Specificity: 0.69252, MCC: 0.15115

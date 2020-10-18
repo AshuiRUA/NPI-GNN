@@ -35,14 +35,14 @@ class Protein:
         Node.__init__(self, protein_name, serial_number, node_type)
 
 class LncRNA_Protein_Interaction:
-    def __init__(self, lncRNA, protein, y):
+    def __init__(self, lncRNA, protein, y:int):
         self.lncRNA = lncRNA
         self.protein = protein
         self.y = y  #y=1代表真的连接，y=0代表假的连接
 
 
 class Net_1(torch.nn.Module):
-    def __init__(self, num_node_features, num_of_classes):
+    def __init__(self, num_node_features, num_of_classes=2):
         super(Net_1, self).__init__()
         self.conv1 = SAGEConv(num_node_features, 128)
         self.pool1 = TopKPooling(128, ratio=0.5)
@@ -123,7 +123,6 @@ class LncRNA_Protein_Interaction_dataset(Dataset):
     def len(self):
         return len(self.processed_file_names)
     
-
     # 下面四个函数用来构建local subgraph
     def local_subgraph_generation(self, interaction, h):
         # 防止图中的回路导致无限循环，所以添加过的interaction，要存起来
@@ -199,6 +198,140 @@ class LncRNA_Protein_Interaction_dataset(Dataset):
                                         subgraph_node_serial_number)
         else:   # interaction已经被遍历过
             return
+    
+    def add_node_to_x(self, node, structural_label, x):
+        vector = [structural_label]
+        # embedded_vector里面都是字符串，不是数
+        for i in node.embedded_vector:
+            vector.append(float(i))
+        vector.extend(node.attributes_vector)
+        x.append(vector)
+
+    def add_interaction_to_edge_index(self, serial_number_1, serial_number_2, edge_index):
+        edge_index[0].append(serial_number_1)
+        edge_index[1].append(serial_number_2)
+        edge_index[0].append(serial_number_2)
+        edge_index[1].append(serial_number_1)
+
+
+class LncRNA_Protein_Interaction_inMemoryDataset(InMemoryDataset):
+    def __init__(self, root,interaction_list=None, h=None, transform=None, pre_transform=None):
+        self.interaction_list = interaction_list
+        self.h = h
+        super(LncRNA_Protein_Interaction_inMemoryDataset, self).__init__(root, transform, pre_transform)
+        self.data, self.slices = torch.load(self.processed_paths[0])
+     
+    @property
+    def raw_file_names(self):
+        return []
+
+    @property
+    def processed_file_names(self):
+        return ['data.pt']
+
+    def download(self):
+        # Download to `self.raw_dir`.
+        pass
+    
+    def process(self):
+        # Read data into huge `Data` list.
+        if self.interaction_list != None and self.h != None:
+            num_data = len(self.interaction_list)
+            print(f'数据总量:{num_data}')
+            data_list = []
+            count = 0
+            for interaction in self.interaction_list:
+                data = self.local_subgraph_generation(interaction, self.h)
+                data_list.append(data)
+                count = count + 1
+                if count % 100 == 0:
+                    print(f'{count}/{num_data}')
+
+            if self.pre_filter is not None:
+                data_list = [data for data in data_list if self.pre_filter(data)]
+
+            if self.pre_transform is not None:
+                data_list = [self.pre_transform(data) for data in data_list]
+
+            data, slices = self.collate(data_list)
+            torch.save((data, slices), self.processed_paths[0])
+    
+    # 下面四个函数用来构建local subgraph
+    def local_subgraph_generation(self, interaction, h):
+        # 防止图中的回路导致无限循环，所以添加过的interaction，要存起来
+        added_interaction_list = []  
+
+        x = []
+        edge_index = [[], []]
+
+        # 子图中每个节点都得有自己独特的serial number和structural label
+        # 这是为了构建edge_index
+        subgraph_node_serial_number = 0
+
+        nodeSerialNumber_subgraphNodeSerialNumber_dict = {}
+
+        # 最重要的函数，把interaction的h-hop子网中的，节点和边都加入，data.x和data.edge_index
+        # add_interaction_to_data(interaction=interaction, hop_count=0, h=h)
+        self.add_interaction_to_data(interaction, 0, h, x, edge_index, nodeSerialNumber_subgraphNodeSerialNumber_dict, 
+                                added_interaction_list, subgraph_node_serial_number)
+
+
+        # y记录这个interaction的真假
+        if interaction.y == 1:
+            y = [1]
+        else:
+            y = [0]
+
+
+        # 用x,y,edge_index创建出data，加入存放data的列表local_subgraph_list
+        x = torch.tensor(x, dtype=torch.float)
+        y = torch.tensor(y, dtype=torch.long)
+        edge_index = torch.tensor(edge_index, dtype=torch.long)
+        data = Data(x=x, y=y, edge_index=edge_index)
+
+        return data
+    
+    def add_interaction_to_data(self, interaction, hop_count, h, x, edge_index, nodeSerialNumber_subgraphNodeSerialNumber_dict,
+                                added_interaction_list, subgraph_node_serial_number):
+        # h限制的子图的大小
+        if hop_count > h:   
+            return
+        # 如果没有超出h跳子图
+        
+        # 用interaction两边的节点的serial number构成的元组，作为他的唯一标识
+        interaction_label = (interaction.lncRNA.serial_number, interaction.protein.serial_number)
+        if added_interaction_list.count(interaction_label) == 0:    # 没遍历过这个interaction
+            added_interaction_list.append(interaction_label)    # 把interaction的标识，加入已遍历的列表
+            node_0 = interaction.lncRNA
+            node_1 = interaction.protein
+            # 如果node_0还没遍历到过，需要把它的特征向量加入data.x，并且分配subgraph_node_serial_number
+            if node_0.serial_number not in nodeSerialNumber_subgraphNodeSerialNumber_dict:  
+                nodeSerialNumber_subgraphNodeSerialNumber_dict[node_0.serial_number] = subgraph_node_serial_number
+                subgraph_node_serial_number += 1
+                self.add_node_to_x(node=node_0, structural_label=hop_count, x=x)
+            # 如果node_1还没遍历到过，需要把它的特征向量加入data.x，并且分配subgraph_node_serial_number
+            if node_1.serial_number not in nodeSerialNumber_subgraphNodeSerialNumber_dict:
+                nodeSerialNumber_subgraphNodeSerialNumber_dict[node_1.serial_number] = subgraph_node_serial_number
+                subgraph_node_serial_number += 1
+                self.add_node_to_x(node=node_1, structural_label=hop_count, x=x)
+            # 因为这是一个没遍历过的interaction，所以要在data.edge_index中记录它
+            self.add_interaction_to_edge_index(serial_number_1=nodeSerialNumber_subgraphNodeSerialNumber_dict[node_0.serial_number],
+                                        serial_number_2=nodeSerialNumber_subgraphNodeSerialNumber_dict[node_1.serial_number],
+                                        edge_index=edge_index)
+            # 然后把node_0的其它interaction也加入子网
+            next_hop_count = hop_count + 1
+            for temp_interaction in node_0.interaction_list:
+                self.add_interaction_to_data(temp_interaction, next_hop_count, h, x, edge_index, 
+                                        nodeSerialNumber_subgraphNodeSerialNumber_dict, added_interaction_list, 
+                                        subgraph_node_serial_number)
+            # 然后把node_1的其它interaction也加入子网
+            for temp_interaction in node_1.interaction_list:
+                self.add_interaction_to_data(temp_interaction, next_hop_count, h, x, edge_index, 
+                                        nodeSerialNumber_subgraphNodeSerialNumber_dict, added_interaction_list, 
+                                        subgraph_node_serial_number)
+        else:   # interaction已经被遍历过
+            return
+    
     def add_node_to_x(self, node, structural_label, x):
         vector = [structural_label]
         # embedded_vector里面都是字符串，不是数

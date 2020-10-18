@@ -1,9 +1,3 @@
-from classes import LncRNA
-from classes import Protein
-from classes import LncRNA_Protein_Interaction, LncRNA_Protein_Interaction_dataset
-
-from methods import reset_basic_data, nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
-
 from openpyxl import load_workbook
 import random
 import networkx as nx
@@ -12,19 +6,25 @@ import sys
 import os.path as osp
 import os
 import argparse
-import copy
 import gc
-sys.setrecursionlimit(100000)
 
+sys.setrecursionlimit(1000000000)
+sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
+
+from src.classes import LncRNA
+from src.classes import Protein
+from src.classes import LncRNA_Protein_Interaction
+
+from src.methods import reset_basic_data, nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
 
 def parse_args():
     parser = argparse.ArgumentParser(description="generate_dataset.")
-    parser.add_argument('--projectName', default='1012_NPInter2', help='project name')
-    parser.add_argument('--datasetName', default='NPInter2', help='raw interactions dataset')
-    parser.add_argument('--createBalanceDataset', default=True, type=bool, help='Create a Balance dataset')
-    parser.add_argument('--reduce', default=False, help='randomly reduce the source database, and also maintain one connected component')
+    parser.add_argument('--projectName',  help='project name')
+    parser.add_argument('--interactionDatasetName',  help='raw interactions dataset')
+    parser.add_argument('--createBalanceDataset', default=1, type=int, help='Create a Balance dataset')
+    parser.add_argument('--reduce', default=0, type=int, help='randomly reduce the source database, and also maintain one connected component')
     parser.add_argument('--reduceRatio', default=0.5, help='reduce Ratio')
-    parser.add_argument('--output', default=True, help='output dataset or not')
+    parser.add_argument('--output', default=1,type=int,  help='output dataset or not')
 
     return parser.parse_args()
 
@@ -394,14 +394,17 @@ def reduce_dataset_mentainConnected(G, ratio, list_interaction, list_negativeInt
 
 
 def output_intermediate_products(project_name, interaction_list, negative_interaction_list, lncRNA_list, protein_list):
+    # 消除相互包含关系，防止递归
+    for lncRNA in lncRNA_list:
+        lncRNA.interaction_list = []
+    for protein in protein_list:
+        protein.interaction_list = []
+
     output_path = f'data/intermediate_products/{project_name}'
     if not osp.exists(path=output_path):
         os.makedirs(output_path)
     else:
-        print('intermediate_products already exist, rewrite or not? y/n')
-        rewrite = input()
-        if rewrite == 'n':
-            exit()
+        raise Exception("相应的intermediate products已存在")
 
 
     interaction_list_path = f'data/intermediate_products/{project_name}/interaction_list.txt'
@@ -439,18 +442,18 @@ if __name__ == '__main__':
     lncRNA_name_index_dict = {}
     protein_name_index_dict = {}
 
-    interaction_dataset_path = 'data/source_database_data/'+ args.datasetName + '.xlsx'
+    interaction_dataset_path = 'data/source_database_data/'+ args.interactionDatasetName + '.xlsx'
 
     # 正负样本读入或生成
-    read_interaction_dataset(dataset_path=interaction_dataset_path, dataset_name=args.datasetName)  
-    if  args.createBalanceDataset:
+    read_interaction_dataset(dataset_path=interaction_dataset_path, dataset_name=args.interactionDatasetName)
+    if args.createBalanceDataset == 1:
         negative_interaction_list = negative_interaction_generation() # 生成负样本
 
     print(f'lncRNA数量: {len(lncRNA_list)}, protein数量: {len(protein_list)}, node数量: {len(lncRNA_list) + len(protein_list)}')
     print(f'相互作用正样本数量: {len(interaction_list)}, 相互作用负样本数量: {len(negative_interaction_list)}, edge数量: {len(interaction_list) + len(negative_interaction_list)}')
 
     # 缩小数据集
-    if args.datasetName == 'NPInter2' and args.reduce == True :
+    if args.interactionDatasetName == 'NPInter2' and args.reduce == 1 :
         # 缩小数据集，并且node2vec结果已经准备好
         # 先生成缩小前的edgelist格式的网络
         G = networkx_format_network_generation(interaction_list, negative_interaction_list, lncRNA_list, protein_list)
@@ -463,6 +466,8 @@ if __name__ == '__main__':
             output_edgelist_file(G, graph_output_path)
             # 输出中间产物
             output_intermediate_products(args.projectName, args.node2vecWindowSize, interaction_list, negative_interaction_list, lncRNA_list, protein_list)
+    elif args.interactionDatasetName != 'NPInter2' and args.reduce == 1 :
+        raise Exception("暂时不支持缩减NPInter2之外的数据集")
     else:
         # 不缩小数据集
         # 生成edgelist格式的网络并保存
