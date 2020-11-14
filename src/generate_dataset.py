@@ -10,10 +10,14 @@ import copy
 import gc
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 sys.path.append(os.path.realpath('.'))
 =======
 sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
 >>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
+=======
+sys.path.append(os.path.realpath('.'))
+>>>>>>> b31f4d7... solved python import path problem
 
 from src.classes import LncRNA
 from src.classes import Protein
@@ -27,10 +31,14 @@ def parse_args():
     parser.add_argument('--projectName', default='0930_NPInter2', help='project name')
     parser.add_argument('--interactionDatasetName', default='NPInter2', help='raw interactions dataset')
 <<<<<<< HEAD
+<<<<<<< HEAD
     parser.add_argument('--inMemory',type=int, help='1 or 0: in memory dataset or not')
 =======
     parser.add_argument('--inMemory',type=int, help='in memory dataset or not')
 >>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
+=======
+    parser.add_argument('--inMemory',type=int, help='1 or 0: in memory dataset or not')
+>>>>>>> b31f4d7... solved python import path problem
     parser.add_argument('--hopNumber', default=2, type=int, help='hop number of subgraph')
     parser.add_argument('--shuffle', default=1, type=int, help='shuffle interactions before generate dataset')
     parser.add_argument('--noKmer', default=0, type=int, help='Not using k-mer')

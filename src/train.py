@@ -7,12 +7,15 @@ import time
 import gc
 import argparse
 sys.path.append(os.path.realpath('.'))
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
 
 =======
 sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
+=======
+>>>>>>> b31f4d7... solved python import path problem
 
 from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
 

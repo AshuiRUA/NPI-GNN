@@ -8,6 +8,7 @@ import gc
 import argparse
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 sys.path.append(os.path.realpath('.'))
 from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
 
@@ -15,6 +16,10 @@ from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protei
 sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
 
 from src.classes import Net_1, LncRNA_Protein_Interaction_dataset
+=======
+sys.path.append(os.path.realpath('.'))
+from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
+>>>>>>> b31f4d7... solved python import path problem
 
 >>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
 from src.methods import dataset_analysis, average_list, Accuracy_Precision_Sensitivity_Specificity_MCC
