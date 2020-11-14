@@ -18,6 +18,7 @@ import sys
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 sys.path.append(os.path.realpath('.'))
 =======
 sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
@@ -25,6 +26,9 @@ sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
 =======
 sys.path.append(os.path.realpath('.'))
 >>>>>>> b31f4d7... solved python import path problem
+=======
+sys.path.append(os.path.realpath('.'))
+>>>>>>> 4c845fb... 解决了import路径的问题
 
 import src.classes
 

@@ -8,6 +8,7 @@ import gc
 import argparse
 sys.path.append(os.path.realpath('.'))
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
@@ -16,6 +17,8 @@ from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protei
 sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
 =======
 >>>>>>> b31f4d7... solved python import path problem
+=======
+>>>>>>> 4c845fb... 解决了import路径的问题
 
 from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
 

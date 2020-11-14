@@ -9,6 +9,7 @@ import argparse
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 sys.path.append(os.path.realpath('.'))
 from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
 
@@ -20,6 +21,10 @@ from src.classes import Net_1, LncRNA_Protein_Interaction_dataset
 sys.path.append(os.path.realpath('.'))
 from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
 >>>>>>> b31f4d7... solved python import path problem
+=======
+sys.path.append(os.path.realpath('.'))
+from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
+>>>>>>> 4c845fb... 解决了import路径的问题
 
 >>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
 from src.methods import dataset_analysis, average_list, Accuracy_Precision_Sensitivity_Specificity_MCC

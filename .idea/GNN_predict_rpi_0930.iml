@@ -10,11 +10,15 @@
     <option name="myDocStringFormat" value="NumPy" />
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     <option name="renderExternalDocumentation" value="true" />
 =======
 >>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
 =======
     <option name="renderExternalDocumentation" value="true" />
 >>>>>>> b31f4d7... solved python import path problem
+=======
+    <option name="renderExternalDocumentation" value="true" />
+>>>>>>> 4c845fb... 解决了import路径的问题
   </component>
 </module>

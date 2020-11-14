@@ -38,6 +38,7 @@ If you want to reduce the size of the dataset while keeping the bipartite graph 
 If you don't want to use k-mer, you need ro use "noK-mer" on generate_dataset.py
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >Python src/generate_dataset.py --projectName yourProjectName --interactionDatasetName NPInter2 --inMemory 0 --noKmer 1
 =======
 >Python src/generate_dataset.py --projectName yourProjectName --interactionDatasetName NPInter2 --inMemory 0 --noKmer 1
@@ -45,3 +46,6 @@ If you don't want to use k-mer, you need ro use "noK-mer" on generate_dataset.py
 =======
 >Python src/generate_dataset.py --projectName yourProjectName --interactionDatasetName NPInter2 --inMemory 0 --noKmer 1
 >>>>>>> bdc6081... Update README.md
+=======
+>Python src/generate_dataset.py --projectName yourProjectName --interactionDatasetName NPInter2 --inMemory 0 --noKmer 1
+>>>>>>> 73fcb72... Update README.md
