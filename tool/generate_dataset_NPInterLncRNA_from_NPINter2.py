@@ -10,7 +10,7 @@ import copy
 import gc
 sys.setrecursionlimit(100000)
 
-sys.path.append('C:\Python_prj\GNN_predict_rpi_0930\src')
+sys.path.append(os.path.realpath('.'))
 
 from src.classes import LncRNA
 from src.classes import Protein
