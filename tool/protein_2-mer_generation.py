@@ -16,7 +16,7 @@ import os.path as osp
 import argparse
 import sys
 
-sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
+sys.path.append(os.path.realpath('.'))
 
 import src.classes
 
