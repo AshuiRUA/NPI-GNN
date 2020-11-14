@@ -7,7 +7,7 @@ import time
 import gc
 import argparse
 
-sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
+sys.path.append(os.path.realpath('.'))
 
 from src.classes import Net_1, LncRNA_Protein_Interaction_dataset
 

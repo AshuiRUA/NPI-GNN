@@ -4,8 +4,8 @@ from torch_geometric.data import DataLoader
 import os.path as osp
 import os
 import torch
-sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
 
+sys.path.append(os.path.realpath('.'))
 from src.classes import LncRNA_Protein_Interaction_dataset, Net_1
 from src.methods import Accuracy_Precision_Sensitivity_Specificity_MCC
 
