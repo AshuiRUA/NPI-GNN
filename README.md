@@ -12,6 +12,8 @@ torch-geometric 1.4.2
 First, you have to generate edgelist for node2vec.
 >Python .\src\generate_edgelist.py --projectName yourProjectName --interactionDatasetName NPInter2 --createBalanceDataset 1 
 
+push test
+
 This will output a edgelist file in 'data/graph/yourProjectName/bipartite_graph.edgelist' and an empty folder 'data/node2vec_result/yourProjectName' to store node2vec result.
 
 Second, you have to run node2vec.
