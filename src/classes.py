@@ -111,10 +111,12 @@ class LncRNA_Protein_Interaction_dataset(Dataset):
         pass
 
     def process(self):
-        for i in tqdm(range(self.num_of_subgraph)):
+        for i in range(self.num_of_subgraph):
             interaction = self.interaction_list[i]
             data = self.local_subgraph_generation(interaction, self.h)
             torch.save(data, osp.join(self.processed_dir, 'data_{}.pt'.format(i)))
+            if i%100 == 0:
+                print(f'{i}/{self.num_of_subgraph}')
     
     def get(self, idx):
         data = torch.load(osp.join(self.processed_dir, 'data_{}.pt'.format(idx)))

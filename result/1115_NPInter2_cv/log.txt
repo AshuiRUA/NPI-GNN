@@ -1,0 +1,28 @@
+database：NPInter2
+node2vec_windowSize = 5
+5折交叉验证
+迭代次数：10
+学习率：初始0.005，每当loss增加时就乘0.95
+L2正则化，系数0.0005
+Epoch: 005, 训练集, Accuracy: 0.96525, Precision: 0.96043, Sensitivity: 0.97046, Specificity: 0.96003, MCC: 0.93054
+Epoch: 005, 测试集, Accuracy: 0.95869, Precision: 0.95652, Sensitivity: 0.96111, Specificity: 0.95627, MCC: 0.91740
+第001折结果, 训练集, Accuracy: 0.97059, Precision: 0.96401, Sensitivity: 0.97767, Specificity: 0.96351, MCC: 0.94127
+第001折结果, 测试集, Accuracy: 0.96061, Precision: 0.95409, Sensitivity: 0.96783, Specificity: 0.95339, MCC: 0.92132
+Epoch: 005, 训练集, Accuracy: 0.88445, Precision: 0.87686, Sensitivity: 0.89365, Specificity: 0.87531, MCC: 0.76906
+Epoch: 005, 测试集, Accuracy: 0.87800, Precision: 0.87112, Sensitivity: 0.89094, Specificity: 0.86472, MCC: 0.75609
+第002折结果, 训练集, Accuracy: 0.92857, Precision: 0.92144, Sensitivity: 0.93653, Specificity: 0.92067, MCC: 0.85726
+第002折结果, 测试集, Accuracy: 0.91667, Precision: 0.90863, Sensitivity: 0.92888, Specificity: 0.90414, MCC: 0.83347
+Epoch: 005, 训练集, Accuracy: 0.95834, Precision: 0.93226, Sensitivity: 0.98833, Specificity: 0.92848, MCC: 0.91835
+Epoch: 005, 测试集, Accuracy: 0.95269, Precision: 0.92569, Sensitivity: 0.98523, Specificity: 0.91961, MCC: 0.90723
+第003折结果, 训练集, Accuracy: 0.96591, Precision: 0.94743, Sensitivity: 0.98641, Specificity: 0.94549, MCC: 0.93260
+第003折结果, 测试集, Accuracy: 0.95533, Precision: 0.93497, Sensitivity: 0.97951, Specificity: 0.93075, MCC: 0.91167
+Epoch: 005, 训练集, Accuracy: 0.95936, Precision: 0.93633, Sensitivity: 0.98599, Specificity: 0.93259, MCC: 0.92002
+Epoch: 005, 测试集, Accuracy: 0.95101, Precision: 0.92449, Sensitivity: 0.98106, Specificity: 0.92162, MCC: 0.90373
+第004折结果, 训练集, Accuracy: 0.95126, Precision: 0.96555, Sensitivity: 0.93619, Specificity: 0.96641, MCC: 0.90295
+第004折结果, 测试集, Accuracy: 0.94332, Precision: 0.95416, Sensitivity: 0.93006, Specificity: 0.95629, MCC: 0.88688
+Epoch: 005, 训练集, Accuracy: 0.96783, Precision: 0.96107, Sensitivity: 0.97534, Specificity: 0.96028, MCC: 0.93575
+Epoch: 005, 测试集, Accuracy: 0.96037, Precision: 0.95444, Sensitivity: 0.96602, Specificity: 0.95485, MCC: 0.92082
+第005折结果, 训练集, Accuracy: 0.97281, Precision: 0.95685, Sensitivity: 0.99042, Specificity: 0.95510, MCC: 0.94620
+第005折结果, 测试集, Accuracy: 0.96806, Precision: 0.94877, Sensitivity: 0.98883, Specificity: 0.94772, MCC: 0.93696
+耗时5049.290762662888
+最终结果，Accuracy: 0.94880, Precision: 0.94012, Sensitivity: 0.95902, Specificity: 0.93846, MCC: 0.89806

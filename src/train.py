@@ -10,13 +10,6 @@ sys.path.append(os.path.realpath('.'))
 
 from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
 
-sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
-
-from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
-
-
-from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
-
 from src.methods import dataset_analysis, average_list, Accuracy_Precision_Sensitivity_Specificity_MCC
 
 from torch_geometric.data import DataLoader
@@ -32,7 +25,7 @@ def parse_args():
     parser.add_argument('--datasetName',  help='the name of this object')
     parser.add_argument('--inMemory', type = int, help='in memory dataset or not')
     parser.add_argument('--interactionDatasetName', help='raw interactions dataset')
-    parser.add_argument('--epochNumber',  type=int, help='number of training epoch')
+    parser.add_argument('--epochNumber', default=50, type=int, help='number of training epoch')
     parser.add_argument('--hopNumber', default=2, type=int , help='hop number of subgraph')
     parser.add_argument('--node2vecWindowSize', default=5, type=int, help='node2vec window size')
     parser.add_argument('--crossValidation', default=1, type=int, help='do cross validation')

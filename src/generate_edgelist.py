@@ -10,25 +10,13 @@ import gc
 
 sys.setrecursionlimit(1000000000)
 sys.path.append(os.path.realpath('.'))
-sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
-sys.path.append(os.path.realpath('.'))
-sys.path.append(os.path.realpath('.'))
-sys.path.append(os.path.realpath('.'))
 
 from src.classes import LncRNA
 from src.classes import Protein
 from src.classes import LncRNA_Protein_Interaction
 
 
-from .methods import reset_basic_data, nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
-
 from src.methods import reset_basic_data, nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
-
-from .methods import reset_basic_data, nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
-
-from .methods import reset_basic_data, nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
-
-from .methods import reset_basic_data, nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
 
 
 def parse_args():
@@ -87,7 +75,7 @@ def read_interaction_dataset(dataset_path, dataset_name):
             temp_protein = protein_list[protein_name_index_dict[protein_name]]
         temp_interaction = LncRNA_Protein_Interaction(temp_lncRNA, temp_protein, label)
         # print(temp_interaction.protein.name, temp_interaction.lncRNA.name)
-        
+
         if label == 1:
             interaction_list.append(temp_interaction)
         elif label == 0:
@@ -159,7 +147,7 @@ def read_node2vec_result(path):
         serial_number = int(arr[0])
         arr.pop(0)
         node_list[serialNumber_listIndex_dict[serial_number]].embedded_vector = arr
-    
+
     for node in node_list:
         if len(node.embedded_vector) != 64:
             print('node2vec读入有问题')
@@ -216,7 +204,7 @@ def networkx_format_network_generation(interaction_list, negative_interaction_li
 
     del node_list, edge_list
     gc.collect()
-    return G 
+    return G
 
 
 def output_edgelist_file(G, output_path):
@@ -372,9 +360,9 @@ def reduce_dataset_mentainConnected(G, ratio, list_interaction, list_negativeInt
             num_deleted_protein += 1
         else:
             index_list_protein += 1
-    
+
     list_interaction_reduced, list_negativeInteraction_reduced, lncRNA_list, protein_list = list_interaction, list_negativeInteraction, list_lncRNA, list_protein
-    
+
     # 根据删除过后的list_interaction_reduced, list_negativeInteraction_reduced重新筛选lncRNA_list, protein_list
     list_serialNumber_lncRNA = []
     list_serialNumber_protein = []
@@ -400,7 +388,7 @@ def reduce_dataset_mentainConnected(G, ratio, list_interaction, list_negativeInt
     for serial_number in list_serialNumber_protein_reduced:
         index = dict_serialNumber_listIndex_protein[serial_number]
         list_protein_reduced.append(protein_list[index])
-    
+
     # 重建列表的依赖关系
     list_interaction_reduced, list_negativeInteraction_reduced, list_lncRNA_reduced, list_protein_reduced = reset_basic_data(list_interaction_reduced, list_negativeInteraction_reduced, list_lncRNA_reduced, list_protein_reduced)
 
@@ -429,7 +417,7 @@ def output_intermediate_products(project_name, interaction_list, negative_intera
     if not osp.exists(path=interaction_list_path):
         with open(file=interaction_list_path, mode='wb') as f:
             pickle.dump(interaction_list, f)
-        
+
     if not osp.exists(path=negative_interaction_list_path):
         with open(file=negative_interaction_list_path, mode='wb') as f:
             pickle.dump(negative_interaction_list, f)
@@ -437,7 +425,7 @@ def output_intermediate_products(project_name, interaction_list, negative_intera
     if not osp.exists(path=lncRNA_list_path):
         with open(file=lncRNA_list_path, mode='wb') as f:
             pickle.dump(lncRNA_list, f)
-    
+
     if not osp.exists(path=protein_list_path):
         with open(file=protein_list_path, mode='wb') as f:
             pickle.dump(protein_list, f)
@@ -493,5 +481,5 @@ if __name__ == '__main__':
             output_intermediate_products(args.projectName, interaction_list, negative_interaction_list, lncRNA_list, protein_list)
     # 创建保存node2vec结果的文件夹
     if not osp.exists(f'data\\node2vec_result\\{args.projectName}'):
-        os.makedirs(f'data\\node2vec_result\\{args.projectName}')        
+        os.makedirs(f'data\\node2vec_result\\{args.projectName}')
     print('\n' + 'exit' + '\n')
