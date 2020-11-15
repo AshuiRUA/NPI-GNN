@@ -17,6 +17,8 @@ push test
 =======
 >>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
 
+push test
+
 This will output a edgelist file in 'data/graph/yourProjectName/bipartite_graph.edgelist' and an empty folder 'data/node2vec_result/yourProjectName' to store node2vec result.
 
 Second, you have to run node2vec.
