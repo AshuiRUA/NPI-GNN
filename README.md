@@ -1,4 +1,4 @@
-# GNN predict rpi
+# NPI-GNN
 In this work, by integrating SEAL, GraphSAGE and top-k pooling, we construct a GNN based model to predict ncRNA-protein interactions.
 
 ### Dependency:
