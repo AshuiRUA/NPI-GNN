@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
     saving_path = f'result/{args.trainingName}'
     if osp.exists(saving_path):
-        raise Exception('已经有同名的训练')
+        raise Exception('There is already a training of the same name')
     else:
         os.makedirs(saving_path)
 
@@ -92,10 +92,10 @@ if __name__ == "__main__":
         result_file = open(file=log_path, mode='w')
         result_file.write(f'database：{args.interactionDatasetName}\n')
         result_file.write(f'node2vec_windowSize = {args.node2vecWindowSize}\n')
-        result_file.write(f'{k}折交叉验证\n')
-        result_file.write(f'迭代次数：{num_of_epoch}\n')
-        result_file.write(f'学习率：初始{LR}，每当loss增加时就乘0.95\n')
-        result_file.write(f'L2正则化，系数{L2_weight_decay}\n')
+        result_file.write(f'{k}-fold cross validation\n')
+        result_file.write(f'number of eopch ：{num_of_epoch}\n')
+        result_file.write(f'learn rate：initial = {LR}，whenever loss increases, multiply by 0.95\n')
+        result_file.write(f'L2 weight decay = {L2_weight_decay}\n')
 
         # 记录启示时间
         start_time = time.time()
@@ -105,7 +105,7 @@ if __name__ == "__main__":
         Specificity_list = []
         MCC_list = []
         for i in range(k):
-            print('第{:d}折开始'.format(i+1))
+            print('{:d}-fold start'.format(i+1))
             # 创建保存模型的文件夹
             os.makedirs(saving_path + f'/model_{i}_fold')
             # 创建模型
@@ -126,10 +126,10 @@ if __name__ == "__main__":
             test_dataset = dataset[test_dataset_start:test_dataset_end]
             train_dataset = dataset[0:test_dataset_start] + dataset[test_dataset_end:dataset.len()]
 
-            print('测试数据数量：', len(test_dataset), '训练集数据数量：', len(train_dataset))
-            print('训练集')
+            print('number of samples in testing dataset：', len(test_dataset), 'number of samples in training dataset：', len(train_dataset))
+            print('training dataset')
             dataset_analysis(train_dataset)
-            print('测试集')
+            print('testing dataset')
             dataset_analysis(test_dataset)
 
             train_loader = DataLoader(train_dataset, batch_size=args.batchSize)
@@ -150,12 +150,12 @@ if __name__ == "__main__":
                     # 用Accuracy, Precision, Sensitivity, MCC评价模型
                     # Accuracy, Precision, Sensitivity ,MCC = Accuracy_Precision_Sensitivity_MCC(model, train_loader, device)
                     Accuracy, Precision, Sensitivity, Specificity, MCC = Accuracy_Precision_Sensitivity_Specificity_MCC(model, train_loader, device)
-                    output = 'Epoch: {:03d}, 训练集, Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(epoch + 1, Accuracy, Precision, Sensitivity, Specificity, MCC)
+                    output = 'Epoch: {:03d}, training dataset, Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(epoch + 1, Accuracy, Precision, Sensitivity, Specificity, MCC)
                     print(output)
                     result_file.write(output + '\n')
                     # Accuracy, Precision, Sensitivity, MCC = Accuracy_Precision_Sensitivity_MCC(model, test_loader, device)
                     Accuracy, Precision, Sensitivity, Specificity, MCC = Accuracy_Precision_Sensitivity_Specificity_MCC(model, test_loader, device)
-                    output = 'Epoch: {:03d}, 测试集, Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(epoch + 1, Accuracy, Precision, Sensitivity, Specificity, MCC)
+                    output = 'Epoch: {:03d}, testing dataset, Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(epoch + 1, Accuracy, Precision, Sensitivity, Specificity, MCC)
                     print(output)
                     result_file.write(output + '\n')
                     # 保存模型
@@ -164,11 +164,11 @@ if __name__ == "__main__":
 
             # 训练结束，评价模型，并且把结果写入文件
             Accuracy, Precision, Sensitivity, Specificity, MCC = Accuracy_Precision_Sensitivity_Specificity_MCC(model, train_loader, device)
-            output = '第{:03d}折结果, 训练集, Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(i + 1, Accuracy, Precision, Sensitivity, Specificity, MCC)
+            output = '{:03d}-fold result, training dataset, Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(i + 1, Accuracy, Precision, Sensitivity, Specificity, MCC)
             print(output)
             result_file.write(output + '\n')
             Accuracy, Precision, Sensitivity, Specificity, MCC = Accuracy_Precision_Sensitivity_Specificity_MCC(model, test_loader, device)
-            output = '第{:03d}折结果, 测试集, Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(i + 1, Accuracy, Precision, Sensitivity, Specificity, MCC)
+            output = '{:03d}-fold result, testing dataset, Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(i + 1, Accuracy, Precision, Sensitivity, Specificity, MCC)
             print(output)
 
             Accuracy_list.append(Accuracy)
@@ -184,8 +184,8 @@ if __name__ == "__main__":
 
         # k折交叉验证完毕
         end_time = time.time()
-        print('耗时', end_time - start_time)
-        result_file.write('耗时' + str(end_time - start_time) + '\n')
+        print('Time consuming:', end_time - start_time)
+        result_file.write('Time consuming:' + str(end_time - start_time) + '\n')
         
 
         # 计算平均的Accuracy, Precision, Sensitivity, MCC
@@ -196,8 +196,8 @@ if __name__ == "__main__":
         MCC_average = average_list(MCC_list)
 
         # 输出最终的结果
-        print('最终结果，Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(Accuracy_average, Precision_average, Sensitivity_average, Specificity_average, MCC_average))
-        result_file.write('最终结果，Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(Accuracy_average, Precision_average, Sensitivity_average, Specificity_average, MCC_average))
+        print('average result，Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(Accuracy_average, Precision_average, Sensitivity_average, Specificity_average, MCC_average))
+        result_file.write('average result，Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(Accuracy_average, Precision_average, Sensitivity_average, Specificity_average, MCC_average))
 
         result_file.close()
         

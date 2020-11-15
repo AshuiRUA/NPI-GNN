@@ -32,7 +32,7 @@ for index in range(len(lines)):
     if line[0] == '>':
         indicant_index_list.append(index)
 num_of_lncRNA = len(indicant_index_list)
-print('lncRNA的数量', num_of_lncRNA)
+print('number of lncRNAs', num_of_lncRNA)
 
 #每两个数之间，就是一个lncRNA序列记录
 indicant_index_list.append(len(lines))  

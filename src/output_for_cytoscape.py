@@ -29,7 +29,7 @@ def read_interaction_dataset(dataset_path, dataset_name):
     # 能在lncRNA_list和protein_list中快速的找到
     if not osp.exists(dataset_path):
         raise Exception('interaction datset does not exist')
-    print('开始读取xlsx文件')
+    print('start reading xlsx file')
     wb = load_workbook(dataset_path)
     sheets = wb.worksheets   # 获取当前所有的sheet
     sheet = sheets[0]
@@ -78,8 +78,8 @@ def read_interaction_dataset(dataset_path, dataset_name):
 
         temp_lncRNA.interaction_list.append(temp_interaction)
         temp_protein.interaction_list.append(temp_interaction)
-    print('读入的lncRNA总数：{:d}, 读入的protein总数：{:d}, node总数：{:d}'.format(lncRNA_count, protein_count, lncRNA_count + protein_count))
-    print(f'读入的正样本数：{len(interaction_list)}, 读入的负样本数：{len(negative_interaction_list)}\n')
+    print('number of lncRNA：{:d}, number of protein：{:d}, number of node：{:d}'.format(lncRNA_count, protein_count, lncRNA_count + protein_count))
+    print(f'number of positive samples：{len(interaction_list)}, number of negative samples：{len(negative_interaction_list)}\n')
 
 
 def negative_interaction_generation():

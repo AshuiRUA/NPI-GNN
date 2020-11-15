@@ -24,7 +24,7 @@ G = nx.read_edgelist(G_path)
 # print(len(G_temp.edges))
 
 print(type(G))
-print(f'连接通量的个数：{len(list(nx.connected_components(G)))}')
+print(f'number of connected components：{len(list(nx.connected_components(G)))}')
 
 if draw_plt == True:
     plt.subplot(2, 2, 1)

@@ -37,7 +37,7 @@ def read_interaction_dataset(dataset_path, dataset_name):
     # 能在lncRNA_list和protein_list中快速的找到
     if not osp.exists(dataset_path):
         raise Exception('interaction datset does not exist')
-    print('开始读取xlsx文件')
+    print('strat reading xlsx file')
     wb = load_workbook(dataset_path)
     sheets = wb.worksheets   # 获取当前所有的sheet
     sheet = sheets[0]
@@ -82,12 +82,12 @@ def read_interaction_dataset(dataset_path, dataset_name):
             negative_interaction_list.append(temp_interaction)
         else:
             print(label)
-            raise Exception('{dataset_name}中有除了0和1之外的label'.format(dataset_name=dataset_name))
+            raise Exception('{dataset_name}has labels other than 0 and 1'.format(dataset_name=dataset_name))
 
         temp_lncRNA.interaction_list.append(temp_interaction)
         temp_protein.interaction_list.append(temp_interaction)
-    print('读入的lncRNA总数：{:d}, 读入的protein总数：{:d}, node总数：{:d}'.format(lncRNA_count, protein_count, lncRNA_count + protein_count))
-    print('读入的interaction总数：{:d}'.format(len(interaction_list) + len(negative_interaction_list)))
+    print('number of lncRNA：{:d}, number of protein：{:d}, number of node：{:d}'.format(lncRNA_count, protein_count, lncRNA_count + protein_count))
+    print('number of interaction：{:d}'.format(len(interaction_list) + len(negative_interaction_list)))
 
 
 def negative_interaction_generation():
@@ -120,7 +120,7 @@ def negative_interaction_generation():
         temp_lncRNA.interaction_list.append(temp_interaction)
         temp_protein.interaction_list.append(temp_interaction)
         negative_interaction_count = negative_interaction_count + 1
-    print('生成了', len(negative_interaction_list), '个负样本')
+    print('generate', len(negative_interaction_list), 'negative samples')
     return negative_interaction_list
 
 
@@ -134,59 +134,59 @@ def return_node_list_and_edge_list():
     return node_list, edge_list
 
 
-def read_node2vec_result(path):
-    print('读入，node2vec的结果')
-    node_list, edge_list = return_node_list_and_edge_list()
-    serialNumber_listIndex_dict = nodeSerialNumber_listIndex_dict_generation(node_list)
+# def read_node2vec_result(path):
+#     print('读入，node2vec的结果')
+#     node_list, edge_list = return_node_list_and_edge_list()
+#     serialNumber_listIndex_dict = nodeSerialNumber_listIndex_dict_generation(node_list)
+#
+#     node2vec_result_file = open(path, mode='r')
+#     lines = node2vec_result_file.readlines()
+#     lines.pop(0)    # 第一行包含：节点个数 节点嵌入后的维度
+#     for line in lines:
+#         arr = line.strip().split(' ')
+#         serial_number = int(arr[0])
+#         arr.pop(0)
+#         node_list[serialNumber_listIndex_dict[serial_number]].embedded_vector = arr
+#
+#     for node in node_list:
+#         if len(node.embedded_vector) != 64:
+#             print('node2vec读入有问题')
+#     node2vec_result_file.close()
 
-    node2vec_result_file = open(path, mode='r')
-    lines = node2vec_result_file.readlines()
-    lines.pop(0)    # 第一行包含：节点个数 节点嵌入后的维度
-    for line in lines:
-        arr = line.strip().split(' ')
-        serial_number = int(arr[0])
-        arr.pop(0)
-        node_list[serialNumber_listIndex_dict[serial_number]].embedded_vector = arr
 
-    for node in node_list:
-        if len(node.embedded_vector) != 64:
-            print('node2vec读入有问题')
-    node2vec_result_file.close()
-
-
-def load_node_k_mer(node_list, node_type, k_mer_path):
-    node_name_index_dict = nodeName_listIndex_dict_generation(node_list)   # 节点的名字：节点在其所在的列表中的index
-    with open(k_mer_path, mode='r') as f:   # 打开存有k-mer特征的文件
-        lines = f.readlines()
-        # 读取k-mer文件
-        for i in range(len(lines)):
-            line = lines[i]
-            # 从文件中定位出lncRNA或者protein的名字
-            if line[0] == '>':
-                node_name = line.strip()[1:]
-                if node_name in node_name_index_dict:   # 根据名字在node_list中找到它，把k-mer数据赋予它
-                    node = node_list[node_name_index_dict[node_name]]
-                    if len(node.attributes_vector) == 0:    # 如果一个node的attributes_vector已经被赋值过，不重复赋值
-                    # 如果这个node，已经被赋予过k-mer数据，报出异常
-                        if len(node.attributes_vector) != 0:
-                            print(node_name, node.node_type)
-                            raise Exception('node被赋予过k-mer数据')
-                        # k-mer数据提取出来，根据node是lncRNA还是protein，给attributes_vector赋值
-                        k_mer_vector = lines[i + 1].strip().split('\t')
-                        if node_type == 'lncRNA':
-                            if len(k_mer_vector) != 64:
-                                raise Exception('lncRNA 3-mer error')
-                            for number in k_mer_vector:
-                                node.attributes_vector.append(float(number))
-                            for i in range(49):
-                                node.attributes_vector.append(0)
-                        if node_type == 'protein':
-                            if len(k_mer_vector) != 49:
-                                raise Exception('protein 2-mer error')
-                            for i in range(64):
-                                node.attributes_vector.append(0)
-                            for number in k_mer_vector:
-                                node.attributes_vector.append(float(number))
+# def load_node_k_mer(node_list, node_type, k_mer_path):
+#     node_name_index_dict = nodeName_listIndex_dict_generation(node_list)   # 节点的名字：节点在其所在的列表中的index
+#     with open(k_mer_path, mode='r') as f:   # 打开存有k-mer特征的文件
+#         lines = f.readlines()
+#         # 读取k-mer文件
+#         for i in range(len(lines)):
+#             line = lines[i]
+#             # 从文件中定位出lncRNA或者protein的名字
+#             if line[0] == '>':
+#                 node_name = line.strip()[1:]
+#                 if node_name in node_name_index_dict:   # 根据名字在node_list中找到它，把k-mer数据赋予它
+#                     node = node_list[node_name_index_dict[node_name]]
+#                     if len(node.attributes_vector) == 0:    # 如果一个node的attributes_vector已经被赋值过，不重复赋值
+#                     # 如果这个node，已经被赋予过k-mer数据，报出异常
+#                         if len(node.attributes_vector) != 0:
+#                             print(node_name, node.node_type)
+#                             raise Exception('node被赋予过k-mer数据')
+#                         # k-mer数据提取出来，根据node是lncRNA还是protein，给attributes_vector赋值
+#                         k_mer_vector = lines[i + 1].strip().split('\t')
+#                         if node_type == 'lncRNA':
+#                             if len(k_mer_vector) != 64:
+#                                 raise Exception('lncRNA 3-mer error')
+#                             for number in k_mer_vector:
+#                                 node.attributes_vector.append(float(number))
+#                             for i in range(49):
+#                                 node.attributes_vector.append(0)
+#                         if node_type == 'protein':
+#                             if len(k_mer_vector) != 49:
+#                                 raise Exception('protein 2-mer error')
+#                             for i in range(64):
+#                                 node.attributes_vector.append(0)
+#                             for number in k_mer_vector:
+#                                 node.attributes_vector.append(float(number))
 
 
 def networkx_format_network_generation(interaction_list, negative_interaction_list, lncRNA_list, protein_list):
@@ -200,7 +200,7 @@ def networkx_format_network_generation(interaction_list, negative_interaction_li
         G.add_node(node.serial_number)
     for edge in edge_list:
         G.add_edge(edge.lncRNA.serial_number, edge.protein.serial_number)
-    print('图包含的节点的数量', G.number_of_nodes(), '图包含的边的数量', G.number_of_edges())
+    print('number of nodes in graph: ', G.number_of_nodes(), 'number of edges in graph: ', G.number_of_edges())
 
     del node_list, edge_list
     gc.collect()
@@ -226,18 +226,18 @@ def delete_interaction_from_lncRNA_protein(lncRNA, protein):
             del lncRNA.interaction_list[index]
             break
         if index == len(lncRNA.interaction_list)-1:
-            raise Exception(f'在lncRNA{lncRNA.name}中没找到要删除的相互作用{lncRNA.name}-{protein.name}')
+            raise Exception(f'{lncRNA.name} do not have {lncRNA.name}-{protein.name} we want to delete')
     for index in range(len(protein.interaction_list)):
         interaction = protein.interaction_list[index]
         if interaction.lncRNA.serial_number == lncRNA.serial_number:
             del protein.interaction_list[index]
             break
         if index == len(protein.interaction_list)-1:
-            raise Exception(f'在protein{protein.name}中没找到要删除的相互作用{lncRNA.name}-{protein.name}')
+            raise Exception(f'{protein.name} do not have {lncRNA.name}-{protein.name} we want to delete')
 
 
 def reduce_dataset_mentainConnected(G, ratio, list_interaction, list_negativeInteraction, list_lncRNA, list_protein):
-    print(f'把数据集缩小到原来的{ratio}')
+    print(f'reduce the dataset to its {ratio}')
     # 确定要删减的数据的数量
     len_list_interaction = len(list_interaction)
     len_list_negativeInteraction = len(list_negativeInteraction)
@@ -335,7 +335,7 @@ def reduce_dataset_mentainConnected(G, ratio, list_interaction, list_negativeInt
             gc.collect()
 
         if count %100 == 0:
-            print(f'还需删除的正例个数{num_delete_interaction-num_deleted_positive}，还需删除的负例个数{num_delete_negativeInteraction-num_deleted_negative}')
+            print(f'number of positive samples need to be deleted: {num_delete_interaction-num_deleted_positive}，number of negative samples need to be deleted: {num_delete_negativeInteraction-num_deleted_negative}')
         count += 1
 
     # 从list_lncRNA中删除掉，已经在二部图中被删除的lncRNA
@@ -406,7 +406,7 @@ def output_intermediate_products(project_name, interaction_list, negative_intera
     if not osp.exists(path=output_path):
         os.makedirs(output_path)
     else:
-        raise Exception("相应的intermediate products已存在")
+        raise Exception("corresponding intermediate products exists")
 
 
     interaction_list_path = f'data/intermediate_products/{project_name}/interaction_list.txt'
@@ -451,8 +451,8 @@ if __name__ == '__main__':
     if args.createBalanceDataset == 1:
         negative_interaction_list = negative_interaction_generation() # 生成负样本
 
-    print(f'lncRNA数量: {len(lncRNA_list)}, protein数量: {len(protein_list)}, node数量: {len(lncRNA_list) + len(protein_list)}')
-    print(f'相互作用正样本数量: {len(interaction_list)}, 相互作用负样本数量: {len(negative_interaction_list)}, edge数量: {len(interaction_list) + len(negative_interaction_list)}')
+    print(f'number of lncRNA: {len(lncRNA_list)}, number of protein: {len(protein_list)}, number of node: {len(lncRNA_list) + len(protein_list)}')
+    print(f'number of positive samples: {len(interaction_list)}, number of negative samples: {len(negative_interaction_list)}, number of edges: {len(interaction_list) + len(negative_interaction_list)}')
 
     # 缩小数据集
     if args.interactionDatasetName == 'NPInter2' and args.reduce == 1 :
@@ -469,7 +469,7 @@ if __name__ == '__main__':
             # 输出中间产物
             output_intermediate_products(args.projectName, args.node2vecWindowSize, interaction_list, negative_interaction_list, lncRNA_list, protein_list)
     elif args.interactionDatasetName != 'NPInter2' and args.reduce == 1 :
-        raise Exception("暂时不支持缩减NPInter2之外的数据集")
+        raise Exception("temporary do not support reduce interaction dataset other than NPInter2")
     else:
         # 不缩小数据集
         # 生成edgelist格式的网络并保存

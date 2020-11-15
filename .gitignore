@@ -2,3 +2,5 @@
 .vscode/
 
 *.pt
+
+output_for_cytoscape.py

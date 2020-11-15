@@ -239,7 +239,7 @@ class LncRNA_Protein_Interaction_inMemoryDataset(InMemoryDataset):
         # Read data into huge `Data` list.
         if self.interaction_list != None and self.h != None:
             num_data = len(self.interaction_list)
-            print(f'数据总量:{num_data}')
+            print(f'the number of samples:{num_data}')
             data_list = []
             count = 0
             for interaction in self.interaction_list:

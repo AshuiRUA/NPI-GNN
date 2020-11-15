@@ -42,7 +42,7 @@ def return_node_list_and_edge_list():
 
 
 def read_node2vec_result(path):
-    print('读入，node2vec的结果')
+    print('read node2vec result')
     node_list, edge_list = return_node_list_and_edge_list()
     serialNumber_listIndex_dict = nodeSerialNumber_listIndex_dict_generation(node_list)
 
@@ -57,7 +57,7 @@ def read_node2vec_result(path):
     
     for node in node_list:
         if len(node.embedded_vector) != 64:
-            print('node2vec读入有问题')
+            print('length of node2vec result vector !== 64')
     node2vec_result_file.close()
 
 
@@ -77,7 +77,7 @@ def load_node_k_mer(node_list, node_type, k_mer_path):
                     # 如果这个node，已经被赋予过k-mer数据，报出异常
                         if len(node.attributes_vector) != 0:
                             print(node_name, node.node_type)
-                            raise Exception('node被赋予过k-mer数据')
+                            raise Exception('node already have k-mer result')
                         # k-mer数据提取出来，根据node是lncRNA还是protein，给attributes_vector赋值
                         k_mer_vector = lines[i + 1].strip().split('\t')
                         if node_type == 'lncRNA':

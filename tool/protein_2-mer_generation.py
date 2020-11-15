@@ -86,7 +86,7 @@ def output_protein_name_list_and_sequence_list(path):
             sequence = sequence + line.strip()
     protein_sequence_list.append(sequence)  # 把最后一个蛋白质的sequence存入protein_sequence_list
 
-    print('蛋白质的数量', len(protein_name_list), '蛋白质序列记录的数量', len(protein_sequence_list))
+    print('number of proteins: ', len(protein_name_list), 'number of protein sequences: ', len(protein_sequence_list))
     protein_sequence_file.close()
     return protein_name_list, protein_sequence_list
 
@@ -114,7 +114,7 @@ def change_protein_sequence_20_to_7():
                 temp = random.sample(['A', 'B', 'C', 'D', 'E', 'F', 'G'], 1)[0]
                 sequence_list[j] = temp
             else:
-                print('蛋白质序列错误')
+                print('protein sequence error')
                 raise Exception
         protein_sequence_list[i] = ''.join(sequence_list)
 
