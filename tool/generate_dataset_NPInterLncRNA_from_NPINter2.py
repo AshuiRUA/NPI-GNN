@@ -10,23 +10,11 @@ import copy
 import gc
 sys.setrecursionlimit(100000)
 
-<<<<<<< HEAD:tool/generate_dataset_NPInterLncRNA_from_NPINter2.py
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 sys.path.append(os.path.realpath('.'))
-=======
 sys.path.append('C:\Python_prj\GNN_predict_rpi_0930\src')
->>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
-=======
 sys.path.append(os.path.realpath('.'))
->>>>>>> b31f4d7... solved python import path problem
-=======
 sys.path.append(os.path.realpath('.'))
->>>>>>> 4c845fb... 解决了import路径的问题
-=======
 sys.path.append(os.path.realpath('.'))
->>>>>>> 4216767b1450b7b85fe4974fc54f997ec4fee435:src/generate_reduced_dataset.py
 
 from src.classes import LncRNA
 from src.classes import Protein

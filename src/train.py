@@ -7,28 +7,16 @@ import time
 import gc
 import argparse
 sys.path.append(os.path.realpath('.'))
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-<<<<<<< HEAD
 from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
 
-=======
 sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
-=======
->>>>>>> b31f4d7... solved python import path problem
-=======
->>>>>>> 4c845fb... 解决了import路径的问题
 
 from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
 
->>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
-=======
 
 from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
 
->>>>>>> 4216767b1450b7b85fe4974fc54f997ec4fee435
 from src.methods import dataset_analysis, average_list, Accuracy_Precision_Sensitivity_Specificity_MCC
 
 from torch_geometric.data import DataLoader
