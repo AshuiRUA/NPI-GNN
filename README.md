@@ -9,7 +9,7 @@ pytorch 1.4.0
 torch-geometric 1.4.2
 
 ### Usage:
-####1.Generating edgelist for node2vec.
+#### 1.Generating edgelist for node2vec.
 >Python .\src\generate_edgelist.py --projectName yourProjectName --interactionDatasetName NPInter2 
 
 This will output a edgelist file in 'data/graph/***yourProjectName***/bipartite_graph.edgelist' and an empty folder 'data/node2vec_result/***yourProjectName***' to store node2vec result.
@@ -23,7 +23,7 @@ This will output a edgelist file in 'data/graph/***yourProjectName***/bipartite_
 * --reduce: Default = 0. Whether you want to randomly reducing the interaction database, and also maintain one connected component. *1* means yes, *0* means no.
 * --reduceRatio: Default = 0.5. The reduce Ratio of reduced dataset.
 
-####2. Running node2vec.
+#### 2. Running node2vec.
 >Python .\node2vec-master\src\main.py --input 'data/graph/yourProjectName/bipartite_graph.edgelist' --output 'data/node2vec_result/yourProjectName/result.emb' --window-size 5
 
 **Necessary parameters**
@@ -35,7 +35,7 @@ The name of the output file must be result.emb, and the folder it in is the fold
 
 * please see <https://github.com/aditya-grover/node2vec>
 
-####3. Generating dataset for training.
+#### 3. Generating dataset for training.
 >Python src/generate_dataset.py --projectName yourProjectName --interactionDatasetName NPInter2 --inMemory 0
 
 **Necessary parameters**
@@ -48,7 +48,7 @@ The name of the output file must be result.emb, and the folder it in is the fold
 * --shuffle: Default = 1. Shuffle interactions before generate dataset, *1* means yes, *0* means no.
 * --noKmer: Default = 0. If you don't want to add *k*-mer frequencies into node feature, set it to *1*;
 
-####4. Running cross validation of NPI-GNN  and save models.
+#### 4. Running cross validation of NPI-GNN  and save models.
 >Python .\src\train.py --trainingName nameOfTraining --datasetName yourProjectName --interactionDatasetName NPInter2 --epochNumber 50 --inMemory 0
 
 This will save modules and training log in 'result/yourProjectName'
