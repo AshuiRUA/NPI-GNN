@@ -12,6 +12,7 @@ import gc
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 sys.path.append(os.path.realpath('.'))
 =======
 sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
@@ -22,6 +23,9 @@ sys.path.append(os.path.realpath('.'))
 =======
 sys.path.append(os.path.realpath('.'))
 >>>>>>> 4c845fb... 解决了import路径的问题
+=======
+sys.path.append(os.path.realpath('.'))
+>>>>>>> 4216767b1450b7b85fe4974fc54f997ec4fee435
 
 from src.classes import LncRNA
 from src.classes import Protein
@@ -29,6 +33,7 @@ from src.classes import LncRNA_Protein_Interaction, LncRNA_Protein_Interaction_d
 
 from src.methods import nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
 from src.methods import load_intermediate_products
+<<<<<<< HEAD
 
 def parse_args():
     parser = argparse.ArgumentParser(description="generate_dataset.")
@@ -52,6 +57,19 @@ def parse_args():
     parser.add_argument('--noKmer', default=0, type=int, help='Not using k-mer')
     parser.add_argument('--output', default=1, type=int, help='output dataset or not')
 
+=======
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="generate_dataset.")
+    parser.add_argument('--projectName', default='0930_NPInter2', help='project name')
+    parser.add_argument('--interactionDatasetName', default='NPInter2', help='raw interactions dataset')
+    parser.add_argument('--inMemory',type=int, help='1 or 0: in memory dataset or not')
+    parser.add_argument('--hopNumber', default=2, type=int, help='hop number of subgraph')
+    parser.add_argument('--shuffle', default=1, type=int, help='shuffle interactions before generate dataset')
+    parser.add_argument('--noKmer', default=0, type=int, help='Not using k-mer')
+    parser.add_argument('--output', default=1, type=int, help='output dataset or not')
+
+>>>>>>> 4216767b1450b7b85fe4974fc54f997ec4fee435
 
     return parser.parse_args()
 

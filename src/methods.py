@@ -2,6 +2,7 @@ import pickle
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import sys, os
 sys.path.append(os.path.realpath('.'))
 =======
@@ -16,6 +17,10 @@ sys.path.append(os.path.realpath('.'))
 import sys, os
 sys.path.append(os.path.realpath('.'))
 >>>>>>> 4c845fb... 解决了import路径的问题
+=======
+import sys, os
+sys.path.append(os.path.realpath('.'))
+>>>>>>> 4216767b1450b7b85fe4974fc54f997ec4fee435
 from src.classes import  LncRNA_Protein_Interaction
 
 

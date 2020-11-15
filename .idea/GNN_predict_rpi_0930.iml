@@ -11,6 +11,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     <option name="renderExternalDocumentation" value="true" />
 =======
 >>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
@@ -20,5 +21,8 @@
 =======
     <option name="renderExternalDocumentation" value="true" />
 >>>>>>> 4c845fb... 解决了import路径的问题
+=======
+    <option name="renderExternalDocumentation" value="true" />
+>>>>>>> 4216767b1450b7b85fe4974fc54f997ec4fee435
   </component>
 </module>

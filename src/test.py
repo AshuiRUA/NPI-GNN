@@ -7,6 +7,7 @@ import torch
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 sys.path.append(os.path.realpath('.'))
 =======
@@ -21,6 +22,10 @@ sys.path.append(os.path.realpath('.'))
 
 sys.path.append(os.path.realpath('.'))
 >>>>>>> 4c845fb... 解决了import路径的问题
+=======
+
+sys.path.append(os.path.realpath('.'))
+>>>>>>> 4216767b1450b7b85fe4974fc54f997ec4fee435
 from src.classes import LncRNA_Protein_Interaction_dataset, Net_1
 from src.methods import Accuracy_Precision_Sensitivity_Specificity_MCC
 

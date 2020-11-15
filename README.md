@@ -12,10 +12,13 @@ torch-geometric 1.4.2
 First, you have to generate edgelist for node2vec.
 >Python .\src\generate_edgelist.py --projectName yourProjectName --interactionDatasetName NPInter2 --createBalanceDataset 1 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 push test
 =======
 >>>>>>> 08847d0... 20201018 有了in memory数据集，测试后提交
+=======
+>>>>>>> 4216767b1450b7b85fe4974fc54f997ec4fee435
 
 push test
 
@@ -41,6 +44,7 @@ If you don't want to use k-mer, you need ro use "noK-mer" on generate_dataset.py
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >Python src/generate_dataset.py --projectName yourProjectName --interactionDatasetName NPInter2 --inMemory 0 --noKmer 1
 =======
 >Python src/generate_dataset.py --projectName yourProjectName --interactionDatasetName NPInter2 --inMemory 0 --noKmer 1
@@ -51,3 +55,6 @@ If you don't want to use k-mer, you need ro use "noK-mer" on generate_dataset.py
 =======
 >Python src/generate_dataset.py --projectName yourProjectName --interactionDatasetName NPInter2 --inMemory 0 --noKmer 1
 >>>>>>> 73fcb72... Update README.md
+=======
+>Python src/generate_dataset.py --projectName yourProjectName --interactionDatasetName NPInter2 --inMemory 0 --noKmer 1
+>>>>>>> 4216767b1450b7b85fe4974fc54f997ec4fee435

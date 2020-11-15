@@ -12,6 +12,7 @@ sys.setrecursionlimit(1000000000)
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 sys.path.append(os.path.realpath('.'))
 =======
 sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
@@ -22,11 +23,15 @@ sys.path.append(os.path.realpath('.'))
 =======
 sys.path.append(os.path.realpath('.'))
 >>>>>>> 4c845fb... 解决了import路径的问题
+=======
+sys.path.append(os.path.realpath('.'))
+>>>>>>> 4216767b1450b7b85fe4974fc54f997ec4fee435
 
 from src.classes import LncRNA
 from src.classes import Protein
 from src.classes import LncRNA_Protein_Interaction
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -40,6 +45,9 @@ from .methods import reset_basic_data, nodeSerialNumber_listIndex_dict_generatio
 =======
 from .methods import reset_basic_data, nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
 >>>>>>> 4c845fb... 解决了import路径的问题
+=======
+from .methods import reset_basic_data, nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
+>>>>>>> 4216767b1450b7b85fe4974fc54f997ec4fee435
 
 def parse_args():
     parser = argparse.ArgumentParser(description="generate_dataset.")
