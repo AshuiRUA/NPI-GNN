@@ -15,7 +15,6 @@ from src.classes import LncRNA
 from src.classes import Protein
 from src.classes import LncRNA_Protein_Interaction
 
-
 from src.methods import reset_basic_data, nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
 
 

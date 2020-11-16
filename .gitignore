@@ -4,3 +4,5 @@
 *.pt
 
 output_for_cytoscape.py
+generate_dataset_NPInterLncRNA_from_NPINter2.py
+id_conversion.py
