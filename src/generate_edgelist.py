@@ -36,7 +36,7 @@ def read_interaction_dataset(dataset_path, dataset_name):
     # 能在lncRNA_list和protein_list中快速的找到
     if not osp.exists(dataset_path):
         raise Exception('interaction datset does not exist')
-    print('strat reading xlsx file')
+    print('start reading xlsx file')
     wb = load_workbook(dataset_path)
     sheets = wb.worksheets   # 获取当前所有的sheet
     sheet = sheets[0]

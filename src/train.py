@@ -9,6 +9,7 @@ import argparse
 sys.path.append(os.path.realpath('.'))
 
 from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
+from src.classes import LncRNA_Protein_Interaction_dataset_1hop_1218_InMemory, LncRNA_Protein_Interaction_dataset_1hop_1218
 
 from src.methods import dataset_analysis, average_list, Accuracy_Precision_Sensitivity_Specificity_MCC
 
@@ -24,8 +25,8 @@ def parse_args():
     parser.add_argument('--trainingName', help='the name of this training')
     parser.add_argument('--datasetName',  help='the name of this object')
     parser.add_argument('--inMemory', type = int, help='in memory dataset or not')
-    parser.add_argument('--interactionDatasetName', help='raw interactions dataset')
-    parser.add_argument('--epochNumber', default=50, type=int, help='number of training epoch')
+    parser.add_argument('--interactionDatasetName',default='NPInter2', help='raw interactions dataset')
+    parser.add_argument('--epochNumber', default=10, type=int, help='number of training epoch')
     parser.add_argument('--hopNumber', default=2, type=int , help='hop number of subgraph')
     parser.add_argument('--node2vecWindowSize', default=5, type=int, help='node2vec window size')
     parser.add_argument('--crossValidation', default=1, type=int, help='do cross validation')
@@ -58,9 +59,9 @@ if __name__ == "__main__":
     dataset_path = f'./data/dataset/{args.datasetName}'
     # 读取数据集
     if args.inMemory == 0:
-        dataset = LncRNA_Protein_Interaction_dataset(root=dataset_path)
+        dataset = LncRNA_Protein_Interaction_dataset_1hop_1218(root=dataset_path)
     else:
-        dataset = LncRNA_Protein_Interaction_inMemoryDataset(root=dataset_path)
+        dataset = LncRNA_Protein_Interaction_dataset_1hop_1218_InMemory(root=dataset_path)
     # 打乱数据集
     print('shuffle dataset\n')
     dataset = dataset.shuffle()
@@ -93,7 +94,7 @@ if __name__ == "__main__":
         result_file.write(f'database：{args.interactionDatasetName}\n')
         result_file.write(f'node2vec_windowSize = {args.node2vecWindowSize}\n')
         result_file.write(f'{k}-fold cross validation\n')
-        result_file.write(f'number of eopch ：{num_of_epoch}\n')
+        result_file.write(f'number of epoch ：{num_of_epoch}\n')
         result_file.write(f'learn rate：initial = {LR}，whenever loss increases, multiply by 0.95\n')
         result_file.write(f'L2 weight decay = {L2_weight_decay}\n')
 

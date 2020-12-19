@@ -71,7 +71,7 @@ def load_intermediate_products(project_name):
     with open(file=protein_list_path, mode='rb') as f:
         protein_list = pickle.load(f)
     # 重新建立node和interaction的相互包含的关系
-    return reset_basic_data(interaction_list, negative_interaction_list, lncRNA_list, protein_list)\
+    return reset_basic_data(interaction_list, negative_interaction_list, lncRNA_list, protein_list)
 
 
 def Accuracy(model, loader, device):
