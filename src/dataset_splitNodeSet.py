@@ -67,7 +67,7 @@ class LncRNA_Protein_Interaction_dataset_1hop_1220_splitNodeSet_InMemory(InMemor
                             print(f'average node number = {self.sum_node / count}')
                 elif self.dataset_type == 'testing_selected':
                     if interaction.lncRNA.serial_number in self.set_serialNumber_node_test and interaction.protein.serial_number in self.set_serialNumber_node_test:
-                        if interaction.lncRNA.serial_number not in self.set_serialNumber_node_test_alone or interaction.protein.serial_number not in self.set_serialNumber_node_test_alone:
+                        if interaction.lncRNA.serial_number not in self.set_serialNumber_node_test_alone and interaction.protein.serial_number not in self.set_serialNumber_node_test_alone:
                             data = self.local_subgraph_generation(interaction, self.h)
                             data_list.append(data)
                             count = count + 1
@@ -115,40 +115,23 @@ class LncRNA_Protein_Interaction_dataset_1hop_1220_splitNodeSet_InMemory(InMemor
         subgraphNodeSerialNumber_node_dict[subgraph_serialNumber] = interaction.protein
         subgraph_serialNumber += 1
 
-        if self.dataset_type == 'training':
-            for interaction_temp in interaction.lncRNA.interaction_list:
-                if interaction_temp.protein.serial_number in self.set_serialNumber_node_train:
-                    set_interactionSerialNumberPair_wait_to_add.add((interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number))
-                    if interaction_temp.protein.serial_number not in nodeSerialNumber_subgraphNodeSerialNumber_dict.keys():
-                        nodeSerialNumber_subgraphNodeSerialNumber_dict[interaction_temp.protein.serial_number] = subgraph_serialNumber
-                        subgraphNodeSerialNumber_node_dict[subgraph_serialNumber] = interaction_temp.protein
-                        subgraph_serialNumber += 1
-            
-            for interaction_temp in interaction.protein.interaction_list:
-                if interaction_temp.lncRNA.serial_number in self.set_serialNumber_node_train:
-                    set_interactionSerialNumberPair_wait_to_add.add((interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number))
-                    if interaction_temp.lncRNA.serial_number not in nodeSerialNumber_subgraphNodeSerialNumber_dict.keys():
-                        nodeSerialNumber_subgraphNodeSerialNumber_dict[interaction_temp.lncRNA.serial_number] = subgraph_serialNumber
-                        subgraphNodeSerialNumber_node_dict[subgraph_serialNumber] = interaction_temp.lncRNA
-                        subgraph_serialNumber += 1
-        elif self.dataset_type == 'testing' or self.dataset_type == 'testing_selected':
-            for interaction_temp in interaction.lncRNA.interaction_list:
-                if interaction_temp.protein.serial_number not in self.set_serialNumber_node_test:
-                    set_interactionSerialNumberPair_wait_to_add.add((interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number))
-                    if interaction_temp.protein.serial_number not in nodeSerialNumber_subgraphNodeSerialNumber_dict.keys():
-                        nodeSerialNumber_subgraphNodeSerialNumber_dict[interaction_temp.protein.serial_number] = subgraph_serialNumber
-                        subgraphNodeSerialNumber_node_dict[subgraph_serialNumber] = interaction_temp.protein
-                        subgraph_serialNumber += 1
-            
-            for interaction_temp in interaction.protein.interaction_list:
-                if interaction_temp.lncRNA.serial_number not in self.set_serialNumber_node_test:
-                    set_interactionSerialNumberPair_wait_to_add.add((interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number))
-                    if interaction_temp.lncRNA.serial_number not in nodeSerialNumber_subgraphNodeSerialNumber_dict.keys():
-                        nodeSerialNumber_subgraphNodeSerialNumber_dict[interaction_temp.lncRNA.serial_number] = subgraph_serialNumber
-                        subgraphNodeSerialNumber_node_dict[subgraph_serialNumber] = interaction_temp.lncRNA
-                        subgraph_serialNumber += 1
-        else:
-            raise Exception('dataset type has to be training, testing or testing_selected')
+
+        for interaction_temp in interaction.lncRNA.interaction_list:
+            if interaction_temp.protein.serial_number in self.set_serialNumber_node_train:
+                set_interactionSerialNumberPair_wait_to_add.add((interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number))
+                if interaction_temp.protein.serial_number not in nodeSerialNumber_subgraphNodeSerialNumber_dict.keys():
+                    nodeSerialNumber_subgraphNodeSerialNumber_dict[interaction_temp.protein.serial_number] = subgraph_serialNumber
+                    subgraphNodeSerialNumber_node_dict[subgraph_serialNumber] = interaction_temp.protein
+                    subgraph_serialNumber += 1
+        
+        for interaction_temp in interaction.protein.interaction_list:
+            if interaction_temp.lncRNA.serial_number in self.set_serialNumber_node_train:
+                set_interactionSerialNumberPair_wait_to_add.add((interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number))
+                if interaction_temp.lncRNA.serial_number not in nodeSerialNumber_subgraphNodeSerialNumber_dict.keys():
+                    nodeSerialNumber_subgraphNodeSerialNumber_dict[interaction_temp.lncRNA.serial_number] = subgraph_serialNumber
+                    subgraphNodeSerialNumber_node_dict[subgraph_serialNumber] = interaction_temp.lncRNA
+                    subgraph_serialNumber += 1
+
 
         # 构造edge_list
         for interaction_serialNumber_pair in set_interactionSerialNumberPair_wait_to_add:

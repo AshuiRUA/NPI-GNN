@@ -37,7 +37,7 @@ def parse_args():
     # parser.add_argument('--crossValidation', default=1, type=int, help='do cross validation')
     # parser.add_argument('--foldNumber', default=5, type=int, help='fold number of cross validation')
     parser.add_argument('--initialLearningRate', default=0.005, type=float, help='Initial learning rate')
-    parser.add_argument('--l2WeightDecay', default=0.0005, type=float, help='L2 weight')
+    parser.add_argument('--l2WeightDecay', default=0.001, type=float, help='L2 weight')
     parser.add_argument('--batchSize', default=200, type=int, help='batch size')
 
     return parser.parse_args()
@@ -142,6 +142,13 @@ if __name__ == "__main__":
     train_loader = DataLoader(train_dataset, batch_size=args.batchSize)
     test_loader = DataLoader(test_dataset, batch_size=args.batchSize)
 
+    MCC_max = -1
+    epoch_MCC_max = 0
+    ACC_MCC_max = 0
+    Pre_MCC_max = 0
+    Sen_MCC_max = 0
+    Spe_MCC_max = 0
+
     # 训练开始
     loss_last = float('inf')
     for epoch in range(num_of_epoch):
@@ -166,6 +173,13 @@ if __name__ == "__main__":
             print(output)
             result_file.write(output + '\n')
             # 保存模型
+            if MCC > MCC_max:
+                MCC_max = MCC
+                epoch_MCC_max = epoch+1
+                ACC_MCC_max = Accuracy
+                Pre_MCC_max = Precision
+                Sen_MCC_max = Sensitivity
+                Spe_MCC_max = Specificity
             network_model_path = saving_path + f'/model_{args.fold}_fold/{epoch+1}'
             torch.save(model.state_dict(), network_model_path)
 
@@ -177,11 +191,19 @@ if __name__ == "__main__":
     Accuracy, Precision, Sensitivity, Specificity, MCC = Accuracy_Precision_Sensitivity_Specificity_MCC(model, test_loader, device)
     output = 'result, testing dataset, Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(Accuracy, Precision, Sensitivity, Specificity, MCC)
     print(output)
-
     result_file.write(output + '\n')
     # 把模型存起来
     network_model_path = saving_path + f'/model_{args.fold}_fold/{num_of_epoch}'
     torch.save(model.state_dict(), network_model_path)
+
+    result_file.write('\n')
+    output = f'MCC最大的时候的性能：'
+    print(output)
+    result_file.write(output + '\n')
+    output = f'epoch: {epoch_MCC_max}, MCC: {MCC_max}, ACC: {ACC_MCC_max}, Pre: {Pre_MCC_max}, Sen: {Sen_MCC_max}, Spe: {Spe_MCC_max}'
+    print(output)
+    result_file.write(output + '\n')
+
 
     # 完毕
     end_time = time.time()

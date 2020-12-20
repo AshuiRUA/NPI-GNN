@@ -8,6 +8,7 @@ import os
 import argparse
 import copy
 import gc
+import numpy
 
 from openpyxl.descriptors.base import Set
 from torch import pinverse
@@ -264,6 +265,39 @@ def find_test_alone_node():
     
 
 
+def exam_training_testing_node():
+    global lncRNA_list, protein_list, set_serialNumber_lncRNA_train, set_serialNumber_protein_train, set_serialNumber_lncRNA_test, set_serialNumber_protein_test
+
+    print('分析训练集里的lncRNA')
+    list_len_interaction_list = []
+    for lncRNA in lncRNA_list:
+        if lncRNA.serial_number in set_serialNumber_lncRNA_train:
+            list_len_interaction_list.append(len(lncRNA.interaction_list))
+    print(f'平均相互连接数 = {numpy.mean(list_len_interaction_list)}， 方差 = {numpy.var(list_len_interaction_list)}')
+
+    print('分析训练集里的protein')
+    list_len_interaction_list = []
+    for protein in protein_list:
+        if protein.serial_number in set_serialNumber_protein_train:
+            list_len_interaction_list.append(len(protein.interaction_list))
+    print(f'平均相互连接数 = {numpy.mean(list_len_interaction_list)}， 方差 = {numpy.var(list_len_interaction_list)}')
+
+    print('分析测试集里的lncRNA')
+    list_len_interaction_list = []
+    for lncRNA in lncRNA_list:
+        if lncRNA.serial_number in set_serialNumber_lncRNA_test:
+            list_len_interaction_list.append(len(lncRNA.interaction_list))
+    print(f'平均相互连接数 = {numpy.mean(list_len_interaction_list)}， 方差 = {numpy.var(list_len_interaction_list)}')
+
+    print('分析测试集里的protein')
+    list_len_interaction_list = []
+    for protein in protein_list:
+        if protein.serial_number in set_serialNumber_protein_test:
+            list_len_interaction_list.append(len(protein.interaction_list))
+    print(f'平均相互连接数 = {numpy.mean(list_len_interaction_list)}， 方差 = {numpy.var(list_len_interaction_list)}')
+        
+
+
 if __name__ == "__main__":
     args = parse_args()
 
@@ -293,6 +327,8 @@ if __name__ == "__main__":
     set_serialNumber_protein_test = read_set_serialNumber_node(path_set_serialNumber_protein_test)
 
     set_serialNumber_node_test_alone = find_test_alone_node()
+
+    exam_training_testing_node()
 
     # # 把训练集和测试集包含的边读取出来
     # path_set_interactionKey_train = path_set_allInteractionKey + f'/set_interactionKey_train_{args.fold}'
@@ -352,6 +388,9 @@ if __name__ == "__main__":
             set_serialNumber_node_test = set()
             set_serialNumber_node_test.update(set_serialNumber_lncRNA_test)
             set_serialNumber_node_test.update(set_serialNumber_protein_test)
+
+            print(f'训练集和测试集没有重叠:{len(set_serialNumber_node_train & set_serialNumber_node_test) == 0}')
+            print(f'训练集和测试集中点的总数：{len(set_serialNumber_node_train) + len(set_serialNumber_node_test)}')
 
             # 生成训练集
             dataset_train_path = f'data/dataset/{args.projectName}_inMemory_train_{args.fold}'
