@@ -356,7 +356,6 @@ def reduce_dataset_mentainConnected(G, ratio, list_interaction, list_negativeInt
     return list_interaction_reduced, list_negativeInteraction_reduced, list_lncRNA_reduced, list_protein_reduced
 
 
-
 def output_set_interactionKey(path:str, set_interactionKey:set):
     print(f'输出了：{path}')
     with open(path, mode='w') as f:
@@ -364,55 +363,87 @@ def output_set_interactionKey(path:str, set_interactionKey:set):
             f.write(f'{interactionKey[0]},{interactionKey[1]}\n')
 
 
+def output_set_serialNumber_node(path:set, set_serialNumber_node:set):
+    print(f'输出了：{path}')
+    with open(path, mode='w') as f:
+        for serialNumber_node in set_serialNumber_node:
+            f.write(f'{serialNumber_node}\n')
+
+
+def generate_set_nodeSerialNumber(list_node):
+    set_nodeSerialNumber = set()
+    for node in list_node:
+        set_nodeSerialNumber.add(node.serial_number)
+    if len(set_nodeSerialNumber) != len(list_node):
+        raise Exception('list node has repetitive serial number')
+    return set_nodeSerialNumber
+
+
 def generate_training_and_testing():
-    global set_interactionKey, set_negativeInteractionKey
-    
-    # 把set_interactionKey和set_negativeInteractionKey分5份
-    list_set_interactionKey = [set(), set(), set(), set(), set()]
-    list_set_negativeInteractionKey = [set(), set(), set(), set(), set()]
+    global lncRNA_list, protein_list
+
+    set_serialNumber_lncRNA = generate_set_nodeSerialNumber(lncRNA_list)
+    set_serialNumber_protein = generate_set_nodeSerialNumber(protein_list)
+
+    # 把lncRNA和protein都平分成5份
+    list_set_serialNumber_lncRNA = [set(), set(), set(), set(), set()]
+    list_set_serialNumber_protein = [set(), set(), set(), set(), set()]
     count = 0
-    while len(set_interactionKey) > 0:
-        list_set_interactionKey[count % 5].add(set_interactionKey.pop())
+    while len(set_serialNumber_lncRNA) > 0:
+        list_set_serialNumber_lncRNA[count%5].add(set_serialNumber_lncRNA.pop())
         count += 1
     count = 0
-    while len(set_negativeInteractionKey) > 0:
-        list_set_negativeInteractionKey[count % 5].add(set_negativeInteractionKey.pop())
+    while len(set_serialNumber_protein) > 0:
+        list_set_serialNumber_protein[count%5].add(set_serialNumber_protein.pop())
         count += 1
-    
-    # 每次那四份组成训练集，另一份是测试集
+
+    # 创建用来输出训练集和测试集的文件夹
+    path_set_serialNumber_node = f'data/set_serialNumber_node/{args.projectName}'
+    if args.output == 1:
+        if not osp.exists(path_set_serialNumber_node):
+            os.makedirs(path_set_serialNumber_node)
+            print(f'创建了文件夹：{path_set_serialNumber_node}')
+
+    # 构造5对训练集-测试集
     for i in range(5):
-        set_interactionKey_train = set()
-        set_negativeInteractionKey_train = set()
-        set_interactionKey_test = set()
-        set_negativeInteractionKey_test = set()
+        print(f'fold: {i}')
+        set_serialNumber_lncRNA_train = set()
+        set_serialNumber_protein_train = set()
+        set_serialNumber_lncRNA_test = set()
+        set_serialNumber_protein_test = set()
         for j in range(5):
             if i == j:
-                set_interactionKey_test.update(list_set_interactionKey[j])
-                set_negativeInteractionKey_test.update(list_set_negativeInteractionKey[j])
+                set_serialNumber_lncRNA_test.update(list_set_serialNumber_lncRNA[j])
+                set_serialNumber_protein_test.update(list_set_serialNumber_protein[j])
             else:
-                set_interactionKey_train.update(list_set_interactionKey[j])
-                set_negativeInteractionKey_train.update(list_set_negativeInteractionKey[j])
+                set_serialNumber_lncRNA_train.update(list_set_serialNumber_lncRNA[j])
+                set_serialNumber_protein_train.update(list_set_serialNumber_protein[j])
         if args.output == 1:
-            output_set_interactionKey(path_set_allInteractionKey+f'/set_interactionKey_test_{i}', set_interactionKey_test)
-            output_set_interactionKey(path_set_allInteractionKey+f'/set_negativeInteractionKey_test_{i}', set_negativeInteractionKey_test)
-            output_set_interactionKey(path_set_allInteractionKey+f'/set_interactionKey_train_{i}', set_interactionKey_train)
-            output_set_interactionKey(path_set_allInteractionKey+f'/set_negativeInteractionKey_train_{i}', set_negativeInteractionKey_train)
-        # 为训练集生成对应的图
-        generate_G_training(set_interactionKey_test, set_negativeInteractionKey_test, i)
+            # 把训练集和测试集中的lncRNA和protein都输出
+            output_set_serialNumber_node(path_set_serialNumber_node + f'/set_serialNumber_lncRNA_train_{i}', set_serialNumber_lncRNA_train)
+            output_set_serialNumber_node(path_set_serialNumber_node + f'/set_serialNumber_protein_train_{i}', set_serialNumber_protein_train)
+            output_set_serialNumber_node(path_set_serialNumber_node + f'/set_serialNumber_lncRNA_test_{i}', set_serialNumber_lncRNA_test)
+            output_set_serialNumber_node(path_set_serialNumber_node + f'/set_serialNumber_protein_test_{i}', set_serialNumber_protein_test)
+        # 构造为了做node2vec的图
+        generate_G_training(set_serialNumber_lncRNA_test, set_serialNumber_protein_test, i)
 
 
-def generate_G_training(set_interactionKey_test, set_negativeInteraction_test, fold_number):
+def generate_G_training(set_serialNumber_lncRNA_test, set_serialNumber_protein_test, fold_number):
     global G
     G_whole_temp = copy.deepcopy(G)
-    for interactionKey in set_interactionKey_test:
-        G_whole_temp.remove_edge(*interactionKey)
-    for interactionKey in set_negativeInteraction_test:
-        G_whole_temp.remove_edge(*interactionKey)
+
+    set_edge_needRemove = set()
+    for edge in G_whole_temp.edges:
+        if edge[0] in set_serialNumber_lncRNA_test and edge[1] in set_serialNumber_protein_test:
+            set_edge_needRemove.add(edge)
+    print(f'lncRNA和protein都属于测试集的边有：{len(set_edge_needRemove)}个')
+    for edge_needRemove in set_edge_needRemove:
+        G_whole_temp.remove_edge(*edge_needRemove)
     G_training = G_whole_temp
     print(f'{fold_number} fold training dataset graph : number of nodes = {G_training.number_of_nodes()}, number of edges = {G_training.number_of_edges()}')
     print(f'number of connected components = {len(list(nx.connected_components(G_training)))}')
     if args.output == 1:
-        output_edgelist_file(G_training, f'data/graph/{args.projectName}/training_{fold_number}')
+        output_edgelist_file(G_training, f'data/graph/{args.projectName}/training_between_{fold_number}')
 
 
 if __name__ == '__main__':
@@ -458,6 +489,8 @@ if __name__ == '__main__':
             output_edgelist_file(G, graph_output_path)
             # 输出中间产物
             # output_intermediate_products(args.projectName, interaction_list, negative_interaction_list, lncRNA_list, protein_list)
+
+            # 输出生成的负样本的键集合
             path_set_allInteractionKey = f'data/set_allInteractionKey/{args.projectName}'
             if args.output == 1:
                 if not osp.exists(path_set_allInteractionKey):

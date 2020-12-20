@@ -23,6 +23,8 @@ from src.generate_edgelist import read_interaction_dataset
 from src.methods import nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
 from src.methods import reset_basic_data
 
+from src.dataset_splitNodeSet import LncRNA_Protein_Interaction_dataset_1hop_1220_splitNodeSet_InMemory
+
 def parse_args():
     parser = argparse.ArgumentParser(description="generate_dataset.")
     parser.add_argument('--projectName', help='project name')
@@ -30,10 +32,10 @@ def parse_args():
     # parser.add_argument('--datasetType', help='training or testing or testing_selected')
     parser.add_argument('--interactionDatasetName', default='NPInter2', help='raw interactions dataset')
     parser.add_argument('--inMemory',default=1, type=int, help='1 or 0: in memory dataset or not')
-    parser.add_argument('--hopNumber', default=2, type=int, help='hop number of subgraph')
+    parser.add_argument('--hopNumber', default=1, type=int, help='hop number of subgraph')
     parser.add_argument('--shuffle', default=1, type=int, help='shuffle interactions before generate dataset')
     parser.add_argument('--noKmer', default=0, type=int, help='Not using k-mer')
-    parser.add_argument('--output', default=1, type=int, help='output dataset or not')
+    parser.add_argument('--output', default=0, type=int, help='output dataset or not')
 
     return parser.parse_args()
 
@@ -206,11 +208,68 @@ def exam_set_allInteractionKey_train_test(set_interactionKey_train, set_negative
         raise Exception('训练集和测试集有重合')
 
 
+def read_set_serialNumber_node(path):
+    set_serialNumber_node = set()
+    with open(path, mode='r') as f:
+        for line in f.readlines():
+            set_serialNumber_node.add(int(line.strip()))
+    return set_serialNumber_node
+
+
+def process_edgelist_from_local(G:nx.Graph):
+    G_new = nx.Graph()
+    for node in G.nodes:
+        G_new.add_node(int(node))
+    for edge in G.edges:
+        G_new.add_edge(int(edge[0]), int(edge[1]))
+    return G_new
+
+
+def find_test_alone_node():
+    global set_interactionKey, set_negativeInteractionKey, set_serialNumber_lncRNA_test, set_serialNumber_protein_test
+    # 创建G_whole
+    G_whole = nx.Graph()
+    G_whole = process_edgelist_from_local(nx.read_edgelist(f'data/graph/{args.projectName}/bipartite_graph.edgelist')) 
+    # for interactionKey in set_interactionKey:
+    #     G_whole.add_edge(*interactionKey)
+    # for negativeInteractionKey in set_negativeInteractionKey:
+    #     G_whole.add_edge(*negativeInteractionKey)
+    
+    print(f'G whole : number of nodes = {G_whole.number_of_nodes()}, number of edges = {G_whole.number_of_edges()}')
+    print(f'number of connected components = {len(list(nx.connected_components(G_whole)))}')
+
+    #创建G_train_between
+    set_edge_needRemove = set()
+    for edge in G_whole.edges:
+        if edge[0] in set_serialNumber_lncRNA_test and edge[1] in set_serialNumber_protein_test:
+            set_edge_needRemove.add(edge)
+        elif edge[0] in set_serialNumber_protein_test and edge[1] in set_serialNumber_lncRNA_test:
+            set_edge_needRemove.add(edge)
+    print(f'lncRNA和protein都属于测试集的边有：{len(set_edge_needRemove)}个，要被删除')
+    for edge_needRemove in set_edge_needRemove:
+        G_whole.remove_edge(*edge_needRemove)
+    G_train_between = G_whole
+    print(f'{args.fold} fold G_train_between : number of nodes = {G_train_between.number_of_nodes()}, number of edges = {G_train_between.number_of_edges()}')
+    print(f'number of connected components = {len(list(nx.connected_components(G_train_between)))}')
+
+    #找到测试集中的孤立点
+    set_serialNumber_node_alone = set()
+    for node in G_train_between:
+        if node in set_serialNumber_lncRNA_test or node in set_serialNumber_lncRNA_test:
+            if len(G_train_between.adj[node]) == 0:
+                set_serialNumber_node_alone.add(node)
+    print(f'孤立点数量 = {len(set_serialNumber_node_alone)}')
+    # 返回
+    return set_serialNumber_node_alone
+    
+
+
 if __name__ == "__main__":
     args = parse_args()
 
-    # 用中间产物，重现相互作用数据集
-    path_intermediate_products_whole = f'data/intermediate_products/{args.projectName}'
+    # # 用中间产物，重现相互作用数据集
+    # path_intermediate_products_whole = f'data/intermediate_products/{args.projectName}'
+    # 重新读取原始相互作用数据集
     interaction_dataset_path = 'data/source_database_data/'+ args.interactionDatasetName + '.xlsx'
     interaction_list, negative_interaction_list,lncRNA_list, protein_list, lncRNA_name_index_dict, protein_name_index_dict, set_interactionKey, \
         set_negativeInteractionKey = read_interaction_dataset(dataset_path=interaction_dataset_path, dataset_name=args.interactionDatasetName)
@@ -222,19 +281,32 @@ if __name__ == "__main__":
     # 重建负样本
     rebuild_all_negativeInteraction(set_negativeInteractionKey)
 
-    # 把训练集和测试集包含的边读取出来
-    path_set_interactionKey_train = path_set_allInteractionKey + f'/set_interactionKey_train_{args.fold}'
-    path_set_negativeInteractionKey_train = path_set_allInteractionKey + f'/set_negativeInteractionKey_train_{args.fold}'
-    path_set_interactionKey_test = path_set_allInteractionKey + f'/set_interactionKey_test_{args.fold}'
-    path_set_negativeInteractionKey_test = path_set_allInteractionKey + f'/set_negativeInteractionKey_test_{args.fold}'
+    path_set_serialNumber_node = f'data/set_serialNumber_node/{args.projectName}'
+    path_set_serialNumber_lncRNA_train = path_set_serialNumber_node + f'/set_serialNumber_lncRNA_train_{args.fold}'
+    path_set_serialNumber_protein_train = path_set_serialNumber_node + f'/set_serialNumber_protein_train_{args.fold}'
+    path_set_serialNumber_lncRNA_test = path_set_serialNumber_node + f'/set_serialNumber_lncRNA_test_{args.fold}'
+    path_set_serialNumber_protein_test = path_set_serialNumber_node + f'/set_serialNumber_protein_test_{args.fold}'
 
-    set_interactionKey_train = read_set_interactionKey(path_set_interactionKey_train)
-    set_negativeInteractionKey_train = read_set_interactionKey(path_set_negativeInteractionKey_train)
-    set_interactionKey_test = read_set_interactionKey(path_set_interactionKey_test)
-    set_negativeInteractionKey_test = read_set_interactionKey(path_set_negativeInteractionKey_test)
+    set_serialNumber_lncRNA_train = read_set_serialNumber_node(path_set_serialNumber_lncRNA_train)
+    set_serialNumber_protein_train = read_set_serialNumber_node(path_set_serialNumber_protein_train)
+    set_serialNumber_lncRNA_test = read_set_serialNumber_node(path_set_serialNumber_lncRNA_test)
+    set_serialNumber_protein_test = read_set_serialNumber_node(path_set_serialNumber_protein_test)
 
-    # 检查一下训练集和测试集有没有重合
-    exam_set_allInteractionKey_train_test(set_interactionKey_train, set_negativeInteractionKey_train, set_interactionKey_test, set_negativeInteractionKey_test)
+    set_serialNumber_node_test_alone = find_test_alone_node()
+
+    # # 把训练集和测试集包含的边读取出来
+    # path_set_interactionKey_train = path_set_allInteractionKey + f'/set_interactionKey_train_{args.fold}'
+    # path_set_negativeInteractionKey_train = path_set_allInteractionKey + f'/set_negativeInteractionKey_train_{args.fold}'
+    # path_set_interactionKey_test = path_set_allInteractionKey + f'/set_interactionKey_test_{args.fold}'
+    # path_set_negativeInteractionKey_test = path_set_allInteractionKey + f'/set_negativeInteractionKey_test_{args.fold}'
+
+    # set_interactionKey_train = read_set_interactionKey(path_set_interactionKey_train)
+    # set_negativeInteractionKey_train = read_set_interactionKey(path_set_negativeInteractionKey_train)
+    # set_interactionKey_test = read_set_interactionKey(path_set_interactionKey_test)
+    # set_negativeInteractionKey_test = read_set_interactionKey(path_set_negativeInteractionKey_test)
+
+    # # 检查一下训练集和测试集有没有重合
+    # exam_set_allInteractionKey_train_test(set_interactionKey_train, set_negativeInteractionKey_train, set_interactionKey_test, set_negativeInteractionKey_test)
 
     # load node2vec result
     node2vec_result_path = f'data/node2vec_result/{args.projectName}/training_{args.fold}/result.emb'
@@ -273,114 +345,33 @@ if __name__ == "__main__":
             # My_dataset = LncRNA_Protein_Interaction_dataset_1hop_1218(dataset_path, all_interaction_list, 1)
         else:
             # 生成局部子图，不能有测试集的边
-            set_interactionKey_cannotUse = set()
-            set_interactionKey_cannotUse.update(set_interactionKey_test)
-            set_interactionKey_cannotUse.update(set_negativeInteractionKey_test)
+            set_serialNumber_node_train = set()
+            set_serialNumber_node_train.update(set_serialNumber_lncRNA_train)
+            set_serialNumber_node_train.update(set_serialNumber_protein_train)
+
+            set_serialNumber_node_test = set()
+            set_serialNumber_node_test.update(set_serialNumber_lncRNA_test)
+            set_serialNumber_node_test.update(set_serialNumber_protein_test)
 
             # 生成训练集
             dataset_train_path = f'data/dataset/{args.projectName}_inMemory_train_{args.fold}'
             if not osp.exists(dataset_train_path):
                 print(f'创建了文件夹：{dataset_train_path}')
                 os.makedirs(dataset_train_path)
-            set_interactionKey_forGenerate = set()
-            set_interactionKey_forGenerate.update(set_interactionKey_train)
-            set_interactionKey_forGenerate.update(set_negativeInteractionKey_train)
-            My_trainingDataset = LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(dataset_train_path, all_interaction_list, 1, set_interactionKey_forGenerate, set_interactionKey_cannotUse)
+            My_trainingDataset = LncRNA_Protein_Interaction_dataset_1hop_1220_splitNodeSet_InMemory(dataset_train_path, all_interaction_list, 1, 'training', set_serialNumber_node_train, set_serialNumber_node_test, set_serialNumber_node_test_alone )
 
             # 生成测试集
             dataset_test_path = f'data/dataset/{args.projectName}_inMemory_test_{args.fold}'
             if not osp.exists(dataset_test_path):
                 print(f'创建了文件夹：{dataset_test_path}')
                 os.makedirs(dataset_test_path)
-            set_interactionKey_forGenerate = set()
-            set_interactionKey_forGenerate.update(set_interactionKey_test)
-            set_interactionKey_forGenerate.update(set_negativeInteractionKey_test)
-            My_testingDataset = LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(dataset_test_path, all_interaction_list, 1, set_interactionKey_forGenerate, set_interactionKey_cannotUse)
+            My_testingDataset = LncRNA_Protein_Interaction_dataset_1hop_1220_splitNodeSet_InMemory(dataset_test_path, all_interaction_list, 1, 'testing', set_serialNumber_node_train, set_serialNumber_node_test, set_serialNumber_node_test_alone)
+
+            # 生成没有孤立点的测试集
+            dataset_test_selected_path = f'data/dataset/{args.projectName}_inMemory_test_selected_{args.fold}'
+            if not osp.exists(dataset_test_selected_path):
+                print(f'创建了文件夹：{dataset_test_selected_path}')
+                os.makedirs(dataset_test_selected_path)
+            My_testingDataset = LncRNA_Protein_Interaction_dataset_1hop_1220_splitNodeSet_InMemory(dataset_test_selected_path, all_interaction_list, 1, 'testing_selected', set_serialNumber_node_train, set_serialNumber_node_test, set_serialNumber_node_test_alone)
 
     exit(0)
-
-    # if args.output == 1:
-    #     if args.inMemory == 0:
-    #         raise Exception("not ready")
-    #         My_dataset = LncRNA_Protein_Interaction_dataset_1hop_1218(root=dataset_path, interaction_list=all_interaction_list, h=args.hopNumber)
-    #     else:
-    #         print("generating testing_selected dataset !!!!!!!!!!!!!!!!!!!!!!!")
-    #         dataset_path = f'data/dataset/{args.projectName}_testing_selected_{args.fold}'
-    #         if not osp.exists(dataset_path):
-    #             os.makedirs(dataset_path)
-    #         My_dataset = LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory(root=dataset_path, interaction_list=all_interaction_list, \
-    #             h=args.hopNumber, dataset_type='testing_selected', \
-    #             set_allInteractionSerialNumberPair_training= set_allInteractionSerialNumber_training, \
-    #             set_allInteractionSerialNumberPair_testing=set_allInteractionSerialNumber_testing, \
-    #             set_allInteractionSerialNumberPair_testing_selected=set_allInteractionSerialNumber_testing_selected, \
-    #             set_allInteractionSerialNumberPair_between=set_interactionSerialNumber_between)
-            
-    #         print("generating testing dataset !!!!!!!!!!!!!!!!!!!!!!!")
-    #         dataset_path = f'data/dataset/{args.projectName}_testing_{args.fold}'
-    #         if not osp.exists(dataset_path):
-    #             os.makedirs(dataset_path)
-    #         My_dataset = LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory(root=dataset_path, interaction_list=all_interaction_list, \
-    #             h=args.hopNumber, dataset_type='testing', \
-    #             set_allInteractionSerialNumberPair_training= set_allInteractionSerialNumber_training, \
-    #             set_allInteractionSerialNumberPair_testing=set_allInteractionSerialNumber_testing, \
-    #             set_allInteractionSerialNumberPair_testing_selected=set_allInteractionSerialNumber_testing_selected, \
-    #             set_allInteractionSerialNumberPair_between=set_interactionSerialNumber_between)
-            
-    #         print("generating training dataset !!!!!!!!!!!!!!!!!!!!!!!")
-    #         dataset_path = f'data/dataset/{args.projectName}_training_{args.fold}'
-    #         if not osp.exists(dataset_path):
-    #             os.makedirs(dataset_path)
-    #         My_dataset = LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory(root=dataset_path, interaction_list=all_interaction_list, \
-    #             h=args.hopNumber, dataset_type='training', \
-    #             set_allInteractionSerialNumberPair_training= set_allInteractionSerialNumber_training, \
-    #             set_allInteractionSerialNumberPair_testing=set_allInteractionSerialNumber_testing, \
-    #             set_allInteractionSerialNumberPair_testing_selected=set_allInteractionSerialNumber_testing_selected, \
-    #             set_allInteractionSerialNumberPair_between=set_interactionSerialNumber_between)
-    # print('\n' + 'exit' + '\n')
-
-
-
-
-    # path_set_interactionSerialNumber_training = f'data/intermediate_products_trainingDataset/{args.projectName}/set_interactionSerialNumberPair_{args.fold}.txt'
-    # path_set_negativeInteractionSerialNumber_training = f'data/intermediate_products_trainingDataset/{args.projectName}/set_negativeInteractionSerialNumberPair_{args.fold}.txt'
-    # set_interactionSerialNumber_training = load_set_interactionSerialNumberPair(path_set_interactionSerialNumber_training)
-    # set_negativeInteractionSerialNumber_training = load_set_interactionSerialNumberPair(path_set_negativeInteractionSerialNumber_training)
-    # set_allInteractionSerialNumber_training = set()
-    # set_allInteractionSerialNumber_training.update(set_interactionSerialNumber_training)
-    # set_allInteractionSerialNumber_training.update(set_negativeInteractionSerialNumber_training)
-    # if len(set_allInteractionSerialNumber_training) != len(set_interactionSerialNumber_training) + len(set_negativeInteractionSerialNumber_training):
-    #     raise Exception('training dataset has overlap')
-
-    # path_set_interactionSerialNumber_testing = f'data/intermediate_products_testingDataset/{args.projectName}/set_interactionSerialNumberPair_{args.fold}.txt'
-    # path_set_negativeInteractionSerialNumber_testing = f'data/intermediate_products_testingDataset/{args.projectName}/set_negativeInteractionSerialNumberPair_{args.fold}.txt'
-    # set_interactionSerialNumber_testing = load_set_interactionSerialNumberPair(path_set_interactionSerialNumber_testing)
-    # set_negativeInteractionSerialNumber_testing = load_set_interactionSerialNumberPair(path_set_negativeInteractionSerialNumber_testing)
-    # set_allInteractionSerialNumber_testing = set()
-    # set_allInteractionSerialNumber_testing.update(set_interactionSerialNumber_testing)
-    # set_allInteractionSerialNumber_testing.update(set_negativeInteractionSerialNumber_testing)
-    # if len(set_allInteractionSerialNumber_testing) != len(set_interactionSerialNumber_testing) + len(set_negativeInteractionSerialNumber_testing):
-    #     raise Exception('testing dataset has overlap')
-
-    # path_set_interactionSerialNumber_testing_selected = f'data/intermediate_products_testingDataset_selected/{args.projectName}/set_interactionSerialNumberPair_{args.fold}.txt'
-    # path_set_negativeInteractionSerialNumber_testing_selected = f'data/intermediate_products_testingDataset_selected/{args.projectName}/set_negativeInteractionSerialNumberPair_{args.fold}.txt'
-    # set_interactionSerialNumber_testing_selected = load_set_interactionSerialNumberPair(path_set_interactionSerialNumber_testing_selected)
-    # set_negativeInteractionSerialNumber_testing_selected = load_set_interactionSerialNumberPair(path_set_negativeInteractionSerialNumber_testing_selected)
-    # set_allInteractionSerialNumber_testing_selected = set()
-    # set_allInteractionSerialNumber_testing_selected.update(set_interactionSerialNumber_testing_selected)
-    # set_allInteractionSerialNumber_testing_selected.update(set_negativeInteractionSerialNumber_testing_selected)
-    # if len(set_allInteractionSerialNumber_testing_selected) != len(set_interactionSerialNumber_testing_selected) + len(set_negativeInteractionSerialNumber_testing_selected):
-    #     raise Exception('testing_selected dataset has overlap')
-
-    # path_set_interactionSerialNumber_between = f'data/intermediate_products_between/{args.projectName}/set_interactionSerialNumberPair_{args.fold}.txt'
-    # path_set_negativeInteractionSerialNumber_between = f'data/intermediate_products_between/{args.projectName}/set_negativeInteractionSerialNumberPair_{args.fold}.txt'
-    # set_interactionSerialNumber_between = load_set_interactionSerialNumberPair(path_set_interactionSerialNumber_between)
-    # set_negativeInteractionSerialNumber_between = load_set_interactionSerialNumberPair(path_set_negativeInteractionSerialNumber_between)
-    # set_allInteractionSerialNumber_between = set()
-    # set_allInteractionSerialNumber_between.update(set_interactionSerialNumber_between)
-    # set_allInteractionSerialNumber_between.update(set_negativeInteractionSerialNumber_between)
-    # if len(set_allInteractionSerialNumber_between) != len(set_interactionSerialNumber_between) + len(set_negativeInteractionSerialNumber_between):
-    #     raise Exception('between dataset has overlap')
-
-    # print(f'train 和 between 的交集大小: {len(set_allInteractionSerialNumber_training.intersection(set_allInteractionSerialNumber_between))}')
-    # print(f'test 和 between 的交集大小: {len(set_allInteractionSerialNumber_testing.intersection(set_allInteractionSerialNumber_between))}')
-    # print(f'train 和 test 的交集大小: {len(set_allInteractionSerialNumber_training.intersection(set_allInteractionSerialNumber_testing))}')
