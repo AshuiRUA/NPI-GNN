@@ -8,6 +8,8 @@ import os
 import argparse
 import gc
 
+from torch import t
+
 sys.setrecursionlimit(1000000000)
 sys.path.append(os.path.realpath('.'))
 
@@ -31,7 +33,14 @@ def parse_args():
 
 
 def read_interaction_dataset(dataset_path, dataset_name):
-    global interaction_list, negative_interaction_list, lncRNA_list, protein_list, lncRNA_name_index_dict, protein_name_index_dict
+    interaction_list = []
+    negative_interaction_list = []
+    lncRNA_list = []
+    protein_list = []
+    lncRNA_name_index_dict = {}
+    protein_name_index_dict = {}
+    set_interactionKey = set()
+    set_negativeInteractionKey = set()
     # lncRNA_name_index_dict, protein_name_index_dic为了在interaction dataset中，读到重复的lncRNA或protein时
     # 能在lncRNA_list和protein_list中快速的找到
     if not osp.exists(dataset_path):
@@ -72,25 +81,31 @@ def read_interaction_dataset(dataset_path, dataset_name):
             protein_count = protein_count + 1
         else:   # 在interaction dataset中已经读到过，已经创建了对象的protein，就存在protein_list中
             temp_protein = protein_list[protein_name_index_dict[protein_name]]
-        temp_interaction = LncRNA_Protein_Interaction(temp_lncRNA, temp_protein, label)
+        # 创建新的相互作用实例
+        interaction_key = (temp_lncRNA.serial_number, temp_protein.serial_number)
+        temp_interaction = LncRNA_Protein_Interaction(temp_lncRNA, temp_protein, label, interaction_key)
+        temp_lncRNA.interaction_list.append(temp_interaction)
+        temp_protein.interaction_list.append(temp_interaction)
         # print(temp_interaction.protein.name, temp_interaction.lncRNA.name)
 
         if label == 1:
             interaction_list.append(temp_interaction)
+            set_interactionKey.add(interaction_key)
         elif label == 0:
             negative_interaction_list.append(temp_interaction)
+            set_negativeInteractionKey.add(interaction_key)
         else:
             print(label)
             raise Exception('{dataset_name}has labels other than 0 and 1'.format(dataset_name=dataset_name))
 
-        temp_lncRNA.interaction_list.append(temp_interaction)
-        temp_protein.interaction_list.append(temp_interaction)
     print('number of lncRNA：{:d}, number of protein：{:d}, number of node：{:d}'.format(lncRNA_count, protein_count, lncRNA_count + protein_count))
     print('number of interaction：{:d}'.format(len(interaction_list) + len(negative_interaction_list)))
+    return interaction_list, negative_interaction_list,lncRNA_list, protein_list, lncRNA_name_index_dict, protein_name_index_dict, set_interactionKey, set_negativeInteractionKey
 
 
 def negative_interaction_generation():
-    global lncRNA_list, protein_list, interaction_list, negative_interaction_list
+    global lncRNA_list, protein_list, interaction_list, negative_interaction_list, set_interactionKey, set_negativeInteractionKey
+    set_negativeInteractionKey = set()
 
     if len(negative_interaction_list) != 0:
         raise Exception('negative interactions exist')
@@ -106,21 +121,20 @@ def negative_interaction_generation():
         temp_lncRNA = lncRNA_list[random_index_lncRNA]
         temp_protein = protein_list[random_index_protein]
         # 检查随机选出的lncRNA和protein是不是有已知相互作用
-        repetitive_interaction = 0
-        for interaction in temp_lncRNA.interaction_list:
-            if interaction.protein.serial_number == temp_protein.serial_number:
-                repetitive_interaction = 1
-                break
-        if repetitive_interaction == 1:
+        key_negativeInteraction = (temp_lncRNA.serial_number, temp_protein.serial_number)
+        if key_negativeInteraction in set_interactionKey:
             continue
+        if key_negativeInteraction in set_negativeInteractionKey:
+            continue
+
         # 经过检查，随机选出的lncRNA和protein是可以作为负样本的
-        temp_interaction = LncRNA_Protein_Interaction(temp_lncRNA, temp_protein, 0)
+        set_negativeInteractionKey.add(key_negativeInteraction)
+        temp_interaction = LncRNA_Protein_Interaction(temp_lncRNA, temp_protein, 0, key_negativeInteraction)
         negative_interaction_list.append(temp_interaction)
         temp_lncRNA.interaction_list.append(temp_interaction)
         temp_protein.interaction_list.append(temp_interaction)
         negative_interaction_count = negative_interaction_count + 1
-    print('generate', len(negative_interaction_list), 'negative samples')
-    return negative_interaction_list
+    print('generate ', len(negative_interaction_list), ' negative samples')
 
 
 def return_node_list_and_edge_list():
@@ -200,6 +214,7 @@ def networkx_format_network_generation(interaction_list, negative_interaction_li
     for edge in edge_list:
         G.add_edge(edge.lncRNA.serial_number, edge.protein.serial_number)
     print('number of nodes in graph: ', G.number_of_nodes(), 'number of edges in graph: ', G.number_of_edges())
+    print(f'number of connected componet : {len(list(nx.connected_components(G)))}')
 
     del node_list, edge_list
     gc.collect()
@@ -407,7 +422,7 @@ def output_intermediate_products(project_name, interaction_list, negative_intera
     else:
         raise Exception("corresponding intermediate products exists")
 
-
+    print(f'向{output_path}中输出了中间产物')
     interaction_list_path = f'data/intermediate_products/{project_name}/interaction_list.txt'
     negative_interaction_list_path = f'data/intermediate_products/{project_name}/negative_interaction_list.txt'
     lncRNA_list_path = f'data/intermediate_products/{project_name}/lncRNA_list.txt'
@@ -430,43 +445,82 @@ def output_intermediate_products(project_name, interaction_list, negative_intera
             pickle.dump(protein_list, f)
 
 
+def output_set_interactionKey(path:str, set_interactionKey:set):
+    print(f'输出了：{path}')
+    with open(path, mode='w') as f:
+        for interactionKey in set_interactionKey:
+            f.write(f'{interactionKey[0]},{interactionKey[1]}\n')
+
+
+def generate_training_and_testing():
+    global set_interactionKey, set_negativeInteractionKey
+    
+    # 把set_interactionKey和set_negativeInteractionKey分5份
+    list_set_interactionKey = [set(), set(), set(), set(), set()]
+    list_set_negativeInteractionKey = [set(), set(), set(), set(), set()]
+    count = 0
+    while len(set_interactionKey) > 0:
+        list_set_interactionKey[count % 5].add(set_interactionKey.pop())
+        count += 1
+    count = 0
+    while len(set_negativeInteractionKey) > 0:
+        list_set_negativeInteractionKey[count % 5].add(set_negativeInteractionKey.pop())
+        count += 1
+    
+    # 每次那四份组成训练集，另一份是测试集
+    for i in range(5):
+        set_interactionKey_train = set()
+        set_negativeInteractionKey_train = set()
+        set_interactionKey_test = set()
+        set_negativeInteractionKey_test = set()
+        for j in range(5):
+            if i == j:
+                set_interactionKey_test.update(list_set_interactionKey[j])
+                set_negativeInteractionKey_test.update(list_set_negativeInteractionKey[j])
+            else:
+                set_interactionKey_train.update(list_set_interactionKey[j])
+                set_negativeInteractionKey_train.update(list_set_negativeInteractionKey[j])
+        if args.output == 1:
+            output_set_interactionKey(path_set_allInteractionKey+f'/set_interactionKey_test_{i}', set_interactionKey_test)
+            output_set_interactionKey(path_set_allInteractionKey+f'/set_negativeInteractionKey_test_{i}', set_negativeInteractionKey_test)
+            output_set_interactionKey(path_set_allInteractionKey+f'/set_interactionKey_train_{i}', set_interactionKey_train)
+            output_set_interactionKey(path_set_allInteractionKey+f'/set_negativeInteractionKey_train_{i}', set_negativeInteractionKey_train)
+
+
+
+
 if __name__ == '__main__':
     print('\n' + 'start' + '\n')
 
     #参数
     args = parse_args()
 
-    interaction_list = []
-    negative_interaction_list = []
-    lncRNA_list = []
-    protein_list = []
-    lncRNA_name_index_dict = {}
-    protein_name_index_dict = {}
-
-    interaction_dataset_path = 'data/source_database_data/'+ args.interactionDatasetName + '.xlsx'
-
     # 正负样本读入或生成
-    read_interaction_dataset(dataset_path=interaction_dataset_path, dataset_name=args.interactionDatasetName)
+    interaction_dataset_path = 'data/source_database_data/'+ args.interactionDatasetName + '.xlsx'
+    interaction_list, negative_interaction_list,lncRNA_list, protein_list, lncRNA_name_index_dict, protein_name_index_dict, set_interactionKey, \
+        set_negativeInteractionKey = read_interaction_dataset(dataset_path=interaction_dataset_path, dataset_name=args.interactionDatasetName)
+    
     if args.createBalanceDataset == 1:
-        negative_interaction_list = negative_interaction_generation() # 生成负样本
+        negative_interaction_generation() # 生成负样本
 
     print(f'number of lncRNA: {len(lncRNA_list)}, number of protein: {len(protein_list)}, number of node: {len(lncRNA_list) + len(protein_list)}')
     print(f'number of positive samples: {len(interaction_list)}, number of negative samples: {len(negative_interaction_list)}, number of edges: {len(interaction_list) + len(negative_interaction_list)}')
 
     # 缩小数据集
     if args.interactionDatasetName == 'NPInter2' and args.reduce == 1 :
-        # 缩小数据集，并且node2vec结果已经准备好
-        # 先生成缩小前的edgelist格式的网络
-        G = networkx_format_network_generation(interaction_list, negative_interaction_list, lncRNA_list, protein_list)
-        # 根据比例缩小数据集
-        interaction_list, negative_interaction_list, lncRNA_list, protein_list = reduce_dataset_mentainConnected(G, args.reduceRatio, interaction_list, negative_interaction_list, lncRNA_list, protein_list)
-        # 输出缩小后的网络
-        G = networkx_format_network_generation(interaction_list, negative_interaction_list, lncRNA_list, protein_list)
-        graph_output_path = f'data/graph/{args.projectName}'
-        if(args.output == True):
-            output_edgelist_file(G, graph_output_path)
-            # 输出中间产物
-            output_intermediate_products(args.projectName, args.node2vecWindowSize, interaction_list, negative_interaction_list, lncRNA_list, protein_list)
+        raise Exception("not ready")
+        # # 缩小数据集，并且node2vec结果已经准备好
+        # # 先生成缩小前的edgelist格式的网络
+        # G = networkx_format_network_generation(interaction_list, negative_interaction_list, lncRNA_list, protein_list)
+        # # 根据比例缩小数据集
+        # interaction_list, negative_interaction_list, lncRNA_list, protein_list = reduce_dataset_mentainConnected(G, args.reduceRatio, interaction_list, negative_interaction_list, lncRNA_list, protein_list)
+        # # 输出缩小后的网络
+        # G = networkx_format_network_generation(interaction_list, negative_interaction_list, lncRNA_list, protein_list)
+        # graph_output_path = f'data/graph/{args.projectName}'
+        # if(args.output == 1):
+        #     output_edgelist_file(G, graph_output_path)
+        #     # 输出中间产物
+        #     output_intermediate_products(args.projectName, args.node2vecWindowSize, interaction_list, negative_interaction_list, lncRNA_list, protein_list)
     elif args.interactionDatasetName != 'NPInter2' and args.reduce == 1 :
         raise Exception("temporary do not support reduce interaction dataset other than NPInter2")
     else:
@@ -474,11 +528,20 @@ if __name__ == '__main__':
         # 生成edgelist格式的网络并保存
         G = networkx_format_network_generation(interaction_list, negative_interaction_list, lncRNA_list, protein_list)
         graph_output_path = f'data/graph/{args.projectName}'
-        if(args.output == True):
+        if(args.output == 1):
             output_edgelist_file(G, graph_output_path)
             # 输出中间产物
-            output_intermediate_products(args.projectName, interaction_list, negative_interaction_list, lncRNA_list, protein_list)
+            # output_intermediate_products(args.projectName, interaction_list, negative_interaction_list, lncRNA_list, protein_list)
+            path_set_allInteractionKey = f'data/set_allInteractionKey/{args.projectName}'
+            if args.output == 1:
+                if not osp.exists(path_set_allInteractionKey):
+                    print(f'创建了文件夹：{path_set_allInteractionKey}')
+                    os.makedirs(path_set_allInteractionKey)
+                output_set_interactionKey(path_set_allInteractionKey+'/set_negativeInteractionKey_all', set_negativeInteractionKey)
+        generate_training_and_testing()
+
     # 创建保存node2vec结果的文件夹
-    if not osp.exists(f'data\\node2vec_result\\{args.projectName}'):
+    if not osp.exists(f'data\\node2vec_result\\{args.projectName}') and args.output == 1:
         os.makedirs(f'data\\node2vec_result\\{args.projectName}')
+        print(f'创建了文件夹:data/node2vec_result/{args.projectName}')
     print('\n' + 'exit' + '\n')

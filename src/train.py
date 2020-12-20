@@ -33,7 +33,7 @@ def parse_args():
     parser.add_argument('--foldNumber', default=5, type=int, help='fold number of cross validation')
     parser.add_argument('--initialLearningRate', default=0.005,type=float, help='Initial learning rate')
     parser.add_argument('--l2WeightDecay', default=0.0005, type=float, help='L2 weight')
-    parser.add_argument('--batchSize', default=60, type=int, help='batch size')
+    parser.add_argument('--batchSize', default=200, type=int, help='batch size')
 
     return parser.parse_args()
 

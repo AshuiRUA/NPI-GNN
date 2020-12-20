@@ -599,40 +599,14 @@ class LncRNA_Protein_Interaction_dataset_1hop_1218_InMemory(InMemoryDataset):
         return data
 
 
-class LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory(InMemoryDataset):
-    def __init__(self, root, dataset_type, interaction_list=None, h=None, set_allInteractionSerialNumberPair_training = None, \
-        set_allInteractionSerialNumberPair_testing=None, set_allInteractionSerialNumberPair_testing_selected = None, \
-        set_allInteractionSerialNumberPair_between = None, transform=None, pre_transform=None):
-
+class LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(InMemoryDataset):
+    def __init__(self, root,interaction_list=None, h=None, set_allInteractionKey_forGenerate = None, set_allInteractionKey_cannotUse = None, transform=None, pre_transform=None):
         self.interaction_list = interaction_list
         self.h = h
-        self.set_allInteractionSerialNumberPair_training = set_allInteractionSerialNumberPair_training
-        self.set_allInteractionSerialNumberPair_testing = set_allInteractionSerialNumberPair_testing
-        self.set_allInteractionSerialNumberPair_testing_selected = set_allInteractionSerialNumberPair_testing_selected
-        self.set_allInteractionSerialNumberPair_between = set_allInteractionSerialNumberPair_between
-        self.dataset_type = dataset_type
-        self.avr_x_size = 0.0
-        self.avr_positive = 0.0
-        self.avr_negative = 0.0
-        if interaction_list != None:
-            # 决定根据谁生成数据集
-            if dataset_type == 'training':
-                self.set_allInteractionSerialNumberPair_toGenerate = self.set_allInteractionSerialNumberPair_training
-                self.set_allInteractionSerialNumberPair_canNotUse = set()
-                # self.set_allInteractionSerialNumberPair_canNotUse.update(self.set_allInteractionSerialNumberPair_testing)
-                self.set_allInteractionSerialNumberPair_canNotUse.update(self.set_allInteractionSerialNumberPair_between)
-            elif dataset_type == 'testing':
-                self.set_allInteractionSerialNumberPair_toGenerate = self.set_allInteractionSerialNumberPair_testing
-                self.set_allInteractionSerialNumberPair_canNotUse = set()
-                self.set_allInteractionSerialNumberPair_canNotUse.update(self.set_allInteractionSerialNumberPair_testing)
-            elif dataset_type == 'testing_selected':
-                self.set_allInteractionSerialNumberPair_toGenerate = self.set_allInteractionSerialNumberPair_testing_selected
-                self.set_allInteractionSerialNumberPair_canNotUse = set()
-                self.set_allInteractionSerialNumberPair_canNotUse.update(self.set_allInteractionSerialNumberPair_testing)
-            else:
-                raise Exception("dataset_type has to be train, test or test_selected")
-
-        super(LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory, self).__init__(root, transform, pre_transform)
+        self.sum_node = 0.0
+        self.set_allInteractionKey_forGenerate = set_allInteractionKey_forGenerate
+        self.set_allInteractionKey_cannotUse = set_allInteractionKey_cannotUse
+        super(LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory, self).__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
      
     @property
@@ -650,23 +624,19 @@ class LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory(InMemoryDat
     def process(self):
         # Read data into huge `Data` list.
         if self.interaction_list != None and self.h != None:
-            num_data = len(self.set_allInteractionSerialNumberPair_toGenerate)
+            num_data = len(self.set_allInteractionKey_forGenerate)
             print(f'the number of samples:{num_data}')
             data_list = []
             count = 0
             for interaction in self.interaction_list:
-                # 挑出训练集中相互作用，加入数据集
-                if (interaction.lncRNA.serial_number, interaction.protein.serial_number)  in self.set_allInteractionSerialNumberPair_toGenerate:
+                interaction_key = (interaction.lncRNA.serial_number, interaction.protein.serial_number)
+                if interaction_key in self.set_allInteractionKey_forGenerate:
                     data = self.local_subgraph_generation(interaction, self.h)
                     data_list.append(data)
                     count = count + 1
                     if count % 100 == 0:
                         print(f'{count}/{num_data}')
-                        print(f'average node number = {self.avr_x_size/count}')
-                        print(f'average positive edge = {self.avr_positive / count}')
-                        print(f'average negative edge = {self.avr_negative / count}')
-            if len(data_list) != num_data:
-                raise Exception('len(data_list) != num_data')
+                        print(f'average node number = {self.sum_node / count}')
 
             if self.pre_filter is not None:
                 data_list = [data for data in data_list if self.pre_filter(data)]
@@ -684,9 +654,6 @@ class LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory(InMemoryDat
 
         x = []
         edge_index = [[], []]
-
-        positive_count = 0
-        negative_count = 0
 
         # 子图中每个节点都得有自己独特的serial number和structural label
         # 这是为了构建edge_index
@@ -708,13 +675,9 @@ class LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory(InMemoryDat
         subgraphNodeSerialNumber_node_dict[subgraph_serialNumber] = interaction.protein
         subgraph_serialNumber += 1
 
-    
         for interaction_temp in interaction.lncRNA.interaction_list:
-            if (interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number) not in self.set_allInteractionSerialNumberPair_canNotUse:
-                if interaction_temp.y == 1:
-                    positive_count += 1
-                else:
-                    negative_count += 1
+            interaction_key = (interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number)
+            if interaction_key not in self.set_allInteractionKey_cannotUse:
                 set_interactionSerialNumberPair_wait_to_add.add((interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number))
                 if interaction_temp.protein.serial_number not in nodeSerialNumber_subgraphNodeSerialNumber_dict.keys():
                     nodeSerialNumber_subgraphNodeSerialNumber_dict[interaction_temp.protein.serial_number] = subgraph_serialNumber
@@ -722,11 +685,8 @@ class LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory(InMemoryDat
                     subgraph_serialNumber += 1
         
         for interaction_temp in interaction.protein.interaction_list:
-            if (interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number) not in self.set_allInteractionSerialNumberPair_canNotUse:
-                if interaction_temp.y == 1:
-                    positive_count += 1
-                else:
-                    negative_count += 1
+            interaction_key = (interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number)
+            if interaction_key not in self.set_allInteractionKey_cannotUse:
                 set_interactionSerialNumberPair_wait_to_add.add((interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number))
                 if interaction_temp.lncRNA.serial_number not in nodeSerialNumber_subgraphNodeSerialNumber_dict.keys():
                     nodeSerialNumber_subgraphNodeSerialNumber_dict[interaction_temp.lncRNA.serial_number] = subgraph_serialNumber
@@ -762,9 +722,7 @@ class LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory(InMemoryDat
         else:
             y = [0]
 
-        self.avr_x_size += len(x)
-        self.avr_positive += positive_count
-        self.avr_negative += negative_count
+        self.sum_node += len(x)
         # 用x,y,edge_index创建出data，加入存放data的列表local_subgraph_list
         x = torch.tensor(x, dtype=torch.float)
         y = torch.tensor(y, dtype=torch.long)
@@ -772,3 +730,178 @@ class LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory(InMemoryDat
         data = Data(x=x, y=y, edge_index=edge_index)
 
         return data
+
+
+# class LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory(InMemoryDataset):
+#     def __init__(self, root, dataset_type, interaction_list=None, h=None, set_allInteractionSerialNumberPair_training = None, \
+#         set_allInteractionSerialNumberPair_testing=None, set_allInteractionSerialNumberPair_testing_selected = None, \
+#         set_allInteractionSerialNumberPair_between = None, transform=None, pre_transform=None):
+
+#         self.interaction_list = interaction_list
+#         self.h = h
+#         self.set_allInteractionSerialNumberPair_training = set_allInteractionSerialNumberPair_training
+#         self.set_allInteractionSerialNumberPair_testing = set_allInteractionSerialNumberPair_testing
+#         self.set_allInteractionSerialNumberPair_testing_selected = set_allInteractionSerialNumberPair_testing_selected
+#         self.set_allInteractionSerialNumberPair_between = set_allInteractionSerialNumberPair_between
+#         self.dataset_type = dataset_type
+#         self.avr_x_size = 0.0
+#         self.avr_positive = 0.0
+#         self.avr_negative = 0.0
+#         if interaction_list != None:
+#             # 决定根据谁生成数据集
+#             if dataset_type == 'training':
+#                 self.set_allInteractionSerialNumberPair_toGenerate = self.set_allInteractionSerialNumberPair_training
+#                 self.set_allInteractionSerialNumberPair_canNotUse = set()
+#                 # self.set_allInteractionSerialNumberPair_canNotUse.update(self.set_allInteractionSerialNumberPair_testing)
+#                 self.set_allInteractionSerialNumberPair_canNotUse.update(self.set_allInteractionSerialNumberPair_between)
+#             elif dataset_type == 'testing':
+#                 self.set_allInteractionSerialNumberPair_toGenerate = self.set_allInteractionSerialNumberPair_testing
+#                 self.set_allInteractionSerialNumberPair_canNotUse = set()
+#                 self.set_allInteractionSerialNumberPair_canNotUse.update(self.set_allInteractionSerialNumberPair_testing)
+#             elif dataset_type == 'testing_selected':
+#                 self.set_allInteractionSerialNumberPair_toGenerate = self.set_allInteractionSerialNumberPair_testing_selected
+#                 self.set_allInteractionSerialNumberPair_canNotUse = set()
+#                 self.set_allInteractionSerialNumberPair_canNotUse.update(self.set_allInteractionSerialNumberPair_testing)
+#             else:
+#                 raise Exception("dataset_type has to be train, test or test_selected")
+
+#         super(LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory, self).__init__(root, transform, pre_transform)
+#         self.data, self.slices = torch.load(self.processed_paths[0])
+     
+#     @property
+#     def raw_file_names(self):
+#         return []
+
+#     @property
+#     def processed_file_names(self):
+#         return ['data.pt']
+
+#     def download(self):
+#         # Download to `self.raw_dir`.
+#         pass
+    
+#     def process(self):
+#         # Read data into huge `Data` list.
+#         if self.interaction_list != None and self.h != None:
+#             num_data = len(self.set_allInteractionSerialNumberPair_toGenerate)
+#             print(f'the number of samples:{num_data}')
+#             data_list = []
+#             count = 0
+#             for interaction in self.interaction_list:
+#                 # 挑出训练集中相互作用，加入数据集
+#                 if (interaction.lncRNA.serial_number, interaction.protein.serial_number)  in self.set_allInteractionSerialNumberPair_toGenerate:
+#                     data = self.local_subgraph_generation(interaction, self.h)
+#                     data_list.append(data)
+#                     count = count + 1
+#                     if count % 100 == 0:
+#                         print(f'{count}/{num_data}')
+#                         print(f'average node number = {self.avr_x_size/count}')
+#                         print(f'average positive edge = {self.avr_positive / count}')
+#                         print(f'average negative edge = {self.avr_negative / count}')
+#             if len(data_list) != num_data:
+#                 raise Exception('len(data_list) != num_data')
+
+#             if self.pre_filter is not None:
+#                 data_list = [data for data in data_list if self.pre_filter(data)]
+
+#             if self.pre_transform is not None:
+#                 data_list = [self.pre_transform(data) for data in data_list]
+
+#             data, slices = self.collate(data_list)
+#             torch.save((data, slices), self.processed_paths[0])
+    
+#     # 下面四个函数用来构建local subgraph
+#     def local_subgraph_generation(self, interaction, h):
+#         # 防止图中的回路导致无限循环，所以添加过的interaction，要存起来
+#         added_interaction_list = []  
+
+#         x = []
+#         edge_index = [[], []]
+
+#         positive_count = 0
+#         negative_count = 0
+
+#         # 子图中每个节点都得有自己独特的serial number和structural label
+#         # 这是为了构建edge_index
+#         subgraph_node_serial_number = 0
+
+#         nodeSerialNumber_subgraphNodeSerialNumber_dict = {}
+#         subgraphNodeSerialNumber_node_dict = {}
+
+#         # 要加入局部子图的边
+#         set_interactionSerialNumberPair_wait_to_add = set()
+#         set_interactionSerialNumberPair_wait_to_add.add((interaction.lncRNA.serial_number, interaction.protein.serial_number))
+
+#         # 给要加入局部子图中的点都分配好序号
+#         subgraph_serialNumber = 0
+#         nodeSerialNumber_subgraphNodeSerialNumber_dict[interaction.lncRNA.serial_number] = subgraph_serialNumber
+#         subgraphNodeSerialNumber_node_dict[subgraph_serialNumber] = interaction.lncRNA
+#         subgraph_serialNumber += 1
+#         nodeSerialNumber_subgraphNodeSerialNumber_dict[interaction.protein.serial_number] = subgraph_serialNumber
+#         subgraphNodeSerialNumber_node_dict[subgraph_serialNumber] = interaction.protein
+#         subgraph_serialNumber += 1
+
+    
+#         for interaction_temp in interaction.lncRNA.interaction_list:
+#             if (interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number) not in self.set_allInteractionSerialNumberPair_canNotUse:
+#                 if interaction_temp.y == 1:
+#                     positive_count += 1
+#                 else:
+#                     negative_count += 1
+#                 set_interactionSerialNumberPair_wait_to_add.add((interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number))
+#                 if interaction_temp.protein.serial_number not in nodeSerialNumber_subgraphNodeSerialNumber_dict.keys():
+#                     nodeSerialNumber_subgraphNodeSerialNumber_dict[interaction_temp.protein.serial_number] = subgraph_serialNumber
+#                     subgraphNodeSerialNumber_node_dict[subgraph_serialNumber] = interaction_temp.protein
+#                     subgraph_serialNumber += 1
+        
+#         for interaction_temp in interaction.protein.interaction_list:
+#             if (interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number) not in self.set_allInteractionSerialNumberPair_canNotUse:
+#                 if interaction_temp.y == 1:
+#                     positive_count += 1
+#                 else:
+#                     negative_count += 1
+#                 set_interactionSerialNumberPair_wait_to_add.add((interaction_temp.lncRNA.serial_number, interaction_temp.protein.serial_number))
+#                 if interaction_temp.lncRNA.serial_number not in nodeSerialNumber_subgraphNodeSerialNumber_dict.keys():
+#                     nodeSerialNumber_subgraphNodeSerialNumber_dict[interaction_temp.lncRNA.serial_number] = subgraph_serialNumber
+#                     subgraphNodeSerialNumber_node_dict[subgraph_serialNumber] = interaction_temp.lncRNA
+#                     subgraph_serialNumber += 1
+
+#         # 构造edge_list
+#         for interaction_serialNumber_pair in set_interactionSerialNumberPair_wait_to_add:
+#             node1_subgraphSerialNumber = nodeSerialNumber_subgraphNodeSerialNumber_dict[interaction_serialNumber_pair[0]]
+#             node2_subgraphSerialNumber = nodeSerialNumber_subgraphNodeSerialNumber_dict[interaction_serialNumber_pair[1]]
+#             edge_index[0].append(node1_subgraphSerialNumber)
+#             edge_index[1].append(node2_subgraphSerialNumber)
+#             edge_index[0].append(node2_subgraphSerialNumber)
+#             edge_index[1].append(node1_subgraphSerialNumber)
+        
+#         # 构造x
+#         for i in range(len(subgraphNodeSerialNumber_node_dict.keys())):
+#             node_temp = subgraphNodeSerialNumber_node_dict[i]
+#             vector = []
+#             if i == 0 or i == 1:
+#                 vector.append(0)
+#             else:
+#                 vector.append(1)
+#             for f in node_temp.embedded_vector:
+#                 vector.append(float(f))
+#             vector.extend(node_temp.attributes_vector)
+#             x.append(vector)
+
+
+#         # y记录这个interaction的真假
+#         if interaction.y == 1:
+#             y = [1]
+#         else:
+#             y = [0]
+
+#         self.avr_x_size += len(x)
+#         self.avr_positive += positive_count
+#         self.avr_negative += negative_count
+#         # 用x,y,edge_index创建出data，加入存放data的列表local_subgraph_list
+#         x = torch.tensor(x, dtype=torch.float)
+#         y = torch.tensor(y, dtype=torch.long)
+#         edge_index = torch.tensor(edge_index, dtype=torch.long)
+#         data = Data(x=x, y=y, edge_index=edge_index)
+
+#         return data
