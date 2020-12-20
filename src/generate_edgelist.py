@@ -1,3 +1,4 @@
+import copy
 from openpyxl import load_workbook
 import random
 import networkx as nx
@@ -23,11 +24,11 @@ from src.methods import reset_basic_data, nodeSerialNumber_listIndex_dict_genera
 def parse_args():
     parser = argparse.ArgumentParser(description="generate_dataset.")
     parser.add_argument('--projectName',  help='project name')
-    parser.add_argument('--interactionDatasetName',  help='raw interactions dataset')
+    parser.add_argument('--interactionDatasetName', default="NPInter2", help='raw interactions dataset')
     parser.add_argument('--createBalanceDataset', default=1, type=int, help='Create a Balance dataset')
     parser.add_argument('--reduce', default=0, type=int, help='randomly reduce the source database, and also maintain one connected component')
     parser.add_argument('--reduceRatio', default=0.5, help='reduce Ratio')
-    parser.add_argument('--output', default=1,type=int,  help='output dataset or not')
+    parser.add_argument('--output', default=0,type=int,  help='output dataset or not')
 
     return parser.parse_args()
 
@@ -224,6 +225,7 @@ def networkx_format_network_generation(interaction_list, negative_interaction_li
 def output_edgelist_file(G, output_path):
     if not osp.exists(output_path):
         os.makedirs(output_path)
+        print(f'创建了文件夹：{output_path}')
     output_path += '/bipartite_graph.edgelist'
     if osp.exists(output_path):
         print('edgelist file already exist, rewrite or not? y/n')
@@ -409,40 +411,41 @@ def reduce_dataset_mentainConnected(G, ratio, list_interaction, list_negativeInt
     return list_interaction_reduced, list_negativeInteraction_reduced, list_lncRNA_reduced, list_protein_reduced
 
 
-def output_intermediate_products(project_name, interaction_list, negative_interaction_list, lncRNA_list, protein_list):
-    # 消除相互包含关系，防止递归
-    for lncRNA in lncRNA_list:
-        lncRNA.interaction_list = []
-    for protein in protein_list:
-        protein.interaction_list = []
+# def output_intermediate_products(project_name, interaction_list, negative_interaction_list, lncRNA_list, protein_list):
+#     # 消除相互包含关系，防止递归
+#     for lncRNA in lncRNA_list:
+#         lncRNA.interaction_list = []
+#     for protein in protein_list:
+#         protein.interaction_list = []
 
-    output_path = f'data/intermediate_products/{project_name}'
-    if not osp.exists(path=output_path):
-        os.makedirs(output_path)
-    else:
-        raise Exception("corresponding intermediate products exists")
+#     output_path = f'data/intermediate_products/{project_name}'
+#     if not osp.exists(path=output_path):
+#         os.makedirs(output_path)
+#         print(f'创建了文件夹：{output_path}')
+#     else:
+#         raise Exception("corresponding intermediate products exists")
 
-    print(f'向{output_path}中输出了中间产物')
-    interaction_list_path = f'data/intermediate_products/{project_name}/interaction_list.txt'
-    negative_interaction_list_path = f'data/intermediate_products/{project_name}/negative_interaction_list.txt'
-    lncRNA_list_path = f'data/intermediate_products/{project_name}/lncRNA_list.txt'
-    protein_list_path = f'data/intermediate_products/{project_name}/protein_list.txt'
+#     print(f'向{output_path}中输出了中间产物')
+#     interaction_list_path = f'data/intermediate_products/{project_name}/interaction_list.txt'
+#     negative_interaction_list_path = f'data/intermediate_products/{project_name}/negative_interaction_list.txt'
+#     lncRNA_list_path = f'data/intermediate_products/{project_name}/lncRNA_list.txt'
+#     protein_list_path = f'data/intermediate_products/{project_name}/protein_list.txt'
 
-    if not osp.exists(path=interaction_list_path):
-        with open(file=interaction_list_path, mode='wb') as f:
-            pickle.dump(interaction_list, f)
+#     if not osp.exists(path=interaction_list_path):
+#         with open(file=interaction_list_path, mode='wb') as f:
+#             pickle.dump(interaction_list, f)
 
-    if not osp.exists(path=negative_interaction_list_path):
-        with open(file=negative_interaction_list_path, mode='wb') as f:
-            pickle.dump(negative_interaction_list, f)
+#     if not osp.exists(path=negative_interaction_list_path):
+#         with open(file=negative_interaction_list_path, mode='wb') as f:
+#             pickle.dump(negative_interaction_list, f)
 
-    if not osp.exists(path=lncRNA_list_path):
-        with open(file=lncRNA_list_path, mode='wb') as f:
-            pickle.dump(lncRNA_list, f)
+#     if not osp.exists(path=lncRNA_list_path):
+#         with open(file=lncRNA_list_path, mode='wb') as f:
+#             pickle.dump(lncRNA_list, f)
 
-    if not osp.exists(path=protein_list_path):
-        with open(file=protein_list_path, mode='wb') as f:
-            pickle.dump(protein_list, f)
+#     if not osp.exists(path=protein_list_path):
+#         with open(file=protein_list_path, mode='wb') as f:
+#             pickle.dump(protein_list, f)
 
 
 def output_set_interactionKey(path:str, set_interactionKey:set):
@@ -485,8 +488,22 @@ def generate_training_and_testing():
             output_set_interactionKey(path_set_allInteractionKey+f'/set_negativeInteractionKey_test_{i}', set_negativeInteractionKey_test)
             output_set_interactionKey(path_set_allInteractionKey+f'/set_interactionKey_train_{i}', set_interactionKey_train)
             output_set_interactionKey(path_set_allInteractionKey+f'/set_negativeInteractionKey_train_{i}', set_negativeInteractionKey_train)
+        # 为训练集生成对应的图
+        generate_G_training(set_interactionKey_test, set_negativeInteractionKey_test, i)
 
 
+def generate_G_training(set_interactionKey_test, set_negativeInteraction_test, fold_number):
+    global G
+    G_whole_temp = copy.deepcopy(G)
+    for interactionKey in set_interactionKey_test:
+        G_whole_temp.remove_edge(*interactionKey)
+    for interactionKey in set_negativeInteraction_test:
+        G_whole_temp.remove_edge(*interactionKey)
+    G_training = G_whole_temp
+    print(f'{fold_number} fold training dataset graph : number of nodes = {G_training.number_of_nodes()}, number of edges = {G_training.number_of_edges()}')
+    print(f'number of connected components = {len(list(nx.connected_components(G_training)))}')
+    if args.output == 1:
+        output_edgelist_file(G_training, f'data/graph/{args.projectName}/training_{fold_number}')
 
 
 if __name__ == '__main__':
@@ -541,7 +558,13 @@ if __name__ == '__main__':
         generate_training_and_testing()
 
     # 创建保存node2vec结果的文件夹
-    if not osp.exists(f'data\\node2vec_result\\{args.projectName}') and args.output == 1:
-        os.makedirs(f'data\\node2vec_result\\{args.projectName}')
-        print(f'创建了文件夹:data/node2vec_result/{args.projectName}')
+    path_node2vec_result = f'data\\node2vec_result\\{args.projectName}'
+    if not osp.exists(path_node2vec_result) and args.output == 1:
+        os.makedirs(path_node2vec_result)
+        print(f'创建了文件夹: {path_node2vec_result}')
+        for i in range(5):
+            path_node2vec_per_fold = path_node2vec_result + f'/training_{i}'
+            os.makedirs(path_node2vec_per_fold)
+            print(f'创建了文件夹: {path_node2vec_per_fold}')
+    
     print('\n' + 'exit' + '\n')

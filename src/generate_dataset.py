@@ -237,7 +237,7 @@ if __name__ == "__main__":
     exam_set_allInteractionKey_train_test(set_interactionKey_train, set_negativeInteractionKey_train, set_interactionKey_test, set_negativeInteractionKey_test)
 
     # load node2vec result
-    node2vec_result_path = f'data/node2vec_result/{args.projectName}/result.emb'
+    node2vec_result_path = f'data/node2vec_result/{args.projectName}/training_{args.fold}/result.emb'
     read_node2vec_result(path=node2vec_result_path)
 
     # load k-mer
