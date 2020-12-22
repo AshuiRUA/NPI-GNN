@@ -36,7 +36,7 @@ def parse_args():
     parser.add_argument('--node2vecWindowSize', default=5, type=int, help='node2vec window size')
     # parser.add_argument('--crossValidation', default=1, type=int, help='do cross validation')
     # parser.add_argument('--foldNumber', default=5, type=int, help='fold number of cross validation')
-    parser.add_argument('--initialLearningRate', default=0.005, type=float, help='Initial learning rate')
+    parser.add_argument('--initialLearningRate', default=0.001, type=float, help='Initial learning rate')
     parser.add_argument('--l2WeightDecay', default=0.001, type=float, help='L2 weight')
     parser.add_argument('--batchSize', default=200, type=int, help='batch size')
 
@@ -192,6 +192,13 @@ if __name__ == "__main__":
     output = 'result, testing dataset, Accuracy: {:.5f}, Precision: {:.5f}, Sensitivity: {:.5f}, Specificity: {:.5f}, MCC: {:.5f}'.format(Accuracy, Precision, Sensitivity, Specificity, MCC)
     print(output)
     result_file.write(output + '\n')
+    if MCC > MCC_max:
+                MCC_max = MCC
+                epoch_MCC_max = args.epochNumber
+                ACC_MCC_max = Accuracy
+                Pre_MCC_max = Precision
+                Sen_MCC_max = Sensitivity
+                Spe_MCC_max = Specificity
     # 把模型存起来
     network_model_path = saving_path + f'/model_{args.fold}_fold/{num_of_epoch}'
     torch.save(model.state_dict(), network_model_path)

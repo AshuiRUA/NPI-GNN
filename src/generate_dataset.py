@@ -1,3 +1,4 @@
+from networkx import convert
 from openpyxl import load_workbook
 import random
 import networkx as nx
@@ -29,6 +30,7 @@ def parse_args():
     parser.add_argument('--fold', help='which fold is this')
     # parser.add_argument('--datasetType', help='training or testing or testing_selected')
     parser.add_argument('--interactionDatasetName', default='NPInter2', help='raw interactions dataset')
+    parser.add_argument('--createBalanceDataset', default=1, type=int, help='have you create a balance dataset when you run generate_edgelist.py, 0 means no, 1 means yes')
     parser.add_argument('--inMemory',default=1, type=int, help='1 or 0: in memory dataset or not')
     parser.add_argument('--hopNumber', default=2, type=int, help='hop number of subgraph')
     parser.add_argument('--shuffle', default=1, type=int, help='shuffle interactions before generate dataset')
@@ -62,10 +64,12 @@ def read_node2vec_result(path):
         arr.pop(0)
         node_list[serialNumber_listIndex_dict[serial_number]].embedded_vector = arr
     
+    count_node_without_node2vecResult = 0
     for node in node_list:
         if len(node.embedded_vector) != 64:
-            print('length of node2vec result vector !== 64')
+            count_node_without_node2vecResult += 1
             node.embedded_vector = [0] * 64
+    print(f'没有node2vec结果的节点数：{count_node_without_node2vecResult}')
     node2vec_result_file.close()
 
 
@@ -217,10 +221,12 @@ if __name__ == "__main__":
     
     path_set_allInteractionKey = f'data/set_allInteractionKey/{args.projectName}'
     path_set_negativeInteractionKey_all = path_set_allInteractionKey + '/set_negativeInteractionKey_all'
-    set_negativeInteractionKey = read_set_interactionKey(path_set_negativeInteractionKey_all)
+    if args.createBalanceDataset == 1:
+        set_negativeInteractionKey = read_set_interactionKey(path_set_negativeInteractionKey_all)
 
     # 重建负样本
-    rebuild_all_negativeInteraction(set_negativeInteractionKey)
+    if args.createBalanceDataset == 1:
+        rebuild_all_negativeInteraction(set_negativeInteractionKey)
 
     # 把训练集和测试集包含的边读取出来
     path_set_interactionKey_train = path_set_allInteractionKey + f'/set_interactionKey_train_{args.fold}'

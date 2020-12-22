@@ -379,6 +379,40 @@ def generate_set_nodeSerialNumber(list_node):
     return set_nodeSerialNumber
 
 
+def split_protein(list_set_serialNumber_protein:list):
+    global protein_list
+    list_protein_temp = protein_list[:]
+    for i in range(len(list_protein_temp)):
+        k = i
+        for j in range(i+1, len(list_protein_temp)):
+            if len(list_protein_temp[j].interaction_list) > len(list_protein_temp[k].interaction_list):
+                k = j
+        temp = list_protein_temp[i]
+        list_protein_temp[i] = list_protein_temp[k]
+        list_protein_temp[k] = temp
+    
+    count = 0
+    add_or_minus = 'add'
+    for protein in list_protein_temp:
+        list_set_serialNumber_protein[count].add(protein.serial_number)
+        if count == 4:
+            if add_or_minus == 'add':
+                add_or_minus = 'minus'
+            else:
+                count -= 1
+        elif count == 0:
+            if add_or_minus == 'minus':
+                add_or_minus = 'add'
+            else:
+                count += 1
+        else:
+            if add_or_minus == 'add':
+                count += 1
+            else:
+                count -= 1
+
+
+
 def generate_training_and_testing():
     global lncRNA_list, protein_list
 
@@ -392,10 +426,12 @@ def generate_training_and_testing():
     while len(set_serialNumber_lncRNA) > 0:
         list_set_serialNumber_lncRNA[count%5].add(set_serialNumber_lncRNA.pop())
         count += 1
-    count = 0
-    while len(set_serialNumber_protein) > 0:
-        list_set_serialNumber_protein[count%5].add(set_serialNumber_protein.pop())
-        count += 1
+    # count = 0
+    # while len(set_serialNumber_protein) > 0:
+    #     list_set_serialNumber_protein[count%5].add(set_serialNumber_protein.pop())
+    #     count += 1
+
+    split_protein(list_set_serialNumber_protein)
 
     # 创建用来输出训练集和测试集的文件夹
     path_set_serialNumber_node = f'data/set_serialNumber_node/{args.projectName}'

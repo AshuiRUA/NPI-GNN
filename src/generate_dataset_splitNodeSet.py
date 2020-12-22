@@ -64,11 +64,13 @@ def read_node2vec_result(path):
         serial_number = int(arr[0])
         arr.pop(0)
         node_list[serialNumber_listIndex_dict[serial_number]].embedded_vector = arr
-    
+
+    count_node_without_node2vec_result = 0
     for node in node_list:
         if len(node.embedded_vector) != 64:
-            print('length of node2vec result vector !== 64')
+            count_node_without_node2vec_result += 1
             node.embedded_vector = [0] * 64
+    print(f'没有node2vec结果的节点数：{count_node_without_node2vec_result}')
     node2vec_result_file.close()
 
 
@@ -263,6 +265,12 @@ def find_test_alone_node():
     # 返回
     return set_serialNumber_node_alone
     
+
+
+def find_lncRNA_protein_in_set_serialNumber_node_alone(set_serialNumber_node_alone):
+    global set_serialNumber_lncRNA_test, set_serialNumber_protein_test
+    
+
 
 
 def exam_training_testing_node():
