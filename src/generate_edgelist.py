@@ -580,7 +580,7 @@ if __name__ == '__main__':
     print(f'number of positive samples: {len(interaction_list)}, number of negative samples: {len(negative_interaction_list)}, number of edges: {len(interaction_list) + len(negative_interaction_list)}')
 
     # 缩小数据集
-    if args.interactionDatasetName == 'NPInter2' and args.reduce == 1 :
+    if (args.interactionDatasetName == 'NPInter2' or args.interactionDatasetName == 'NPInter2_0.25') and args.reduce == 1 :
         # 缩小数据集，并且node2vec结果已经准备好
         # 先生成缩小前的edgelist格式的网络
         G = networkx_format_network_generation(interaction_list, negative_interaction_list, lncRNA_list, protein_list)

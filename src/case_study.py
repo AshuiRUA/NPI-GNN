@@ -1,43 +1,38 @@
-from networkx import convert
-from openpyxl import load_workbook
-import random
-import networkx as nx
 import pickle
-import sys
-import os.path as osp
-import os
+import sys, os
 import argparse
-import copy
-import gc
+from matplotlib.pyplot import text
 import numpy as np
-
-from openpyxl.descriptors.base import Set
-from torch import pinverse
+import torch
+from torch_geometric.data import Data
+from torch_geometric.data import DataLoader
+import os.path as osp
+import time
 
 sys.path.append(os.path.realpath('.'))
 
-from src.classes import LncRNA
-from src.classes import Protein, LncRNA_Protein_Interaction_dataset_1hop_1218, LncRNA_Protein_Interaction_dataset_1hop_1218_InMemory
-from src.classes import LncRNA_Protein_Interaction, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
-from src.classes import LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory
+from src.generate_edgelist import read_interaction_dataset
+
+from src.generate_dataset import exam_set_allInteractionKey_train_test, read_set_interactionKey
+
+from src.classes import LncRNA_Protein_Interaction, LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory, Net_1
 
 from src.generate_edgelist import read_interaction_dataset
+
 from src.methods import nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
 from src.methods import reset_basic_data
 
 def parse_args():
     parser = argparse.ArgumentParser(description="generate_dataset.")
+    parser.add_argument('--caseStudyName', help='the name of this case study')
     parser.add_argument('--projectName', help='project name')
     parser.add_argument('--fold', help='which fold is this')
-    # parser.add_argument('--datasetType', help='training or testing or testing_selected')
     parser.add_argument('--interactionDatasetName', default='NPInter2', help='raw interactions dataset')
     parser.add_argument('--createBalanceDataset', default=1, type=int, help='have you create a balance dataset when you run generate_edgelist.py, 0 means no, 1 means yes')
-    parser.add_argument('--inMemory',default=1, type=int, help='1 or 0: in memory dataset or not')
-    parser.add_argument('--hopNumber', default=2, type=int, help='hop number of subgraph')
-    parser.add_argument('--shuffle', default=1, type=int, help='shuffle interactions before generate dataset')
-    parser.add_argument('--noKmer', default=0, type=int, help='Not using k-mer')
+    parser.add_argument('--noKmer', default=0, type=int, help='1: Not using k-mer, 0: use k-mer')
     parser.add_argument('--randomNodeEmbedding', default=0, type=int, help='1: use rangdom vector as node Embedding, 0: use node2vec')
-    parser.add_argument('--output', default=1, type=int, help='output dataset or not')
+    parser.add_argument('--modelPath', help='the path of the model')
+    # parser.add_argument('--output', default=1, type=int, help='output dataset or not')
 
     return parser.parse_args()
 
@@ -221,15 +216,50 @@ def exam_set_allInteractionKey_train_test(set_interactionKey_train, set_negative
         raise Exception('训练集和测试集有重合')
 
 
+def return_dict_serialNumber_name(list_node):
+    dict_serialNumber_name = {}
+    for node in list_node:
+        dict_serialNumber_name[node.serial_number] = node.name
+    return dict_serialNumber_name
+
+
+def return_dict_interactionKey_interaction(list_interaction):
+    dict_interactionKey_interaction = {}
+    for interaction in list_interaction:
+        dict_interactionKey_interaction[interaction.key] = interaction
+    return dict_interactionKey_interaction
+
+
+def predict_a_case(model, loader, device):
+    model.eval()
+    TP = 0
+    FN = 0
+    for data in loader:
+        data = data.to(device)
+        pred = model(data).max(dim = 1)[1]
+        for index in range(len(pred)):
+            if pred[index] == 1:
+                TP += 1
+            else:
+                FN += 1
+    if TP == 1 and FN == 0:
+        return True
+    elif FN == 1 and TP == 0:
+        return False
+    else:
+        raise Exception('there should be only one data')
+
+
+
 if __name__ == "__main__":
+    time_start = time.time()
     args = parse_args()
 
-    # 用中间产物，重现相互作用数据集
-    path_intermediate_products_whole = f'data/intermediate_products/{args.projectName}'
     interaction_dataset_path = 'data/source_database_data/'+ args.interactionDatasetName + '.xlsx'
     interaction_list, negative_interaction_list,lncRNA_list, protein_list, lncRNA_name_index_dict, protein_name_index_dict, set_interactionKey, \
         set_negativeInteractionKey = read_interaction_dataset(dataset_path=interaction_dataset_path, dataset_name=args.interactionDatasetName)
     
+    # 读取随机生成的负样本的key集合
     path_set_allInteractionKey = f'data/set_allInteractionKey/{args.projectName}'
     path_set_negativeInteractionKey_all = path_set_allInteractionKey + '/set_negativeInteractionKey_all'
     if args.createBalanceDataset == 1:
@@ -238,7 +268,7 @@ if __name__ == "__main__":
     # 重建负样本
     if args.createBalanceDataset == 1:
         rebuild_all_negativeInteraction(set_negativeInteractionKey)
-
+    
     # 把训练集和测试集包含的边读取出来
     path_set_interactionKey_train = path_set_allInteractionKey + f'/set_interactionKey_train_{args.fold}'
     path_set_negativeInteractionKey_train = path_set_allInteractionKey + f'/set_negativeInteractionKey_train_{args.fold}'
@@ -270,138 +300,65 @@ if __name__ == "__main__":
 
     # 执行检查
     load_exam(args.noKmer, lncRNA_list, protein_list)
-    
-    
-    # 数据集生成
-    exam_list_all_interaction(interaction_list)
-    exam_list_all_interaction(negative_interaction_list)
-    all_interaction_list = interaction_list.copy()
-    all_interaction_list.extend(negative_interaction_list)
-    exam_list_all_interaction(all_interaction_list)
 
-    if args.shuffle == 1:    # 随机打乱
-        print('shuffle dataset\n')
-        random.shuffle(all_interaction_list)
-    
-    # num_of_subgraph = len(all_interaction_list)
+    # 载入模型
+    device = torch.device('cuda')
+    model = Net_1(178).to(device)
+    model.load_state_dict(torch.load(args.modelPath))
 
-    if args.output == 1:
-        if args.inMemory == 0:
-            raise Exception('not ready')
-            # dataset_path = f'data/dataset/{args.projectName}'
-            # if not osp.exists(dataset_path):
-            #     os.makedirs(dataset_path)
-            # My_dataset = LncRNA_Protein_Interaction_dataset_1hop_1218(dataset_path, all_interaction_list, 1)
+    # 开始case study
+
+    # 构建从serial number到名字的字典
+    dict_serialNumber_lncRNAName = return_dict_serialNumber_name(lncRNA_list)
+    dict_serialNumber_proteinName = return_dict_serialNumber_name(protein_list)
+    dict_interactionKey_interaction = return_dict_interactionKey_interaction(interaction_list)
+
+    set_interactionKey_cannotUse = set()
+    set_interactionKey_cannotUse.update(set_interactionKey_test)
+    set_interactionKey_cannotUse.update(set_negativeInteractionKey_test)
+    
+    device = torch.device('cuda')
+
+    case_study_path = f'data/case_study/{args.caseStudyName}/datasets'
+    if not osp.exists(case_study_path):
+        os.makedirs(case_study_path)
+        print(f'创建了文件夹：{case_study_path}')
+    log_path = f'data/case_study/{args.caseStudyName}/logs'
+    if not osp.exists(log_path):
+        os.makedirs(log_path)
+        print(f'创建了文件夹：{log_path}')
+
+    log_predict_success = open(log_path+f'/case_predict_success.txt', 'w')
+    log_predict_fail = open(log_path+f'/case_predict_fail.txt', 'w')
+
+    for interaction_key in set_interactionKey_test:
+        lncRNA_name = dict_serialNumber_lncRNAName[interaction_key[0]]
+        protein_name = dict_serialNumber_proteinName[interaction_key[1]]
+        interaction_name_pair = (lncRNA_name, protein_name)
+        # 打印要预测的case的名字
+        # print(interaction_name_pair)
+        # 生成数据集
+        set_interactionKey_forGenerate = set()
+        set_interactionKey_forGenerate.add(interaction_key)
+        path_dataset_caseStudy = case_study_path+f'/{lncRNA_name}_{protein_name}'
+        dataset_caseStudy = LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(path_dataset_caseStudy, interaction_list, 1, set_interactionKey_forGenerate, set_interactionKey_cannotUse)
+        case_loader = DataLoader(dataset_caseStudy, batch_size=1)
+        case_result = predict_a_case(model, case_loader, device)
+        if case_result == True:
+            log_predict_success.write(f'{lncRNA_name}\t{protein_name}\n')
         else:
-            # 生成局部子图，不能有测试集的边
-            set_interactionKey_cannotUse = set()
-            set_interactionKey_cannotUse.update(set_interactionKey_test)
-            set_interactionKey_cannotUse.update(set_negativeInteractionKey_test)
-
-            # 生成训练集
-            dataset_train_path = f'data/dataset/{args.projectName}_inMemory_train_{args.fold}'
-            if not osp.exists(dataset_train_path):
-                print(f'创建了文件夹：{dataset_train_path}')
-                os.makedirs(dataset_train_path)
-            set_interactionKey_forGenerate = set()
-            set_interactionKey_forGenerate.update(set_interactionKey_train)
-            set_interactionKey_forGenerate.update(set_negativeInteractionKey_train)
-            My_trainingDataset = LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(dataset_train_path, all_interaction_list, 1, set_interactionKey_forGenerate, set_interactionKey_cannotUse)
-
-            # 生成测试集
-            dataset_test_path = f'data/dataset/{args.projectName}_inMemory_test_{args.fold}'
-            if not osp.exists(dataset_test_path):
-                print(f'创建了文件夹：{dataset_test_path}')
-                os.makedirs(dataset_test_path)
-            set_interactionKey_forGenerate = set()
-            set_interactionKey_forGenerate.update(set_interactionKey_test)
-            set_interactionKey_forGenerate.update(set_negativeInteractionKey_test)
-            My_testingDataset = LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(dataset_test_path, all_interaction_list, 1, set_interactionKey_forGenerate, set_interactionKey_cannotUse)
-
-    exit(0)
-
-    # if args.output == 1:
-    #     if args.inMemory == 0:
-    #         raise Exception("not ready")
-    #         My_dataset = LncRNA_Protein_Interaction_dataset_1hop_1218(root=dataset_path, interaction_list=all_interaction_list, h=args.hopNumber)
-    #     else:
-    #         print("generating testing_selected dataset !!!!!!!!!!!!!!!!!!!!!!!")
-    #         dataset_path = f'data/dataset/{args.projectName}_testing_selected_{args.fold}'
-    #         if not osp.exists(dataset_path):
-    #             os.makedirs(dataset_path)
-    #         My_dataset = LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory(root=dataset_path, interaction_list=all_interaction_list, \
-    #             h=args.hopNumber, dataset_type='testing_selected', \
-    #             set_allInteractionSerialNumberPair_training= set_allInteractionSerialNumber_training, \
-    #             set_allInteractionSerialNumberPair_testing=set_allInteractionSerialNumber_testing, \
-    #             set_allInteractionSerialNumberPair_testing_selected=set_allInteractionSerialNumber_testing_selected, \
-    #             set_allInteractionSerialNumberPair_between=set_interactionSerialNumber_between)
-            
-    #         print("generating testing dataset !!!!!!!!!!!!!!!!!!!!!!!")
-    #         dataset_path = f'data/dataset/{args.projectName}_testing_{args.fold}'
-    #         if not osp.exists(dataset_path):
-    #             os.makedirs(dataset_path)
-    #         My_dataset = LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory(root=dataset_path, interaction_list=all_interaction_list, \
-    #             h=args.hopNumber, dataset_type='testing', \
-    #             set_allInteractionSerialNumberPair_training= set_allInteractionSerialNumber_training, \
-    #             set_allInteractionSerialNumberPair_testing=set_allInteractionSerialNumber_testing, \
-    #             set_allInteractionSerialNumberPair_testing_selected=set_allInteractionSerialNumber_testing_selected, \
-    #             set_allInteractionSerialNumberPair_between=set_interactionSerialNumber_between)
-            
-    #         print("generating training dataset !!!!!!!!!!!!!!!!!!!!!!!")
-    #         dataset_path = f'data/dataset/{args.projectName}_training_{args.fold}'
-    #         if not osp.exists(dataset_path):
-    #             os.makedirs(dataset_path)
-    #         My_dataset = LncRNA_Protein_Interaction_dataset_1hop_1218_dataType_InMemory(root=dataset_path, interaction_list=all_interaction_list, \
-    #             h=args.hopNumber, dataset_type='training', \
-    #             set_allInteractionSerialNumberPair_training= set_allInteractionSerialNumber_training, \
-    #             set_allInteractionSerialNumberPair_testing=set_allInteractionSerialNumber_testing, \
-    #             set_allInteractionSerialNumberPair_testing_selected=set_allInteractionSerialNumber_testing_selected, \
-    #             set_allInteractionSerialNumberPair_between=set_interactionSerialNumber_between)
-    # print('\n' + 'exit' + '\n')
+            log_predict_fail.write(f'{lncRNA_name}\t{protein_name}\n')
+    
+    log_predict_fail.close()
+    log_predict_success.close()
+    time_end = time.time()
+    print(f'总耗时：{time_end - time_start}')
 
 
 
 
-    # path_set_interactionSerialNumber_training = f'data/intermediate_products_trainingDataset/{args.projectName}/set_interactionSerialNumberPair_{args.fold}.txt'
-    # path_set_negativeInteractionSerialNumber_training = f'data/intermediate_products_trainingDataset/{args.projectName}/set_negativeInteractionSerialNumberPair_{args.fold}.txt'
-    # set_interactionSerialNumber_training = load_set_interactionSerialNumberPair(path_set_interactionSerialNumber_training)
-    # set_negativeInteractionSerialNumber_training = load_set_interactionSerialNumberPair(path_set_negativeInteractionSerialNumber_training)
-    # set_allInteractionSerialNumber_training = set()
-    # set_allInteractionSerialNumber_training.update(set_interactionSerialNumber_training)
-    # set_allInteractionSerialNumber_training.update(set_negativeInteractionSerialNumber_training)
-    # if len(set_allInteractionSerialNumber_training) != len(set_interactionSerialNumber_training) + len(set_negativeInteractionSerialNumber_training):
-    #     raise Exception('training dataset has overlap')
 
-    # path_set_interactionSerialNumber_testing = f'data/intermediate_products_testingDataset/{args.projectName}/set_interactionSerialNumberPair_{args.fold}.txt'
-    # path_set_negativeInteractionSerialNumber_testing = f'data/intermediate_products_testingDataset/{args.projectName}/set_negativeInteractionSerialNumberPair_{args.fold}.txt'
-    # set_interactionSerialNumber_testing = load_set_interactionSerialNumberPair(path_set_interactionSerialNumber_testing)
-    # set_negativeInteractionSerialNumber_testing = load_set_interactionSerialNumberPair(path_set_negativeInteractionSerialNumber_testing)
-    # set_allInteractionSerialNumber_testing = set()
-    # set_allInteractionSerialNumber_testing.update(set_interactionSerialNumber_testing)
-    # set_allInteractionSerialNumber_testing.update(set_negativeInteractionSerialNumber_testing)
-    # if len(set_allInteractionSerialNumber_testing) != len(set_interactionSerialNumber_testing) + len(set_negativeInteractionSerialNumber_testing):
-    #     raise Exception('testing dataset has overlap')
 
-    # path_set_interactionSerialNumber_testing_selected = f'data/intermediate_products_testingDataset_selected/{args.projectName}/set_interactionSerialNumberPair_{args.fold}.txt'
-    # path_set_negativeInteractionSerialNumber_testing_selected = f'data/intermediate_products_testingDataset_selected/{args.projectName}/set_negativeInteractionSerialNumberPair_{args.fold}.txt'
-    # set_interactionSerialNumber_testing_selected = load_set_interactionSerialNumberPair(path_set_interactionSerialNumber_testing_selected)
-    # set_negativeInteractionSerialNumber_testing_selected = load_set_interactionSerialNumberPair(path_set_negativeInteractionSerialNumber_testing_selected)
-    # set_allInteractionSerialNumber_testing_selected = set()
-    # set_allInteractionSerialNumber_testing_selected.update(set_interactionSerialNumber_testing_selected)
-    # set_allInteractionSerialNumber_testing_selected.update(set_negativeInteractionSerialNumber_testing_selected)
-    # if len(set_allInteractionSerialNumber_testing_selected) != len(set_interactionSerialNumber_testing_selected) + len(set_negativeInteractionSerialNumber_testing_selected):
-    #     raise Exception('testing_selected dataset has overlap')
 
-    # path_set_interactionSerialNumber_between = f'data/intermediate_products_between/{args.projectName}/set_interactionSerialNumberPair_{args.fold}.txt'
-    # path_set_negativeInteractionSerialNumber_between = f'data/intermediate_products_between/{args.projectName}/set_negativeInteractionSerialNumberPair_{args.fold}.txt'
-    # set_interactionSerialNumber_between = load_set_interactionSerialNumberPair(path_set_interactionSerialNumber_between)
-    # set_negativeInteractionSerialNumber_between = load_set_interactionSerialNumberPair(path_set_negativeInteractionSerialNumber_between)
-    # set_allInteractionSerialNumber_between = set()
-    # set_allInteractionSerialNumber_between.update(set_interactionSerialNumber_between)
-    # set_allInteractionSerialNumber_between.update(set_negativeInteractionSerialNumber_between)
-    # if len(set_allInteractionSerialNumber_between) != len(set_interactionSerialNumber_between) + len(set_negativeInteractionSerialNumber_between):
-    #     raise Exception('between dataset has overlap')
 
-    # print(f'train 和 between 的交集大小: {len(set_allInteractionSerialNumber_training.intersection(set_allInteractionSerialNumber_between))}')
-    # print(f'test 和 between 的交集大小: {len(set_allInteractionSerialNumber_testing.intersection(set_allInteractionSerialNumber_between))}')
-    # print(f'train 和 test 的交集大小: {len(set_allInteractionSerialNumber_training.intersection(set_allInteractionSerialNumber_testing))}')
+    
