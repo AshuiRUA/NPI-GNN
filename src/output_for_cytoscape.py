@@ -82,38 +82,38 @@ def read_interaction_dataset(dataset_path, dataset_name):
     print(f'number of positive samples：{len(interaction_list)}, number of negative samples：{len(negative_interaction_list)}\n')
 
 
-def negative_interaction_generation():
-    global lncRNA_list, protein_list, interaction_list, negative_interaction_list
+# def negative_interaction_generation():
+#     global lncRNA_list, protein_list, interaction_list, negative_interaction_list
 
-    if len(negative_interaction_list) != 0:
-        raise Exception('negative interactions exist')
+#     if len(negative_interaction_list) != 0:
+#         raise Exception('negative interactions exist')
 
-    num_of_interaction = len(interaction_list)
-    num_of_lncRNA = len(lncRNA_list)
-    num_of_protein = len(protein_list)
+#     num_of_interaction = len(interaction_list)
+#     num_of_lncRNA = len(lncRNA_list)
+#     num_of_protein = len(protein_list)
 
-    negative_interaction_count = 0
-    while(negative_interaction_count < num_of_interaction):
-        random_index_lncRNA = random.randint(0, num_of_lncRNA - 1)
-        random_index_protein = random.randint(0, num_of_protein - 1)
-        temp_lncRNA = lncRNA_list[random_index_lncRNA]
-        temp_protein = protein_list[random_index_protein]
-        # 检查随机选出的lncRNA和protein是不是有已知相互作用
-        repetitive_interaction = 0
-        for interaction in temp_lncRNA.interaction_list:
-            if interaction.protein.serial_number == temp_protein.serial_number:
-                repetitive_interaction = 1
-                break
-        if repetitive_interaction == 1:
-            continue
-        # 经过检查，随机选出的lncRNA和protein是可以作为负样本的
-        temp_interaction = LncRNA_Protein_Interaction(temp_lncRNA, temp_protein, 0)
-        negative_interaction_list.append(temp_interaction)
-        temp_lncRNA.interaction_list.append(temp_interaction)
-        temp_protein.interaction_list.append(temp_interaction)
-        negative_interaction_count = negative_interaction_count + 1
-    print('生成了', len(negative_interaction_list), '个负样本')
-    return negative_interaction_list
+#     negative_interaction_count = 0
+#     while(negative_interaction_count < num_of_interaction):
+#         random_index_lncRNA = random.randint(0, num_of_lncRNA - 1)
+#         random_index_protein = random.randint(0, num_of_protein - 1)
+#         temp_lncRNA = lncRNA_list[random_index_lncRNA]
+#         temp_protein = protein_list[random_index_protein]
+#         # 检查随机选出的lncRNA和protein是不是有已知相互作用
+#         repetitive_interaction = 0
+#         for interaction in temp_lncRNA.interaction_list:
+#             if interaction.protein.serial_number == temp_protein.serial_number:
+#                 repetitive_interaction = 1
+#                 break
+#         if repetitive_interaction == 1:
+#             continue
+#         # 经过检查，随机选出的lncRNA和protein是可以作为负样本的
+#         temp_interaction = LncRNA_Protein_Interaction(temp_lncRNA, temp_protein, 0)
+#         negative_interaction_list.append(temp_interaction)
+#         temp_lncRNA.interaction_list.append(temp_interaction)
+#         temp_protein.interaction_list.append(temp_interaction)
+#         negative_interaction_count = negative_interaction_count + 1
+#     print('生成了', len(negative_interaction_list), '个负样本')
+#     return negative_interaction_list
 
 
 args = parse_args()
@@ -128,8 +128,8 @@ protein_name_index_dict = {}
 interaction_dataset_path = 'data/source_database_data/'+ args.datasetName + '.xlsx'
 read_interaction_dataset(dataset_path=interaction_dataset_path, dataset_name=args.datasetName)
 
-if  not (args.datasetName == 'RPI2241' or args.datasetName == 'RPI369'):
-    negative_interaction_list = negative_interaction_generation() # 生成负样本
+# if  not (args.datasetName == 'RPI2241' or args.datasetName == 'RPI369'):
+#     negative_interaction_list = negative_interaction_generation() # 生成负样本
 
 path_output = './data/cytoscape_graph'
 if not osp.exists(path_output):

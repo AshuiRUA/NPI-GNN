@@ -1,26 +1,13 @@
 import sys
 import os.path as osp
 import os
-import random
 from tqdm import tqdm
-import time
-import gc
 import argparse
+import numpy as np
+
 
 sys.path.append(os.path.realpath('.'))
-from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
-
-sys.path.append(r"C:\Python_prj\GNN_predict_rpi_0930")
-
-from src.classes import Net_1, LncRNA_Protein_Interaction_dataset
-sys.path.append(os.path.realpath('.'))
-from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
-
-sys.path.append(os.path.realpath('.'))
-from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
-
-sys.path.append(os.path.realpath('.'))
-from src.classes import Net_1, LncRNA_Protein_Interaction_dataset, LncRNA_Protein_Interaction_inMemoryDataset
+from src.classes import LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory
 
 from src.methods import dataset_analysis, average_list, Accuracy_Precision_Sensitivity_Specificity_MCC
 
@@ -34,10 +21,7 @@ from torch.optim import *
 def parse_args():
     parser = argparse.ArgumentParser(description="analyze dataset.")
     parser.add_argument('--datasetName', default='0930_NPInter2', help='the name of this object')
-    parser.add_argument('--interactionDatasetName', default='NPInter2', help='raw interactions dataset')
-    parser.add_argument('--hopNumber', default=2, help='hop number of subgraph')
-    parser.add_argument('--node2vecWindowSize', default=5, help='node2vec window size')
-    parser.add_argument('--onlyPositive', type=int,default=1, help='only count positive samples')
+    parser.add_argument('--onlyPositive', type=int,default=0, help='only count positive samples')
 
     return parser.parse_args()
 
@@ -45,9 +29,9 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
 
-    dataset_path = f'data\\dataset\\{args.datasetName}'
+    dataset_path = f'data/dataset/{args.datasetName}'
     # 读取数据集
-    dataset = LncRNA_Protein_Interaction_inMemoryDataset(root=dataset_path)
+    dataset = LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(root=dataset_path)
 
     average_node_number = 0
     average_edge_number = 0
@@ -72,14 +56,11 @@ if __name__ == "__main__":
             else:
                 dict_edgeNumber_occurrenceNumber[data.num_edges] = 1
             list_edgeNumber.append(data.num_edges)
-            # 计算平均节点数和平均边数
-            average_node_number = (average_node_number * i + data.num_nodes) / (i + 1)
-            average_edge_number = (average_edge_number * i + data.num_edges) / (i + 1)
-            # 检查节点特征维度
-            if data.num_node_features != 178:
-                print('feature dimensions != 178')
-                print(f'feature dimensions：{data.num_node_features}')
-                exit()
+            # # 检查节点特征维度
+            # if data.num_node_features != 178:
+            #     print('feature dimensions != 178')
+            #     print(f'feature dimensions：{data.num_node_features}')
+            #     exit()
             # 统计正负样本数量
             if data.y[0] == 1:
                 num_of_positive_data += 1
@@ -98,19 +79,18 @@ if __name__ == "__main__":
             else:
                 dict_edgeNumber_occurrenceNumber[data.num_edges] = 1
             list_edgeNumber.append(data.num_edges)
-            # 计算平均节点数和平均边数
-            average_node_number = (average_node_number * i + data.num_nodes) / (i + 1)
-            average_edge_number = (average_edge_number * i + data.num_edges) / (i + 1)
-            # 检查节点特征维度
-            if data.num_node_features != 178:
-                print('feature dimensions != 178')
-                print(f'feature dimensions：{data.num_node_features}')
-                exit()
+            # # 检查节点特征维度
+            # if data.num_node_features != 178:
+            #     print('feature dimensions != 178')
+            #     print(f'feature dimensions：{data.num_node_features}')
+            #     exit()
             # 统计正负样本数量
             if data.y[0] == 1:
                 num_of_positive_data += 1
             else:
                 num_of_negative_data += 1
+    average_node_number = np.mean(list_nodeNumber)
+    average_edge_number = np.mean(list_edgeNumber)
     print('average node number of enclosing subgraph', average_node_number)
     print('average edge number of enclosing subgraph', average_edge_number)
     print('number of positive samples', num_of_positive_data)

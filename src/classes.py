@@ -645,6 +645,7 @@ class LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(InMemoryDataset):
                 data_list = [self.pre_transform(data) for data in data_list]
 
             data, slices = self.collate(data_list)
+            print(f'average node number = {self.sum_node / count}')
             torch.save((data, slices), self.processed_paths[0])
     
     # 下面四个函数用来构建local subgraph

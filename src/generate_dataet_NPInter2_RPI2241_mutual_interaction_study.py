@@ -1,3 +1,4 @@
+from networkx import convert
 from openpyxl import load_workbook
 import random
 import networkx as nx
@@ -8,7 +9,7 @@ import os
 import argparse
 import copy
 import gc
-import numpy
+import numpy as np
 
 from openpyxl.descriptors.base import Set
 from torch import pinverse
@@ -24,19 +25,21 @@ from src.generate_edgelist import read_interaction_dataset
 from src.methods import nodeSerialNumber_listIndex_dict_generation, nodeName_listIndex_dict_generation
 from src.methods import reset_basic_data
 
-from src.dataset_splitNodeSet import LncRNA_Protein_Interaction_dataset_1hop_1220_splitNodeSet_InMemory
-
 def parse_args():
     parser = argparse.ArgumentParser(description="generate_dataset.")
     parser.add_argument('--projectName', help='project name')
-    parser.add_argument('--fold', help='which fold is this')
+    # parser.add_argument('--fold', help='which fold is this')
     # parser.add_argument('--datasetType', help='training or testing or testing_selected')
     parser.add_argument('--interactionDatasetName', default='NPInter2', help='raw interactions dataset')
+    parser.add_argument('--createBalanceDataset', default=1, type=int, help='have you create a balance dataset when you run generate_edgelist.py, 0 means no, 1 means yes')
+    parser.add_argument('--path_set_negativeInteractionKey')
     parser.add_argument('--inMemory',default=1, type=int, help='1 or 0: in memory dataset or not')
-    parser.add_argument('--hopNumber', default=1, type=int, help='hop number of subgraph')
+    parser.add_argument('--number', type=int)
+    # parser.add_argument('--hopNumber', default=2, type=int, help='hop number of subgraph')
     parser.add_argument('--shuffle', default=1, type=int, help='shuffle interactions before generate dataset')
     parser.add_argument('--noKmer', default=0, type=int, help='Not using k-mer')
-    parser.add_argument('--output', default=0, type=int, help='output dataset or not')
+    parser.add_argument('--randomNodeEmbedding', default=0, type=int, help='1: use rangdom vector as node Embedding, 0: use node2vec')
+    parser.add_argument('--output', default=1, type=int, help='output dataset or not')
 
     return parser.parse_args()
 
@@ -64,14 +67,23 @@ def read_node2vec_result(path):
         serial_number = int(arr[0])
         arr.pop(0)
         node_list[serialNumber_listIndex_dict[serial_number]].embedded_vector = arr
-
-    count_node_without_node2vec_result = 0
+    
+    count_node_without_node2vecResult = 0
     for node in node_list:
         if len(node.embedded_vector) != 64:
-            count_node_without_node2vec_result += 1
+            count_node_without_node2vecResult += 1
             node.embedded_vector = [0] * 64
-    print(f'没有node2vec结果的节点数：{count_node_without_node2vec_result}')
+    print(f'没有node2vec结果的节点数：{count_node_without_node2vecResult}')
     node2vec_result_file.close()
+
+
+def read_random_node_embedding():
+    print('use random vector as node embedding')
+    global lncRNA_list, protein_list
+    for lncRNA in lncRNA_list:
+        lncRNA.embedded_vector = list(np.random.randn(64))
+    for protein in protein_list:
+        protein.embedded_vector = list(np.random.randn(64))
 
 
 def load_node_k_mer(node_list, node_type, k_mer_path):
@@ -211,150 +223,51 @@ def exam_set_allInteractionKey_train_test(set_interactionKey_train, set_negative
         raise Exception('训练集和测试集有重合')
 
 
-def read_set_serialNumber_node(path):
-    set_serialNumber_node = set()
-    with open(path, mode='r') as f:
-        for line in f.readlines():
-            set_serialNumber_node.add(int(line.strip()))
-    return set_serialNumber_node
-
-
-def process_edgelist_from_local(G:nx.Graph):
-    G_new = nx.Graph()
-    for node in G.nodes:
-        G_new.add_node(int(node))
-    for edge in G.edges:
-        G_new.add_edge(int(edge[0]), int(edge[1]))
-    return G_new
-
-
-def find_test_alone_node():
-    global set_interactionKey, set_negativeInteractionKey, set_serialNumber_lncRNA_test, set_serialNumber_protein_test
-    # 创建G_whole
-    G_whole = nx.Graph()
-    G_whole = process_edgelist_from_local(nx.read_edgelist(f'data/graph/{args.projectName}/bipartite_graph.edgelist')) 
-    # for interactionKey in set_interactionKey:
-    #     G_whole.add_edge(*interactionKey)
-    # for negativeInteractionKey in set_negativeInteractionKey:
-    #     G_whole.add_edge(*negativeInteractionKey)
-    
-    print(f'G whole : number of nodes = {G_whole.number_of_nodes()}, number of edges = {G_whole.number_of_edges()}')
-    print(f'number of connected components = {len(list(nx.connected_components(G_whole)))}')
-
-    #创建G_train_between
-    set_edge_needRemove = set()
-    for edge in G_whole.edges:
-        if edge[0] in set_serialNumber_lncRNA_test and edge[1] in set_serialNumber_protein_test:
-            set_edge_needRemove.add(edge)
-        elif edge[0] in set_serialNumber_protein_test and edge[1] in set_serialNumber_lncRNA_test:
-            set_edge_needRemove.add(edge)
-    print(f'lncRNA和protein都属于测试集的边有：{len(set_edge_needRemove)}个，要被删除')
-    for edge_needRemove in set_edge_needRemove:
-        G_whole.remove_edge(*edge_needRemove)
-    G_train_between = G_whole
-    print(f'{args.fold} fold G_train_between : number of nodes = {G_train_between.number_of_nodes()}, number of edges = {G_train_between.number_of_edges()}')
-    print(f'number of connected components = {len(list(nx.connected_components(G_train_between)))}')
-
-    #找到测试集中的孤立点
-    set_serialNumber_node_alone = set()
-    for node in G_train_between:
-        if node in set_serialNumber_lncRNA_test or node in set_serialNumber_lncRNA_test:
-            if len(G_train_between.adj[node]) == 0:
-                set_serialNumber_node_alone.add(node)
-    print(f'孤立点数量 = {len(set_serialNumber_node_alone)}')
-    # 返回
-    return set_serialNumber_node_alone
-    
-
-
-def find_lncRNA_protein_in_set_serialNumber_node_alone(set_serialNumber_node_alone):
-    global set_serialNumber_lncRNA_test, set_serialNumber_protein_test
-    
-
-
-
-def exam_training_testing_node():
-    global lncRNA_list, protein_list, set_serialNumber_lncRNA_train, set_serialNumber_protein_train, set_serialNumber_lncRNA_test, set_serialNumber_protein_test
-
-    print('分析训练集里的lncRNA')
-    list_len_interaction_list = []
-    for lncRNA in lncRNA_list:
-        if lncRNA.serial_number in set_serialNumber_lncRNA_train:
-            list_len_interaction_list.append(len(lncRNA.interaction_list))
-    print(f'平均相互连接数 = {numpy.mean(list_len_interaction_list)}， 方差 = {numpy.var(list_len_interaction_list)}')
-
-    print('分析训练集里的protein')
-    list_len_interaction_list = []
-    for protein in protein_list:
-        if protein.serial_number in set_serialNumber_protein_train:
-            list_len_interaction_list.append(len(protein.interaction_list))
-    print(f'平均相互连接数 = {numpy.mean(list_len_interaction_list)}， 方差 = {numpy.var(list_len_interaction_list)}')
-
-    print('分析测试集里的lncRNA')
-    list_len_interaction_list = []
-    for lncRNA in lncRNA_list:
-        if lncRNA.serial_number in set_serialNumber_lncRNA_test:
-            list_len_interaction_list.append(len(lncRNA.interaction_list))
-    print(f'平均相互连接数 = {numpy.mean(list_len_interaction_list)}， 方差 = {numpy.var(list_len_interaction_list)}')
-
-    print('分析测试集里的protein')
-    list_len_interaction_list = []
-    for protein in protein_list:
-        if protein.serial_number in set_serialNumber_protein_test:
-            list_len_interaction_list.append(len(protein.interaction_list))
-    print(f'平均相互连接数 = {numpy.mean(list_len_interaction_list)}， 方差 = {numpy.var(list_len_interaction_list)}')
-        
-
-
 if __name__ == "__main__":
     args = parse_args()
 
-    # # 用中间产物，重现相互作用数据集
+    # 用中间产物，重现相互作用数据集
     # path_intermediate_products_whole = f'data/intermediate_products/{args.projectName}'
-    # 重新读取原始相互作用数据集
     interaction_dataset_path = 'data/source_database_data/'+ args.interactionDatasetName + '.xlsx'
     interaction_list, negative_interaction_list,lncRNA_list, protein_list, lncRNA_name_index_dict, protein_name_index_dict, set_interactionKey, \
         set_negativeInteractionKey = read_interaction_dataset(dataset_path=interaction_dataset_path, dataset_name=args.interactionDatasetName)
     
-    path_set_allInteractionKey = f'data/set_allInteractionKey/{args.projectName}'
-    path_set_negativeInteractionKey_all = path_set_allInteractionKey + '/set_negativeInteractionKey_all'
-    set_negativeInteractionKey = read_set_interactionKey(path_set_negativeInteractionKey_all)
+    # 读入mutual interaction的键集合
+    if args.interactionDatasetName == 'NPInter2':
+        path_set_interactionKey_mutual = r'data\NPInter2_RPI2241_mutual_interaction\interactionKey_NPInter2_mutual'
+    elif args.interactionDatasetName == 'RPI2241':
+        path_set_interactionKey_mutual = r'data\NPInter2_RPI2241_mutual_interaction\interactionKey_RPI2241_mutual'
+    else:
+        raise Exception('必须是RPI2241或者NPInter2其中之一')
+    set_interactionKey_mutual = read_set_interactionKey(path_set_interactionKey_mutual + f'_{args.number}')
+    print(set_interactionKey_mutual)
 
-    # 重建负样本
-    rebuild_all_negativeInteraction(set_negativeInteractionKey)
+    # 从set_interactionKey里面删去读入的NPInter2和RPI2241共有的相互作用
+    for interactionKey in set_interactionKey_mutual:
+        set_interactionKey.remove(interactionKey)
 
-    path_set_serialNumber_node = f'data/set_serialNumber_node/{args.projectName}'
-    path_set_serialNumber_lncRNA_train = path_set_serialNumber_node + f'/set_serialNumber_lncRNA_train_{args.fold}'
-    path_set_serialNumber_protein_train = path_set_serialNumber_node + f'/set_serialNumber_protein_train_{args.fold}'
-    path_set_serialNumber_lncRNA_test = path_set_serialNumber_node + f'/set_serialNumber_lncRNA_test_{args.fold}'
-    path_set_serialNumber_protein_test = path_set_serialNumber_node + f'/set_serialNumber_protein_test_{args.fold}'
 
-    set_serialNumber_lncRNA_train = read_set_serialNumber_node(path_set_serialNumber_lncRNA_train)
-    set_serialNumber_protein_train = read_set_serialNumber_node(path_set_serialNumber_protein_train)
-    set_serialNumber_lncRNA_test = read_set_serialNumber_node(path_set_serialNumber_lncRNA_test)
-    set_serialNumber_protein_test = read_set_serialNumber_node(path_set_serialNumber_protein_test)
+    # 读入负样本的键集合
+    if args.createBalanceDataset == 1:
+        path_set_negativeInteractionKey_all = args.path_set_negativeInteractionKey
+        set_negativeInteractionKey = read_set_interactionKey(path_set_negativeInteractionKey_all)
+        # # 随机减少负样本数量，构造平衡训练集
+        # while len(set_negativeInteractionKey) > len(set_interactionKey):
+        #     set_negativeInteractionKey.pop()
+        # 把负样本重建在negative_interaction_list中
+        rebuild_all_negativeInteraction(set_negativeInteractionKey)
 
-    set_serialNumber_node_test_alone = find_test_alone_node()
-
-    exam_training_testing_node()
-
-    # # 把训练集和测试集包含的边读取出来
-    # path_set_interactionKey_train = path_set_allInteractionKey + f'/set_interactionKey_train_{args.fold}'
-    # path_set_negativeInteractionKey_train = path_set_allInteractionKey + f'/set_negativeInteractionKey_train_{args.fold}'
-    # path_set_interactionKey_test = path_set_allInteractionKey + f'/set_interactionKey_test_{args.fold}'
-    # path_set_negativeInteractionKey_test = path_set_allInteractionKey + f'/set_negativeInteractionKey_test_{args.fold}'
-
-    # set_interactionKey_train = read_set_interactionKey(path_set_interactionKey_train)
-    # set_negativeInteractionKey_train = read_set_interactionKey(path_set_negativeInteractionKey_train)
-    # set_interactionKey_test = read_set_interactionKey(path_set_interactionKey_test)
-    # set_negativeInteractionKey_test = read_set_interactionKey(path_set_negativeInteractionKey_test)
-
-    # # 检查一下训练集和测试集有没有重合
-    # exam_set_allInteractionKey_train_test(set_interactionKey_train, set_negativeInteractionKey_train, set_interactionKey_test, set_negativeInteractionKey_test)
+    # # 平衡数据集
+    # while len(set_negativeInteractionKey) > len(set_interactionKey):
+    #     set_negativeInteractionKey.pop()
 
     # load node2vec result
-    node2vec_result_path = f'data/node2vec_result/{args.projectName}/training_{args.fold}/result.emb'
-    read_node2vec_result(path=node2vec_result_path)
+    node2vec_result_path = f'data/node2vec_result/{args.projectName}/result.emb'
+    if args.randomNodeEmbedding == 0:
+        read_node2vec_result(path=node2vec_result_path)
+    else:
+        read_random_node_embedding()
+
 
     # load k-mer
     if args.noKmer == 0:
@@ -366,7 +279,9 @@ if __name__ == "__main__":
     # 执行检查
     load_exam(args.noKmer, lncRNA_list, protein_list)
     
-    
+    dict_serialNumber_name_lncRNA = build_dict_serialNumber_node(lncRNA_list)
+    dict_serialNumber_name_protein = build_dict_serialNumber_node(protein_list)
+
     # 数据集生成
     exam_list_all_interaction(interaction_list)
     exam_list_all_interaction(negative_interaction_list)
@@ -383,42 +298,28 @@ if __name__ == "__main__":
     if args.output == 1:
         if args.inMemory == 0:
             raise Exception('not ready')
-            # dataset_path = f'data/dataset/{args.projectName}'
-            # if not osp.exists(dataset_path):
-            #     os.makedirs(dataset_path)
-            # My_dataset = LncRNA_Protein_Interaction_dataset_1hop_1218(dataset_path, all_interaction_list, 1)
         else:
             # 生成局部子图，不能有测试集的边
-            set_serialNumber_node_train = set()
-            set_serialNumber_node_train.update(set_serialNumber_lncRNA_train)
-            set_serialNumber_node_train.update(set_serialNumber_protein_train)
-
-            set_serialNumber_node_test = set()
-            set_serialNumber_node_test.update(set_serialNumber_lncRNA_test)
-            set_serialNumber_node_test.update(set_serialNumber_protein_test)
-
-            print(f'训练集和测试集没有重叠:{len(set_serialNumber_node_train & set_serialNumber_node_test) == 0}')
-            print(f'训练集和测试集中点的总数：{len(set_serialNumber_node_train) + len(set_serialNumber_node_test)}')
+            set_interactionKey_cannotUse = set()
+            set_interactionKey_cannotUse.update(set_interactionKey_mutual)
 
             # 生成训练集
-            dataset_train_path = f'data/dataset/{args.projectName}_inMemory_train_{args.fold}'
+            dataset_train_path = f'data/dataset/{args.projectName}_inMemory_train_mutualInteractionStudy_{args.number}'
             if not osp.exists(dataset_train_path):
                 print(f'创建了文件夹：{dataset_train_path}')
                 os.makedirs(dataset_train_path)
-            My_trainingDataset = LncRNA_Protein_Interaction_dataset_1hop_1220_splitNodeSet_InMemory(dataset_train_path, all_interaction_list, 1, 'training', set_serialNumber_node_train, set_serialNumber_node_test, set_serialNumber_node_test_alone )
+            set_interactionKey_forGenerate = set()
+            set_interactionKey_forGenerate.update(set_interactionKey)
+            set_interactionKey_forGenerate.update(set_negativeInteractionKey)
+            My_trainingDataset = LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(dataset_train_path, all_interaction_list, 1, set_interactionKey_forGenerate, set_interactionKey_cannotUse)
 
-            # 生成测试集
-            dataset_test_path = f'data/dataset/{args.projectName}_inMemory_test_{args.fold}'
+            # # 生成测试集
+            dataset_test_path = f'data/dataset/{args.projectName}_inMemory_test_mutualInteractionStudy_{args.number}'
             if not osp.exists(dataset_test_path):
                 print(f'创建了文件夹：{dataset_test_path}')
                 os.makedirs(dataset_test_path)
-            My_testingDataset = LncRNA_Protein_Interaction_dataset_1hop_1220_splitNodeSet_InMemory(dataset_test_path, all_interaction_list, 1, 'testing', set_serialNumber_node_train, set_serialNumber_node_test, set_serialNumber_node_test_alone)
-
-            # 生成没有孤立点的测试集
-            dataset_test_selected_path = f'data/dataset/{args.projectName}_inMemory_test_selected_{args.fold}'
-            if not osp.exists(dataset_test_selected_path):
-                print(f'创建了文件夹：{dataset_test_selected_path}')
-                os.makedirs(dataset_test_selected_path)
-            My_testingDataset = LncRNA_Protein_Interaction_dataset_1hop_1220_splitNodeSet_InMemory(dataset_test_selected_path, all_interaction_list, 1, 'testing_selected', set_serialNumber_node_train, set_serialNumber_node_test, set_serialNumber_node_test_alone)
+            set_interactionKey_forGenerate = set()
+            set_interactionKey_forGenerate.update(set_interactionKey_mutual)
+            My_testingDataset = LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(dataset_test_path, all_interaction_list, 1, set_interactionKey_forGenerate, set_interactionKey_cannotUse)
 
     exit(0)

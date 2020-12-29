@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument('--createBalanceDataset', default=1, type=int, help='Create a Balance dataset')
     parser.add_argument('--reduce', default=0, type=int, help='randomly reduce the source database, and also maintain one connected component')
     parser.add_argument('--reduceRatio', default=0.5, help='reduce Ratio')
-    parser.add_argument('--output', default=0,type=int,  help='output dataset or not')
+    parser.add_argument('--output', default=1,type=int,  help='output dataset or not')
 
     return parser.parse_args()
 

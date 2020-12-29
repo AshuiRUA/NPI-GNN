@@ -61,14 +61,16 @@ if __name__ == "__main__":
     #参数
     args = parse_args()
 
-    training_dataset_path = f'.\\data\\dataset\\{args.trainingDatasetName}'
-    testing_dataset_path = f'.\\data\\dataset\\{args.testingDatasetName}'
+    training_dataset_path = f'.\\data\\dataset\\{args.trainingDatasetName}_{args.fold}'
+    testing_dataset_path = f'.\\data\\dataset\\{args.testingDatasetName}_{args.fold}'
     # 读取数据集
     if args.inMemory == 0:
         raise Exception("not ready yet")
         train_dataset = Dataset(root=training_dataset_path)
         test_dataset = Dataset(root=testing_dataset_path)
     elif args.inMemory == 1:
+        print(training_dataset_path)
+        print(testing_dataset_path)
         train_dataset = LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(root=training_dataset_path)
         test_dataset = LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(root=testing_dataset_path)
     else:
@@ -160,7 +162,7 @@ if __name__ == "__main__":
         loss_last = loss
 
         # 训练中评价模型，监视训练过程中的模型变化, 并且写入文件
-        if (epoch + 1) % 2 == 0 and epoch != num_of_epoch - 1:
+        if (epoch + 1) % 5 == 0 and epoch != num_of_epoch - 1:
             # 用Accuracy, Precision, Sensitivity, MCC评价模型
             # Accuracy, Precision, Sensitivity ,MCC = Accuracy_Precision_Sensitivity_MCC(model, train_loader, device)
             Accuracy, Precision, Sensitivity, Specificity, MCC = Accuracy_Precision_Sensitivity_Specificity_MCC(model, train_loader, device)
@@ -182,8 +184,6 @@ if __name__ == "__main__":
                 Spe_MCC_max = Specificity
             network_model_path = saving_path + f'/model_{args.fold}_fold/{epoch+1}'
             torch.save(model.state_dict(), network_model_path)
-
-
 
     # 训练结束，评价模型，并且把结果写入文件
     Accuracy, Precision, Sensitivity, Specificity, MCC = Accuracy_Precision_Sensitivity_Specificity_MCC(model, train_loader, device)

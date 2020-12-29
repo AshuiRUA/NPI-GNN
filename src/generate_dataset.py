@@ -299,7 +299,10 @@ if __name__ == "__main__":
             set_interactionKey_cannotUse.update(set_negativeInteractionKey_test)
 
             # 生成训练集
-            dataset_train_path = f'data/dataset/{args.projectName}_inMemory_train_{args.fold}'
+            if args.noKmer == 0:
+                dataset_train_path = f'data/dataset/{args.projectName}_inMemory_train_{args.fold}'
+            else:
+                dataset_train_path = f'data/dataset/{args.projectName}_inMemory_noKmer_train_{args.fold}'
             if not osp.exists(dataset_train_path):
                 print(f'创建了文件夹：{dataset_train_path}')
                 os.makedirs(dataset_train_path)
@@ -309,7 +312,10 @@ if __name__ == "__main__":
             My_trainingDataset = LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(dataset_train_path, all_interaction_list, 1, set_interactionKey_forGenerate, set_interactionKey_cannotUse)
 
             # 生成测试集
-            dataset_test_path = f'data/dataset/{args.projectName}_inMemory_test_{args.fold}'
+            if args.noKmer == 0:
+                dataset_test_path = f'data/dataset/{args.projectName}_inMemory_test_{args.fold}'
+            else:
+                dataset_test_path = f'data/dataset/{args.projectName}_inMemory_noKmer_test_{args.fold}'
             if not osp.exists(dataset_test_path):
                 print(f'创建了文件夹：{dataset_test_path}')
                 os.makedirs(dataset_test_path)
