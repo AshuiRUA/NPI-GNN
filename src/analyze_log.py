@@ -16,8 +16,8 @@ SPES = []
 
 list_result = []
 
-name_training = '1221_6'
-line_start = 'Epoch: 035, testing dataset,'
+name_training = '1229_1_per5Epoch'
+line_start = 'Epoch: 040, testing dataset,'
 for i in range(5):
     with open(f'result/{name_training}/log_{i}.txt') as f:
         for line in f.readlines():
@@ -41,8 +41,4 @@ for result in list_result:
 
 
 
-print(f'{numpy.mean(MCCS)}')
-print(f'{numpy.mean(ACCS)}')
-print(f'{numpy.mean(PRES)}')
-print(f'{numpy.mean(SENS)}')
-print(f'{numpy.mean(SPES)}')
+print(f'MCC = {numpy.mean(MCCS)} ACC = {numpy.mean(ACCS)} Pre = {numpy.mean(PRES)} Sen = {numpy.mean(SENS)} Spe = {numpy.mean(SPES)}')

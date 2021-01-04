@@ -36,7 +36,7 @@ def parse_args():
     parser.add_argument('--projectName', help='project name')
     parser.add_argument('--interactionDatasetName', default='NPInter2', help='raw interactions dataset')
     parser.add_argument('--createBalanceDataset', default=1, type=int, help='have you create a balance dataset when you run generate_edgelist.py, 0 means no, 1 means yes')
-    parser.add_argument('--path_set_negativeInteractionKey')
+    parser.add_argument('--path_set_negativeInteractionKey', default='data/set_allInteractionKey/1223_1/set_negativeInteractionKey_all')
     parser.add_argument('--output', default=1, type=int, help='output dataset or not')
     return parser.parse_args()
 

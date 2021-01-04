@@ -33,7 +33,7 @@ def parse_args():
     parser.add_argument('--interactionDatasetName', default='NPInter2', help='raw interactions dataset')
     parser.add_argument('--createBalanceDataset', default=1, type=int, help='have you create a balance dataset when you run generate_edgelist.py, 0 means no, 1 means yes')
     parser.add_argument('--inMemory',default=1, type=int, help='1 or 0: in memory dataset or not')
-    parser.add_argument('--hopNumber', default=2, type=int, help='hop number of subgraph')
+    # parser.add_argument('--hopNumber', default=1, type=int, help='hop number of subgraph')
     parser.add_argument('--shuffle', default=1, type=int, help='shuffle interactions before generate dataset')
     parser.add_argument('--noKmer', default=0, type=int, help='Not using k-mer')
     parser.add_argument('--randomNodeEmbedding', default=0, type=int, help='1: use rangdom vector as node Embedding, 0: use node2vec')

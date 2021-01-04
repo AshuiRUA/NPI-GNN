@@ -160,7 +160,7 @@ if __name__ == "__main__":
         loss_last = loss
 
         # 训练中评价模型，监视训练过程中的模型变化, 并且写入文件
-        if (epoch + 1) % 2 == 0 and epoch != num_of_epoch - 1:
+        if (epoch + 1) % 5 == 0 and epoch != num_of_epoch - 1:
             # 用Accuracy, Precision, Sensitivity, MCC评价模型
             # Accuracy, Precision, Sensitivity ,MCC = Accuracy_Precision_Sensitivity_MCC(model, train_loader, device)
             Accuracy, Precision, Sensitivity, Specificity, MCC = Accuracy_Precision_Sensitivity_Specificity_MCC(model, train_loader, device)

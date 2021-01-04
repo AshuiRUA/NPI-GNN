@@ -55,19 +55,19 @@ def return_scores_and_labels(model, loader, device):
             
 
 
-def return_scores_and_labels_for_5fold(i, type):
+def return_scores_and_labels_for_5fold(i, type, model_number, projectName):
     # 有kmer的
         # load datset
         print('load dataset with kmer')
-        datset_test = LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(f'data/dataset/1227_1_inMemory{type}_test_{i}')
-        print(f'载入数据集：data/dataset/1227_1_inMemory{type}_test_{i}')
+        datset_test = LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(f'data/dataset/{projectName}_inMemory{type}_test_{i}')
+        print(f'载入数据集：data/dataset/{projectName}_inMemory{type}_test_{i}')
         test_loader = DataLoader(datset_test, batch_size=60)
         # load model
         print('load model with kmer')
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = Net_1(datset_test.num_node_features)
-        model.load_state_dict(torch.load(f'result/1227_1{type}/model_{i}_fold/10'))
-        print(f'载入模型：result/1227_1{type}/model_{i}_fold/10')
+        model.load_state_dict(torch.load(f'result/{projectName}{type}/model_{i}_fold/{model_number}'))
+        print(f'载入模型：result/{projectName}{type}/model_{i}_fold/{model_number}')
         # run test
         scores_temp, labels_temp = return_scores_and_labels(model, test_loader, device)
         return scores_temp, labels_temp
@@ -159,11 +159,14 @@ def return_au_PR(list_pre, list_sen):
 
 if __name__ == "__main__":
     # 计算有kmer的5折测试结果
+    project_name = '1227_2'
+    model_number_withKmer = 25
+    model_number_withoutKmer = 40
     type = ''
     scores_withKmer = []
     labels_withKmer = []
     for i in range(5):
-        scores_temp, labels_temp = return_scores_and_labels_for_5fold(i, type)
+        scores_temp, labels_temp = return_scores_and_labels_for_5fold(i, type, model_number_withKmer, project_name)
         scores_withKmer.extend(scores_temp)
         labels_withKmer.extend(labels_temp)
     
@@ -176,7 +179,7 @@ if __name__ == "__main__":
     scores_withoutKmer = []
     labels_withoutKmer = []
     for i in range(5):
-        scores_temp, labels_temp = return_scores_and_labels_for_5fold(i, type)
+        scores_temp, labels_temp = return_scores_and_labels_for_5fold(i, type, model_number_withoutKmer, project_name)
         scores_withoutKmer.extend(scores_temp)
         labels_withoutKmer.extend(labels_temp)
     
@@ -198,7 +201,7 @@ if __name__ == "__main__":
     plt.ylabel('True positive rate')
     plt.legend()
     print('ROC curve')
-    plt.savefig(fname = f'figure_for_paper/ROC_1227_1_10epoch.svg', format='svg')
+    plt.savefig(fname = f'figure_for_paper/ROC_{project_name}.svg', format='svg')
     plt.show()
     print(f'with k-mer, AUROC = {AUROC_withKmer}')
     print(f'without k-mer, AUROC = {AUROC_withoutKmer}')
@@ -210,12 +213,12 @@ if __name__ == "__main__":
     plt.plot(sen_withKmer, pre_withKmer, label='with kmer', color='r')
     plt.plot(sen_withoutKmer, pre_withoutKmer, label = 'without kmer', color='g')
     plt.xlim((0, 1))
-    plt.ylim((0.5, 1))
+    plt.ylim((0, 1))
     plt.xlabel('Recall')
     plt.ylabel('Precision')
     plt.legend()
     print('PR curve')
-    plt.savefig(fname = f'figure_for_paper/PR_1227_1_10epoch.svg', format='svg')
+    plt.savefig(fname = f'figure_for_paper/PR_{project_name}.svg', format='svg')
     plt.show()
     AUPR_withKmer = return_au_PR(pre_withKmer, sen_withKmer)
     AUPR_withoutKmer = return_au_PR(pre_withoutKmer, sen_withoutKmer)
