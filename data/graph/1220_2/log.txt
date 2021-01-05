@@ -1,0 +1,55 @@
+
+start
+
+start reading xlsx file
+number of lncRNA：4636, number of protein：449, number of node：5085
+number of interaction：10412
+generate  10412  negative samples
+number of lncRNA: 4636, number of protein: 449, number of node: 5085
+number of positive samples: 10412, number of negative samples: 10412, number of edges: 20824
+number of nodes in graph:  5085 number of edges in graph:  20824
+number of connected componet : 1
+创建了文件夹：data/graph/1220_2
+创建了文件夹：data/set_allInteractionKey/1220_2
+输出了：data/set_allInteractionKey/1220_2/set_negativeInteractionKey_all
+输出了：data/set_allInteractionKey/1220_2/set_interactionKey_test_0
+输出了：data/set_allInteractionKey/1220_2/set_negativeInteractionKey_test_0
+输出了：data/set_allInteractionKey/1220_2/set_interactionKey_train_0
+输出了：data/set_allInteractionKey/1220_2/set_negativeInteractionKey_train_0
+0 fold training dataset graph : number of nodes = 5085, number of edges = 16658
+number of connected components = 110
+创建了文件夹：data/graph/1220_2/training_0
+输出了：data/set_allInteractionKey/1220_2/set_interactionKey_test_1
+输出了：data/set_allInteractionKey/1220_2/set_negativeInteractionKey_test_1
+输出了：data/set_allInteractionKey/1220_2/set_interactionKey_train_1
+输出了：data/set_allInteractionKey/1220_2/set_negativeInteractionKey_train_1
+1 fold training dataset graph : number of nodes = 5085, number of edges = 16658
+number of connected components = 107
+创建了文件夹：data/graph/1220_2/training_1
+输出了：data/set_allInteractionKey/1220_2/set_interactionKey_test_2
+输出了：data/set_allInteractionKey/1220_2/set_negativeInteractionKey_test_2
+输出了：data/set_allInteractionKey/1220_2/set_interactionKey_train_2
+输出了：data/set_allInteractionKey/1220_2/set_negativeInteractionKey_train_2
+2 fold training dataset graph : number of nodes = 5085, number of edges = 16660
+number of connected components = 109
+创建了文件夹：data/graph/1220_2/training_2
+输出了：data/set_allInteractionKey/1220_2/set_interactionKey_test_3
+输出了：data/set_allInteractionKey/1220_2/set_negativeInteractionKey_test_3
+输出了：data/set_allInteractionKey/1220_2/set_interactionKey_train_3
+输出了：data/set_allInteractionKey/1220_2/set_negativeInteractionKey_train_3
+3 fold training dataset graph : number of nodes = 5085, number of edges = 16660
+number of connected components = 110
+创建了文件夹：data/graph/1220_2/training_3
+输出了：data/set_allInteractionKey/1220_2/set_interactionKey_test_4
+输出了：data/set_allInteractionKey/1220_2/set_negativeInteractionKey_test_4
+4 fold training dataset graph : number of nodes = 5085, number of edges = 16660
+number of connected components = 94
+创建了文件夹：data/graph/1220_2/training_4
+创建了文件夹: data\node2vec_result\1220_2
+创建了文件夹: data\node2vec_result\1220_2/training_0
+创建了文件夹: data\node2vec_result\1220_2/training_1
+创建了文件夹: data\node2vec_result\1220_2/training_2
+创建了文件夹: data\node2vec_result\1220_2/training_3
+创建了文件夹: data\node2vec_result\1220_2/training_4
+
+exit

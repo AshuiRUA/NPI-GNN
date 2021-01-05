@@ -1,0 +1,65 @@
+start
+
+start reading xlsx file
+number of lncRNA：4636, number of protein：449, number of node：5085
+number of interaction：10412
+generate  10412  negative samples
+number of lncRNA: 4636, number of protein: 449, number of node: 5085
+number of positive samples: 10412, number of negative samples: 10412, number of edges: 20824
+number of nodes in graph:  5085 number of edges in graph:  20824
+number of connected componet : 1
+创建了文件夹：data/graph/1220_3
+创建了文件夹：data/set_allInteractionKey/1220_3
+输出了：data/set_allInteractionKey/1220_3/set_negativeInteractionKey_all
+创建了文件夹：data/set_serialNumber_node/1220_3
+fold: 0
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_lncRNA_train_0
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_protein_train_0
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_lncRNA_test_0
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_protein_test_0
+lncRNA和protein都属于测试集的边有：1023个
+0 fold training dataset graph : number of nodes = 5085, number of edges = 19801
+number of connected components = 38
+创建了文件夹：data/graph/1220_3/training_between_0
+fold: 1
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_lncRNA_train_1
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_protein_train_1
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_lncRNA_test_1
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_protein_test_1
+lncRNA和protein都属于测试集的边有：1007个
+1 fold training dataset graph : number of nodes = 5085, number of edges = 19817
+number of connected components = 51
+创建了文件夹：data/graph/1220_3/training_between_1
+fold: 2
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_lncRNA_train_2
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_protein_train_2
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_lncRNA_test_2
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_protein_test_2
+lncRNA和protein都属于测试集的边有：732个
+2 fold training dataset graph : number of nodes = 5085, number of edges = 20092
+number of connected components = 12
+创建了文件夹：data/graph/1220_3/training_between_2
+fold: 3
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_lncRNA_train_3
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_protein_train_3
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_lncRNA_test_3
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_protein_test_3
+lncRNA和protein都属于测试集的边有：668个
+3 fold training dataset graph : number of nodes = 5085, number of edges = 20156
+number of connected components = 10
+创建了文件夹：data/graph/1220_3/training_between_3
+fold: 4
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_lncRNA_train_4
+输出了：data/set_serialNumber_node/1220_3/set_serialNumber_protein_test_4
+lncRNA和protein都属于测试集的边有：739个
+4 fold training dataset graph : number of nodes = 5085, number of edges = 20085
+number of connected components = 3
+创建了文件夹：data/graph/1220_3/training_between_4
+创建了文件夹: data\node2vec_result\1220_3
+创建了文件夹: data\node2vec_result\1220_3/training_0
+创建了文件夹: data\node2vec_result\1220_3/training_1
+创建了文件夹: data\node2vec_result\1220_3/training_2
+创建了文件夹: data\node2vec_result\1220_3/training_3
+创建了文件夹: data\node2vec_result\1220_3/training_4
+
+exit
