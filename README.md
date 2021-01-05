@@ -64,7 +64,7 @@ The name of the output file must be result.emb, and the folder it in is the fold
 
 >Python .\src\train_with_twoDataset.py --trainingName nameOfTraining --datasetName yourProjectName --interactionDatasetName NPInter2 --epochNumber 50 --fold 0
 
-This will save modules and training log in 'result/yourProjectName'
+This will save modules and training log in 'result/{yourProjectName}'.Every five epochs report the model performance and save the model. Please note that the paper uses the performance of the model with the largest mean MCC in a cross-validation. 
 
 ##### Necessary parameters
 
