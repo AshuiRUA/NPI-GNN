@@ -6,3 +6,15 @@
 output_for_cytoscape.py
 generate_dataset_NPInterLncRNA_from_NPINter2.py
 id_conversion.py
+
+currently_not_use
+
+graph_generate_subgraph
+intermediate_products_testingDataset
+intermediate_products_between
+intermediate_products
+intermediate_products_testingDataset_selected
+log_generate_edgelist
+intermediate_products_trainingDataset
+set_serialNumber_node
+compare_withOrwithout_kmer
