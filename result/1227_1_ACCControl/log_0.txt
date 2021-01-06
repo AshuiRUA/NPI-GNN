@@ -1,0 +1,16 @@
+training dataset : 1227_1_inMemory_train_0testing dataset : 1227_1_inMemory_test_0database：NPInter2
+node2vec_windowSize = 5
+number of eopch ：200
+learn rate：initial = 0.01，whenever loss increases, multiply by 0.95
+L2 weight decay = 0.001
+Epoch: 001, training dataset, Accuracy: 0.90797, Precision: 0.90510, Sensitivity: 0.91151, Specificity: 0.90443, MCC: 0.81596
+Epoch: 001, testing dataset, Accuracy: 0.90014, Precision: 0.89076, Sensitivity: 0.91215, Specificity: 0.88814, MCC: 0.80052
+Epoch: 002, training dataset, Accuracy: 0.91398, Precision: 0.89632, Sensitivity: 0.93625, Specificity: 0.89170, MCC: 0.82877
+Epoch: 002, testing dataset, Accuracy: 0.89582, Precision: 0.87123, Sensitivity: 0.92895, Specificity: 0.86270, MCC: 0.79339
+Epoch: 003, training dataset, Accuracy: 0.90869, Precision: 0.86960, Sensitivity: 0.96158, Specificity: 0.85581, MCC: 0.82200
+result, training dataset, Accuracy: 0.90869, Precision: 0.86960, Sensitivity: 0.96158, Specificity: 0.85581, MCC: 0.82200
+result, testing dataset, Accuracy: 0.86798, Precision: 0.80995, Sensitivity: 0.96159, Specificity: 0.77436, MCC: 0.74921
+
+MCC最大的时候的性能：
+epoch: 1, MCC: 0.8005187024971483, ACC: 0.900144023043687, Pre: 0.8907641819034224, Sen: 0.9121459433509361, Spe: 0.8881421027364378
+Time consuming:187.53660774230957

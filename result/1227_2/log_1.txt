@@ -1,0 +1,29 @@
+training dataset : 1227_2_inMemory_train_1testing dataset : 1227_2_inMemory_test_1database：NPInter2
+node2vec_windowSize = 5
+number of eopch ：50
+learn rate：initial = 0.001，whenever loss increases, multiply by 0.95
+L2 weight decay = 0.001
+Epoch: 005, training dataset, Accuracy: 0.93174, Precision: 0.90188, Sensitivity: 0.96890, Specificity: 0.89459, MCC: 0.86588
+Epoch: 005, testing dataset, Accuracy: 0.88790, Precision: 0.83555, Sensitivity: 0.96591, Specificity: 0.80989, MCC: 0.78542
+Epoch: 010, training dataset, Accuracy: 0.94123, Precision: 0.91582, Sensitivity: 0.97179, Specificity: 0.91067, MCC: 0.88411
+Epoch: 010, testing dataset, Accuracy: 0.89990, Precision: 0.85207, Sensitivity: 0.96783, Specificity: 0.83197, MCC: 0.80729
+Epoch: 015, training dataset, Accuracy: 0.94795, Precision: 0.93093, Sensitivity: 0.96770, Specificity: 0.92820, MCC: 0.89661
+Epoch: 015, testing dataset, Accuracy: 0.91455, Precision: 0.87593, Sensitivity: 0.96591, Specificity: 0.86318, MCC: 0.83350
+Epoch: 020, training dataset, Accuracy: 0.95246, Precision: 0.92800, Sensitivity: 0.98103, Specificity: 0.92388, MCC: 0.90639
+Epoch: 020, testing dataset, Accuracy: 0.90735, Precision: 0.86030, Sensitivity: 0.97264, Specificity: 0.84205, MCC: 0.82173
+Epoch: 025, training dataset, Accuracy: 0.96122, Precision: 0.96233, Sensitivity: 0.96002, Specificity: 0.96242, MCC: 0.92244
+Epoch: 025, testing dataset, Accuracy: 0.93615, Precision: 0.93365, Sensitivity: 0.93903, Specificity: 0.93327, MCC: 0.87231
+Epoch: 030, training dataset, Accuracy: 0.92814, Precision: 0.97332, Sensitivity: 0.88042, Specificity: 0.97587, MCC: 0.86021
+Epoch: 030, testing dataset, Accuracy: 0.91047, Precision: 0.95968, Sensitivity: 0.85694, Specificity: 0.96399, MCC: 0.82568
+Epoch: 035, training dataset, Accuracy: 0.95216, Precision: 0.97383, Sensitivity: 0.92928, Specificity: 0.97503, MCC: 0.90526
+Epoch: 035, testing dataset, Accuracy: 0.92319, Precision: 0.95090, Sensitivity: 0.89246, Specificity: 0.95391, MCC: 0.84798
+Epoch: 040, training dataset, Accuracy: 0.95288, Precision: 0.97506, Sensitivity: 0.92952, Specificity: 0.97623, MCC: 0.90674
+Epoch: 040, testing dataset, Accuracy: 0.92127, Precision: 0.94611, Sensitivity: 0.89342, Specificity: 0.94911, MCC: 0.84384
+Epoch: 045, training dataset, Accuracy: 0.97173, Precision: 0.97054, Sensitivity: 0.97299, Specificity: 0.97046, MCC: 0.94345
+Epoch: 045, testing dataset, Accuracy: 0.93111, Precision: 0.92844, Sensitivity: 0.93423, Specificity: 0.92799, MCC: 0.86223
+result, training dataset, Accuracy: 0.97443, Precision: 0.96330, Sensitivity: 0.98643, Specificity: 0.96242, MCC: 0.94913
+result, testing dataset, Accuracy: 0.92343, Precision: 0.89340, Sensitivity: 0.96159, Specificity: 0.88526, MCC: 0.84933
+
+MCC最大的时候的性能：
+epoch: 25, MCC: 0.8723140433258924, ACC: 0.9361497839654345, Pre: 0.9336515513126492, Sen: 0.9390302448391743, Spe: 0.9332693230916946
+Time consuming:1371.948009967804
