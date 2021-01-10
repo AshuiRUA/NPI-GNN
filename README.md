@@ -2,6 +2,7 @@
 
 In this work, by integrating SEAL, GraphSAGE and top-k pooling, we construct a GNN based model to predict ncRNA-protein interactions.
 
+
 ### Dependency
 
 Python 3.6
@@ -47,6 +48,8 @@ The name of the output file must be result.emb, and the folder it in is the fold
 
 >Python .\src\generate_dataset.py --projectName yourProjectName --interactionDatasetName NPInter2 --fold 0
 
+Note: There is randomness in the existence process because the data is shuffled as the dataset is generated.
+
 ##### Necessary parameters
 
 * --projectName : The name of dataset you want to generate.
@@ -65,6 +68,8 @@ The name of the output file must be result.emb, and the folder it in is the fold
 >Python .\src\train_with_twoDataset.py --trainingName nameOfTraining --datasetName yourProjectName --interactionDatasetName NPInter2 --epochNumber 50 --fold 0
 
 This will save modules and training log in 'result/{yourProjectName}'.Every five epochs report the model performance and save the model. Please note that the paper uses the performance of the model with the largest mean MCC in a cross-validation. 
+Note: There is randomness in the existence process because the data is shuffled as the dataset is read.
+Note: The initial learning rate was 0.0001 when we perform 5-fold cross validation on RPI369
 
 ##### Necessary parameters
 
@@ -102,7 +107,7 @@ This will save modules and training log in 'result/{yourProjectName}'.Every five
 
 * --k: Default = 2. The *k* of *k*-mer frequency.
 
-### 2. Run  workflow
+#### 2. Run  workflow
 
 When running the workflow using you on interaction dataset, all **--interactionDataset** have to be {yourInteractionDataset}.
 

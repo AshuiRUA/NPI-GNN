@@ -58,12 +58,12 @@ def return_scores_and_labels(model, loader, device):
 def return_scores_and_labels_for_5fold(i, type, model_number, projectName):
     # 有kmer的
         # load datset
-        print('load dataset with kmer')
+        # print('load dataset with kmer')
         datset_test = LncRNA_Protein_Interaction_dataset_1hop_1220_InMemory(f'data/dataset/{projectName}_inMemory{type}_test_{i}')
         print(f'载入数据集：data/dataset/{projectName}_inMemory{type}_test_{i}')
         test_loader = DataLoader(datset_test, batch_size=60)
         # load model
-        print('load model with kmer')
+        # print('load model with kmer')
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = Net_1(datset_test.num_node_features)
         model.load_state_dict(torch.load(f'result/{projectName}{type}/model_{i}_fold/{model_number}'))
@@ -157,11 +157,7 @@ def return_au_PR(list_pre, list_sen):
         
 
 
-if __name__ == "__main__":
-    # 计算有kmer的5折测试结果
-    project_name = '1227_2'
-    model_number_withKmer = 25
-    model_number_withoutKmer = 40
+def srcores_labels_with_without_kmer(project_name, model_number_withKmer, model_number_withoutKmer):
     type = ''
     scores_withKmer = []
     labels_withKmer = []
@@ -169,9 +165,6 @@ if __name__ == "__main__":
         scores_temp, labels_temp = return_scores_and_labels_for_5fold(i, type, model_number_withKmer, project_name)
         scores_withKmer.extend(scores_temp)
         labels_withKmer.extend(labels_temp)
-    
-
-    AUROC_withKmer = roc_auc_score(labels_withKmer, scores_withKmer)
     
 
     # 计算没有kmer的5折测试结果
@@ -183,14 +176,106 @@ if __name__ == "__main__":
         scores_withoutKmer.extend(scores_temp)
         labels_withoutKmer.extend(labels_temp)
     
-
-    AUROC_withoutKmer = roc_auc_score(labels_withoutKmer, scores_withoutKmer)
+    return scores_withKmer, labels_withKmer, scores_withoutKmer, labels_withoutKmer
     
 
+def average_curve(list_list_x, list_list_y):
+    list_dict_x_y = []
+    for i in range(len(list_list_x)):
+        dict_x_y = {}
+        list_x = list_list_x[i]
+        list_y = list_list_y[i]
+        for j in range(len(list_x)):
+            x = list_x[j]
+            y = list_y[j]
+            dict_x_y[x] = y
+        list_dict_x_y.append(dict_x_y)
+    # 找到所有的共有的x坐标
+    set_shared_x = set()
+    for dict_x_y in list_dict_x_y:
+        if len(set_shared_x) == 0:
+            set_shared_x = set_shared_x | dict_x_y.keys()
+        else:
+            set_shared_x = set_shared_x & dict_x_y.keys()
+    list_shared_x = list(set_shared_x)
+    list_shared_x.sort()
+    
+    # 对几个曲线x坐标相同的点的y取平均
+    list_shared_y = []
+    for shared_x in list_shared_x:
+        list_y_temp = []
+        for dict_x_y in list_dict_x_y:
+            list_y_temp.append(dict_x_y[shared_x])
+        list_shared_y.append(np.mean(list_y_temp))
+    return list_shared_x, list_shared_y
 
-    #画ROC
-    fpr_withKmer, tpr_withKmer, _ = roc_curve(labels_withKmer, scores_withKmer, pos_label=1)
-    fpr_withoutKmer, tpr_withoutKmer, _ = roc_curve(labels_withoutKmer, scores_withoutKmer, pos_label=1)
+
+if __name__ == "__main__":
+    # 计算有kmer的5折测试结果
+    figure_name = 'five_NPInter2'
+    list_project_name = ['1223_1', '1227_1', '1227_2', '1230_1', '1230_2']
+    list_model_number_withKmer = [15, 20, 25, 25, 25]
+    list_model_number_withoutKmer = [35, 45, 40, 30, 30]
+    
+    # figure_name = '1223_1_1237_1'
+    # list_project_name = ['1223_1', '1227_1']
+    # list_model_number_withKmer = [15, 20]
+    # list_model_number_withoutKmer = [35, 45]
+
+    list_AUROC_withKmer = []
+    list_AUROC_withoutKmer = []
+    list_fpr_withKmer = []
+    list_tpr_withKmer = []
+    list_fpr_withoutKmer = []
+    list_tpr_withoutKmer = []
+    list_pre_withKmer = []
+    list_sen_withKmer = []
+    list_pre_withoutKmer = []
+    list_sen_withoutKmer = []
+    list_AUPR_withKmer = []
+    list_AUPR_withoutKmer = []
+
+    for i in range(len(list_project_name)):
+        scores_withKmer = []
+        labels_withKmer = []
+        scores_withoutKmer = []
+        labels_withoutKmer = []
+        project_name = list_project_name[i]
+        model_number_withKmer = list_model_number_withKmer[i]
+        model_number_withoutKmer = list_model_number_withoutKmer[i]
+
+        scores_withKmer, labels_withKmer, scores_withoutKmer, labels_withoutKmer = srcores_labels_with_without_kmer(project_name, model_number_withKmer, model_number_withoutKmer)
+
+        # 计算AUROC
+        AUROC_withKmer = roc_auc_score(labels_withKmer, scores_withKmer)
+        AUROC_withoutKmer = roc_auc_score(labels_withoutKmer, scores_withoutKmer)
+        list_AUROC_withKmer.append(AUROC_withKmer)
+        list_AUROC_withoutKmer.append(AUROC_withoutKmer)
+
+        #画ROC
+        fpr_withKmer, tpr_withKmer, _ = roc_curve(labels_withKmer, scores_withKmer, pos_label=1)
+        fpr_withoutKmer, tpr_withoutKmer, _ = roc_curve(labels_withoutKmer, scores_withoutKmer, pos_label=1)
+        list_fpr_withKmer.append(fpr_withKmer)
+        list_tpr_withKmer.append(tpr_withKmer)
+        list_fpr_withoutKmer.append(fpr_withoutKmer)
+        list_tpr_withoutKmer.append(tpr_withoutKmer)
+
+        #PR
+        pre_withKmer, sen_withKmer, _ = precision_recall_curve(labels_withKmer, scores_withKmer)  
+        pre_withoutKmer, sen_withoutKmer, _ = precision_recall_curve(labels_withoutKmer, scores_withoutKmer)
+        list_pre_withKmer.append(pre_withKmer)
+        list_sen_withKmer.append(sen_withKmer)
+        list_pre_withoutKmer.append(pre_withoutKmer)
+        list_sen_withoutKmer.append(sen_withoutKmer)
+
+        # 计算AUPR
+        AUPR_withKmer = return_au_PR(pre_withKmer, sen_withKmer)
+        AUPR_withoutKmer = return_au_PR(pre_withoutKmer, sen_withoutKmer)
+        list_AUPR_withKmer.append(AUPR_withKmer)
+        list_AUPR_withoutKmer.append(AUPR_withoutKmer)
+
+    fpr_withKmer, tpr_withKmer =average_curve(list_fpr_withKmer, list_tpr_withKmer)
+    fpr_withoutKmer, tpr_withoutKmer = average_curve(list_fpr_withoutKmer, list_tpr_withoutKmer)
 
     plt.figure(1)
     plt.plot(fpr_withKmer, tpr_withKmer, label='with kmer', color='r')
@@ -201,13 +286,14 @@ if __name__ == "__main__":
     plt.ylabel('True positive rate')
     plt.legend()
     print('ROC curve')
-    plt.savefig(fname = f'figure_for_paper/ROC_{project_name}.svg', format='svg')
+    plt.savefig(fname = f'figure_for_paper/ROC_{figure_name}.svg', format='svg')
     plt.show()
-    print(f'with k-mer, AUROC = {AUROC_withKmer}')
-    print(f'without k-mer, AUROC = {AUROC_withoutKmer}')
+    print(f'with k-mer, AUROC = {np.mean(list_AUROC_withKmer)}')
+    print(f'without k-mer, AUROC = {np.mean(list_AUROC_withoutKmer)}')
+    
     #画PR曲线
-    pre_withKmer, sen_withKmer, _ = precision_recall_curve(labels_withKmer, scores_withKmer)  
-    pre_withoutKmer, sen_withoutKmer, _ = precision_recall_curve(labels_withoutKmer, scores_withoutKmer)
+    sen_withKmer, pre_withKmer = average_curve(list_sen_withKmer, list_pre_withKmer)
+    sen_withoutKmer, pre_withoutKmer = average_curve(list_sen_withoutKmer, list_pre_withoutKmer)
 
     plt.figure(2)
     plt.plot(sen_withKmer, pre_withKmer, label='with kmer', color='r')
@@ -218,12 +304,11 @@ if __name__ == "__main__":
     plt.ylabel('Precision')
     plt.legend()
     print('PR curve')
-    plt.savefig(fname = f'figure_for_paper/PR_{project_name}.svg', format='svg')
+    plt.savefig(fname = f'figure_for_paper/PR_{figure_name}.svg', format='svg')
     plt.show()
-    AUPR_withKmer = return_au_PR(pre_withKmer, sen_withKmer)
-    AUPR_withoutKmer = return_au_PR(pre_withoutKmer, sen_withoutKmer)
-    print(f'with k-mer, AUPR = {AUPR_withKmer}')
-    print(f'without k-mer, AUPR = {AUPR_withoutKmer}')
+    
+    print(f'with k-mer, AUPR = {np.mean(list_AUPR_withKmer)}')
+    print(f'without k-mer, AUPR = {np.mean(list_AUPR_withoutKmer)}')
     
 
     # 对scores排序，同时改变label的顺序
