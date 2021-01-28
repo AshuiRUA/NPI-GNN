@@ -2,7 +2,6 @@
 
 In this work, by integrating SEAL, GraphSAGE and top-k pooling, we construct a GNN based model to predict ncRNA-protein interactions.
 
-
 ### Dependency
 
 Python 3.6
@@ -68,7 +67,9 @@ Note: There is randomness in the existence process because the data is shuffled 
 >Python .\src\train_with_twoDataset.py --trainingName nameOfTraining --datasetName yourProjectName --interactionDatasetName NPInter2 --epochNumber 50 --fold 0
 
 This will save modules and training log in 'result/{yourProjectName}'.Every five epochs report the model performance and save the model. Please note that the paper uses the performance of the model with the largest mean MCC in a cross-validation. 
+
 Note: There is randomness in the existence process because the data is shuffled as the dataset is read.
+
 Note: The initial learning rate was 0.0001 when we perform 5-fold cross validation on RPI369. Moreover, in the data set of RPI369, the model often fails to converge, which further proves that NPI-GNN is not suitable to run on the data set with too small local subgraphs.
 
 ##### Necessary parameters
