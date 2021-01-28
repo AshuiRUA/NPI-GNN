@@ -69,7 +69,7 @@ Note: There is randomness in the existence process because the data is shuffled 
 
 This will save modules and training log in 'result/{yourProjectName}'.Every five epochs report the model performance and save the model. Please note that the paper uses the performance of the model with the largest mean MCC in a cross-validation. 
 Note: There is randomness in the existence process because the data is shuffled as the dataset is read.
-Note: The initial learning rate was 0.0001 when we perform 5-fold cross validation on RPI369
+Note: The initial learning rate was 0.0001 when we perform 5-fold cross validation on RPI369. Moreover, in the data set of RPI369, the model often fails to converge, which further proves that NPI-GNN is not suitable to run on the data set with too small local subgraphs.
 
 ##### Necessary parameters
 
