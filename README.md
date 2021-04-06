@@ -10,6 +10,12 @@ pytorch 1.4.0
 
 torch-geometric 1.4.2
 
+dependencies for node2vec
+    
+    Note: This project contains node2vec released in https://github.com/aditya-grover/node2vec. So you need to configure its dependencies according to its description. But this node2vec is based on Python2, and some of its dependencies are also based on Python2. The code for node2vec included in the project was modified to make it work under Python3.
+    
+    Note: We strongly recommend that you configure a Python 2 environment to run node2vec and download the source code from this site.This will avoid a lot of confusion with Python2 and Python3.
+
 ### Workflow
 
 #### 1.Generating edgelist for node2vec
