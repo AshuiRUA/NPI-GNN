@@ -223,3 +223,7 @@ This will create a folder in 'data/case_study/{nameOfThisCaseStudy}
 ##### Optional parameters
 
 * --noKmer : 0 or1, be consistent with workflow 1-4
+
+# Citation
+
+[1] Zi-Ang Shen, Tao Luo, Yuan-Ke Zhou, Han Yu, Pu-Feng Du, NPI-GNN: Predicting ncRNA–protein interactions with deep graph neural networks, Briefings in Bioinformatics, Volume 22, Issue 5, September 2021, bbab051, https://doi.org/10.1093/bib/bbab051
