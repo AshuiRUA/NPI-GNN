@@ -1,3 +1,5 @@
+
+
 # NPI-GNN
 
 In this work, by integrating SEAL, GraphSAGE and top-k pooling, we construct a GNN based model to predict ncRNA-protein interactions.
@@ -160,7 +162,7 @@ This will generate a edgelist under 'data/graph/{yourProjectName_1}/bipartite_gr
 
 #### 2. run node2vec
 
->python ./node2vec-master/src/main.py --input data/graph/{yourProjectName_1}/bipartite_graph.edgelist -- output data/node2vec_result/{yourProjectName_1}/result.emb
+>python ./node2vec-master/src/main.py --input data/graph/{yourProjectName_1}/bipartite_graph.edgelist --output data/node2vec_result/{yourProjectName_1}/result.emb
 
 
 #### 3. run leave-one-out cross validation based on NPInter2
@@ -183,7 +185,7 @@ This will generate a edgelist under 'data/graph/{yourProjectName_2}/bipartite_gr
 
 #### 5. run node2vec
 
->python ./node2vec-master/src/main.py --input data/graph/{yourProjectName_2}/bipartite_graph.edgelist -- output data/node2vec_result/{yourProjectName_2}/result.emb
+>python ./node2vec-master/src/main.py --input data/graph/{yourProjectName_2}/bipartite_graph.edgelist --output data/node2vec_result/{yourProjectName_2}/result.emb
 
 #### 6. run leave-one-out cross validation based on RPI2241
 
